@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Pet Dojo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f5fff8;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(65px);opacity:.15;pointer-events:none;z-index:0}
+  .b1{width:320px;height:320px;background:#55efc4;top:-80px;left:-60px}
+  .b2{width:260px;height:260px;background:#ffeaa7;top:50px;right:-50px}
+  .b3{width:240px;height:240px;background:#fd79a8;bottom:-60px;left:20px}
+  .b4{width:200px;height:200px;background:#74b9ff;bottom:30px;right:-30px}
+  main{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center}
+
+  h1{font-family:'Fredoka One',cursive;font-size:2rem;background:linear-gradient(135deg,#00b894,#55efc4,#ffeaa7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;text-align:center}
+  .tagline{font-size:.85rem;color:#999;font-weight:600;letter-spacing:1px;margin-bottom:16px;text-align:center}
+
+  /* pet picker */
+  #picker{width:100%}
+  #picker h2{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#555;margin-bottom:14px;text-align:center}
+  #picker-name-row{display:flex;gap:10px;margin-bottom:14px;align-items:center;justify-content:center}
+  #pet-name-input{padding:10px 14px;border:2px solid #c8f5e5;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:#444;outline:none;width:180px;transition:.2s}
+  #pet-name-input:focus{border-color:#00b894}
+  #pet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+  .pet-opt{background:#fff;border-radius:18px;padding:14px 8px;text-align:center;cursor:pointer;border:3px solid transparent;box-shadow:0 3px 12px rgba(0,0,0,.07);transition:.2s}
+  .pet-opt:hover{transform:translateY(-4px);box-shadow:0 7px 18px rgba(0,0,0,.12)}
+  .pet-opt.selected{border-color:#00b894;background:#f0fff8}
+  .pet-opt .po-icon{font-size:2.4rem;margin-bottom:6px}
+  .pet-opt .po-name{font-family:'Fredoka One',cursive;font-size:.78rem;color:#555}
+  #start-pet-btn{background:linear-gradient(135deg,#00b894,#55efc4);color:#fff;border:none;padding:13px 36px;font-family:'Fredoka One',cursive;font-size:1.15rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(0,184,148,.4);transition:.2s;display:block;margin:0 auto}
+  #start-pet-btn:hover{transform:scale(1.05)}
+
+  /* game area */
+  #game{width:100%;display:none;flex-direction:column;align-items:center}
+
+  /* pet card */
+  #pet-card{width:100%;background:#fff;border-radius:24px;padding:20px;box-shadow:0 6px 26px rgba(0,0,0,.1);margin-bottom:14px;text-align:center;position:relative;overflow:hidden}
+  #pet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#00b894,#55efc4,#ffeaa7)}
+  #pet-scene{font-size:5.5rem;display:block;margin:0 auto 8px;line-height:1;transition:all .4s}
+  #pet-name-display{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#444;margin-bottom:4px}
+  #pet-level-badge{display:inline-block;padding:4px 16px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.8rem;color:#fff;background:linear-gradient(135deg,#00b894,#55efc4);margin-bottom:12px}
+  #pet-mood{font-size:.9rem;color:#888;font-weight:700;margin-bottom:14px;min-height:1.4em;font-style:italic}
+
+  /* stat bars */
+  .stat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .stat-icon{font-size:1.2rem;flex-shrink:0;width:28px;text-align:center}
+  .stat-bar-wrap{flex:1;background:#f0f0f0;border-radius:99px;height:12px;overflow:hidden}
+  .stat-bar{height:100%;border-radius:99px;transition:width .6s,background .4s}
+  .stat-bar.hunger{background:linear-gradient(90deg,#ffeaa7,#fdcb6e)}
+  .stat-bar.happy{background:linear-gradient(90deg,#fd79a8,#e84393)}
+  .stat-bar.energy{background:linear-gradient(90deg,#74b9ff,#6c5ce7)}
+  .stat-bar.clean{background:linear-gradient(90deg,#55efc4,#00b894)}
+  .stat-val{font-family:'Fredoka One',cursive;font-size:.8rem;color:#bbb;min-width:30px;text-align:right}
+
+  /* action buttons */
+  #actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;margin-bottom:14px}
+  .act{background:#fff;border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;border:2px solid transparent;box-shadow:0 3px 10px rgba(0,0,0,.07);transition:.2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .act:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+  .act:disabled{opacity:.4;cursor:default}
+  .act .a-icon{font-size:1.8rem}
+  .act .a-label{font-family:'Fredoka One',cursive;font-size:.68rem;color:#666}
+  .act .a-cost{font-size:.6rem;color:#bbb;font-weight:700}
+  .act.feed{border-color:#fdcb6e}
+  .act.play{border-color:#fd79a8}
+  .act.sleep{border-color:#74b9ff}
+  .act.bath{border-color:#55efc4}
+
+  /* responsibility tasks */
+  #tasks-section{width:100%;background:#fff;border-radius:20px;padding:16px 18px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:14px}
+  #tasks-section h3{font-family:'Fredoka One',cursive;font-size:.95rem;color:#555;margin-bottom:4px}
+  #tasks-section p{font-size:.75rem;color:#aaa;font-weight:600;margin-bottom:12px}
+  #task-list{display:flex;flex-direction:column;gap:8px}
+  .rtask{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9fff7;border-radius:12px;cursor:pointer;border:2px solid #d4f8e8;transition:.2s}
+  .rtask:hover:not(.done){background:#f0fff8;border-color:#00b894}
+  .rtask.done{opacity:.6;background:#f0f0f0;border-color:#ddd}
+  .rtask-check{width:28px;height:28px;border-radius:50%;border:2px solid #c8f5e5;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;transition:.3s}
+  .rtask.done .rtask-check{background:#00b894;border-color:#00b894;color:#fff}
+  .rtask-info{flex:1}
+  .rtask-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:#444}
+  .rtask-desc{font-size:.7rem;color:#aaa;font-weight:600}
+  .rtask-reward{font-family:'Fredoka One',cursive;font-size:.75rem;color:#00b894;background:#d4f8e8;padding:3px 10px;border-radius:99px;flex-shrink:0}
+  .rtask.done .rtask-reward{background:#e0e0e0;color:#aaa}
+
+  /* message bubble */
+  #msg-bubble{background:linear-gradient(135deg,#f0fff8,#e8f8f5);border-radius:16px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;font-weight:700;color:#00695c;text-align:center;border-left:4px solid #00b894;display:none;animation:slidein .3s ease;width:100%}
+  @keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  /* stats bar top */
+  #top-stats{display:flex;gap:10px;width:100%;margin-bottom:12px;justify-content:center;flex-wrap:wrap}
+  .tstat{background:#fff;border-radius:12px;padding:7px 14px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.07)}
+  .tstat-label{font-size:.55rem;color:#bbb;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .tstat-val{font-family:'Fredoka One',cursive;font-size:1rem;color:#555}
+
+  /* pet evolution notice */
+  #evolve-banner{display:none;width:100%;background:linear-gradient(135deg,#ffeaa7,#fdcb6e);border-radius:14px;padding:10px 16px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#7a5c00;text-align:center;margin-bottom:12px;animation:slidein .3s ease}
+
+  /* reset btn */
+  #reset-btn{background:#fff;color:#bbb;border:2px solid #e0e0e0;padding:8px 20px;font-family:'Fredoka One',cursive;font-size:.8rem;border-radius:99px;cursor:pointer;margin-top:4px;transition:.2s}
+  #reset-btn:hover{border-color:#fd79a8;color:#fd79a8}
+
+  /* overlay */
+  #overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;background:rgba(245,255,248,.97)}
+  .ov-icon{font-size:4rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .ov-h{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,#00b894,#55efc4,#ffeaa7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .ov-p{font-size:.87rem;color:#999;font-weight:600;line-height:2.1;margin-bottom:4px}
+  .ov-btn{background:linear-gradient(135deg,#00b894,#55efc4);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(0,184,148,.4);margin-top:16px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+
+  @keyframes petbounce{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-16px) scale(1.1)}60%{transform:translateY(-8px) scale(1.05)}}
+  @keyframes petsad{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  @keyframes petspin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .85s ease forwards;z-index:999}
+  @media(max-width:440px){#actions{grid-template-columns:repeat(2,1fr)}#pet-grid{grid-template-columns:repeat(4,1fr)}h1{font-size:1.7rem}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<main>
+  <h1>🐾 Pet Dojo</h1>
+  <p class="tagline">Care for your pet by being responsible!</p>
+
+  <!-- Pet picker -->
+  <div id="picker">
+    <h2>🌟 Choose your pet & give it a name!</h2>
+    <div id="picker-name-row">
+      <input id="pet-name-input" type="text" placeholder="Pet's name..." maxlength="16"/>
+    </div>
+    <div id="pet-grid">
+      <div class="pet-opt selected" data-pet="🐱" onclick="selectPet(this,'🐱')"><div class="po-icon">🐱</div><div class="po-name">Kitty</div></div>
+      <div class="pet-opt" data-pet="🐶" onclick="selectPet(this,'🐶')"><div class="po-icon">🐶</div><div class="po-name">Puppy</div></div>
+      <div class="pet-opt" data-pet="🐰" onclick="selectPet(this,'🐰')"><div class="po-icon">🐰</div><div class="po-name">Bunny</div></div>
+      <div class="pet-opt" data-pet="🐹" onclick="selectPet(this,'🐹')"><div class="po-icon">🐹</div><div class="po-name">Hamster</div></div>
+      <div class="pet-opt" data-pet="🦊" onclick="selectPet(this,'🦊')"><div class="po-icon">🦊</div><div class="po-name">Fox</div></div>
+      <div class="pet-opt" data-pet="🐸" onclick="selectPet(this,'🐸')"><div class="po-icon">🐸</div><div class="po-name">Froggy</div></div>
+      <div class="pet-opt" data-pet="🦋" onclick="selectPet(this,'🦋')"><div class="po-icon">🦋</div><div class="po-name">Butterfly</div></div>
+      <div class="pet-opt" data-pet="🐼" onclick="selectPet(this,'🐼')"><div class="po-icon">🐼</div><div class="po-name">Panda</div></div>
+    </div>
+    <button id="start-pet-btn" onclick="startGame()">Adopt My Pet! 🐾</button>
+  </div>
+
+  <!-- Game area -->
+  <div id="game">
+    <div id="top-stats">
+      <div class="tstat"><div class="tstat-label">Day</div><div class="tstat-val" id="day-count">1</div></div>
+      <div class="tstat"><div class="tstat-label">Love pts</div><div class="tstat-val" id="love-pts" style="color:#fd79a8">0</div></div>
+      <div class="tstat"><div class="tstat-label">Tasks done</div><div class="tstat-val" id="tasks-done" style="color:#00b894">0</div></div>
+    </div>
+
+    <div id="evolve-banner"></div>
+    <div id="msg-bubble"></div>
+
+    <div id="pet-card">
+      <span id="pet-scene">🐱</span>
+      <div id="pet-name-display">My Pet</div>
+      <div id="pet-level-badge">Baby 🌱</div>
+      <div id="pet-mood">Loading...</div>
+      <div class="stat-row"><div class="stat-icon">🍽️</div><div class="stat-bar-wrap"><div class="stat-bar hunger" id="bar-hunger" style="width:70%"></div></div><div class="stat-val" id="val-hunger">70</div></div>
+      <div class="stat-row"><div class="stat-icon">😄</div><div class="stat-bar-wrap"><div class="stat-bar happy" id="bar-happy" style="width:70%"></div></div><div class="stat-val" id="val-happy">70</div></div>
+      <div class="stat-row"><div class="stat-icon">⚡</div><div class="stat-bar-wrap"><div class="stat-bar energy" id="bar-energy" style="width:70%"></div></div><div class="stat-val" id="val-energy">70</div></div>
+      <div class="stat-row"><div class="stat-icon">🛁</div><div class="stat-bar-wrap"><div class="stat-bar clean" id="bar-clean" style="width:70%"></div></div><div class="stat-val" id="val-clean">70</div></div>
+    </div>
+
+    <div id="actions">
+      <div class="act feed" onclick="petAction('feed')"><div class="a-icon">🍎</div><div class="a-label">Feed</div><div class="a-cost">+15 hunger</div></div>
+      <div class="act play" onclick="petAction('play')"><div class="a-icon">🎾</div><div class="a-label">Play</div><div class="a-cost">+15 happy</div></div>
+      <div class="act sleep" onclick="petAction('sleep')"><div class="a-icon">😴</div><div class="a-label">Rest</div><div class="a-cost">+15 energy</div></div>
+      <div class="act bath" onclick="petAction('bath')"><div class="a-icon">🛁</div><div class="a-label">Bathe</div><div class="a-cost">+15 clean</div></div>
+    </div>
+
+    <div id="tasks-section">
+      <h3>🎯 Responsibility Tasks</h3>
+      <p>Complete real-life tasks to earn Love Points for your pet!</p>
+      <div id="task-list"></div>
+      <div style="text-align:center;margin-top:10px">
+        <button style="background:linear-gradient(135deg,#00b894,#55efc4);color:#fff;border:none;padding:8px 22px;font-family:Fredoka One,cursive;font-size:.85rem;border-radius:99px;cursor:pointer;box-shadow:0 3px 10px rgba(0,184,148,.3)" onclick="resetTasks()">🔄 New Day — Reset Tasks</button>
+      </div>
+    </div>
+
+    <button id="reset-btn" onclick="resetGame()">🔄 Start Over with a New Pet</button>
+  </div>
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">🐾</div>
+  <h2 class="ov-h">Pet Dojo!</h2>
+  <p class="ov-p">Adopt a virtual pet and keep it happy!<br>🍎 Feed it · 🎾 Play with it<br>😴 Let it rest · 🛁 Keep it clean<br><br>But here's the secret — your pet only<br>TRULY thrives when YOU are responsible! 💚<br>Complete real tasks to earn Love Points<br>and help your pet grow and evolve! 🌟</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none'">Meet My Pet! 🐾</button>
+</div>
+
+<script>
+const PET_LEVELS=[
+  {name:'Baby 🌱',minLove:0,boost:'',desc:'Your pet is a tiny baby — it needs lots of care!'},
+  {name:'Toddler 🌿',minLove:30,boost:'💧',desc:'Growing up! Your pet is getting more playful.'},
+  {name:'Kid 🌳',minLove:80,boost:'✨',desc:'Your pet is full of energy and loves adventures!'},
+  {name:'Teen 🌟',minLove:160,boost:'💫',desc:'Your pet is so confident and independent now!'},
+  {name:'Adult 🏆',minLove:280,boost:'🌈',desc:'Fully grown! Your pet is wise, happy and loves you!'},
+];
+
+const MOODS=[
+  {min:80,mood:'😍',text:'Absolutely thriving! So happy and loved!'},
+  {min:60,mood:'😊',text:'Feeling great! A little more attention would be lovely.'},
+  {min:40,mood:'😐',text:'Doing okay... but could use some care.'},
+  {min:20,mood:'😟',text:'Feeling a bit neglected... please take care of me!'},
+  {min:0, mood:'😢',text:'Very sad and hungry... I need you! 💙'},
+];
+
+const TASKS=[
+  {id:'r1',title:'Brush my teeth',desc:'Morning & evening — 2 mins each!',reward:8,emoji:'🪥'},
+  {id:'r2',title:'Make my bed',desc:'Tidy bed = happy pet!',reward:8,emoji:'🛏️'},
+  {id:'r3',title:'Eat a proper meal',desc:'Healthy food makes your pet stronger!',reward:10,emoji:'🥗'},
+  {id:'r4',title:'Do my homework',desc:'Smart human = smart pet!',reward:12,emoji:'📚'},
+  {id:'r5',title:'Tidy my room',desc:'Clean space, calm pet.',reward:10,emoji:'🧹'},
+  {id:'r6',title:'Help with a chore',desc:'Helping at home = bonus love!',reward:12,emoji:'🏠'},
+  {id:'r7',title:'Be kind to someone',desc:'Kindness fills your pet\'s heart!',reward:15,emoji:'💗'},
+  {id:'r8',title:'Read for 15 minutes',desc:'Reading grows your mind AND your pet!',reward:10,emoji:'📖'},
+  {id:'r9',title:'Get to bed on time',desc:'A rested you = a happy pet!',reward:10,emoji:'😴'},
+  {id:'r10',title:'Say thank you today',desc:'Gratitude is magic!',reward:8,emoji:'🙏'},
+];
+
+const ACTION_MSGS={
+  feed:['Yummy! 😋 Nom nom nom!','That was delicious! 🍎','More please! 🥰'],
+  play:['Wheee! So fun! 🎾','Best day EVER! 🌟','Play again! Play again! 🎉'],
+  sleep:['Zzzz... 😴 Sweet dreams!','Feeling refreshed! ⚡','That nap was perfect! 💤'],
+  bath:['So clean and fresh! 🛁✨','Squeaky clean! 🌿','Bubbles! Bubbles! 💧'],
+};
+
+let pet={icon:'🐱',name:'',hunger:70,happy:70,energy:70,clean:70,love:0,day:1,completedTasks:[]};
+let selPetIcon='🐱';
+
+function selectPet(el,icon){
+  document.querySelectorAll('.pet-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');selPetIcon=icon;
+}
+
+function startGame(){
+  const name=document.getElementById('pet-name-input').value.trim()||'Buddy';
+  pet={icon:selPetIcon,name,hunger:70,happy:70,energy:70,clean:70,love:0,day:1,completedTasks:[]};
+  document.getElementById('picker').style.display='none';
+  document.getElementById('game').style.display='flex';
+  document.getElementById('game').style.flexDirection='column';
+  document.getElementById('game').style.alignItems='center';
+  document.getElementById('game').style.width='100%';
+  buildTasks();render();
+  // gentle stat decay every 30s
+  setInterval(()=>{
+    pet.hunger=Math.max(0,pet.hunger-3);
+    pet.happy=Math.max(0,pet.happy-2);
+    pet.energy=Math.max(0,pet.energy-2);
+    pet.clean=Math.max(0,pet.clean-1);
+    render();
+  },30000);
+}
+
+function resetGame(){
+  document.getElementById('game').style.display='none';
+  document.getElementById('picker').style.display='block';
+}
+
+function getLevel(){
+  let lv=PET_LEVELS[0];
+  for(const l of PET_LEVELS)if(pet.love>=l.minLove)lv=l;
+  return lv;
+}
+
+function getMood(){
+  const avg=(pet.hunger+pet.happy+pet.energy+pet.clean)/4;
+  for(const m of MOODS)if(avg>=m.min)return m;
+  return MOODS[MOODS.length-1];
+}
+
+function clamp(v){return Math.max(0,Math.min(100,v));}
+
+function petAction(type){
+  const gain=15;
+  const oldLv=getLevel();
+  if(type==='feed')pet.hunger=clamp(pet.hunger+gain);
+  if(type==='play'){pet.happy=clamp(pet.happy+gain);pet.love+=2;}
+  if(type==='sleep')pet.energy=clamp(pet.energy+gain);
+  if(type==='bath')pet.clean=clamp(pet.clean+gain);
+  const msgs=ACTION_MSGS[type];
+  showMsg(msgs[Math.floor(Math.random()*msgs.length)]);
+  animatePet('bounce');
+  confettiBurst();
+  checkEvolve(oldLv);
+  render();
+}
+
+function buildTasks(){
+  const el=document.getElementById('task-list');el.innerHTML='';
+  TASKS.forEach(t=>{
+    const done=pet.completedTasks.includes(t.id);
+    const row=document.createElement('div');row.className=`rtask${done?' done':''}`;
+    row.innerHTML=`<div class="rtask-check">${done?'✓':''}</div><div class="a-icon" style="font-size:1.4rem;flex-shrink:0">${t.emoji}</div><div class="rtask-info"><div class="rtask-title">${t.title}</div><div class="rtask-desc">${t.desc}</div></div><div class="rtask-reward">${done?'Done!':'+'+t.reward+' 💗'}</div>`;
+    if(!done)row.addEventListener('click',()=>completeTask(t));
+    el.appendChild(row);
+  });
+}
+
+function completeTask(t){
+  if(pet.completedTasks.includes(t.id))return;
+  const oldLv=getLevel();
+  pet.completedTasks.push(t.id);
+  pet.love+=t.reward;
+  pet.happy=clamp(pet.happy+8);
+  pet.day=1+Math.floor(pet.love/40);
+  document.getElementById('love-pts').textContent=pet.love;
+  document.getElementById('tasks-done').textContent=pet.completedTasks.length;
+  showMsg(`✅ You completed "${t.title}"! ${pet.name} got +${t.reward} Love Points! 💗`);
+  animatePet('bounce');confettiBurst();
+  checkEvolve(oldLv);
+  buildTasks();render();
+}
+
+function resetTasks(){
+  pet.completedTasks=[];
+  pet.day++;
+  document.getElementById('day-count').textContent=pet.day;
+  showMsg(`🌅 New day! All tasks reset. Keep caring for ${pet.name}!`);
+  buildTasks();render();
+}
+
+function checkEvolve(oldLv){
+  const newLv=getLevel();
+  if(newLv.name!==oldLv.name){
+    const b=document.getElementById('evolve-banner');
+    b.textContent=`🎉 ${pet.name} evolved to ${newLv.name}! ${newLv.desc}`;
+    b.style.display='block';
+    confettiAll();
+    setTimeout(()=>b.style.display='none',5000);
+  }
+}
+
+function showMsg(txt){
+  const el=document.getElementById('msg-bubble');
+  el.textContent=txt;el.style.display='block';
+  clearTimeout(el._t);el._t=setTimeout(()=>el.style.display='none',3000);
+}
+
+function animatePet(type){
+  const el=document.getElementById('pet-scene');
+  el.style.animation='none';
+  setTimeout(()=>{el.style.animation=`pet${type} .6s ease`;},10);
+}
+
+function render(){
+  const lv=getLevel();const mood=getMood();
+  const lvl=document.getElementById('pet-level-badge');
+  lvl.textContent=lv.name;
+  document.getElementById('pet-scene').textContent=pet.icon+(lv.boost||'');
+  document.getElementById('pet-name-display').textContent=pet.name;
+  document.getElementById('pet-mood').textContent=mood.mood+' "'+mood.text+'"';
+  document.getElementById('day-count').textContent=pet.day;
+  document.getElementById('love-pts').textContent=pet.love;
+  document.getElementById('tasks-done').textContent=pet.completedTasks.length;
+  ['hunger','happy','energy','clean'].forEach(k=>{
+    const v=pet[k];
+    document.getElementById('bar-'+k).style.width=v+'%';
+    document.getElementById('val-'+k).textContent=v;
+    document.getElementById('bar-'+k).style.background=v>60?null:v>30?'linear-gradient(90deg,#fdcb6e,#ff9f43)':'linear-gradient(90deg,#ff7675,#e74c3c)';
+  });
+}
+
+function confettiBurst(){
+  const em=['🐾','💗','⭐','✨','💚','🌟'];
+  for(let i=0;i<7;i++){
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*80+10+'vw';el.style.top=Math.random()*50+15+'vh';
+    el.style.setProperty('--dx',(Math.random()*80-40)+'px');el.style.setProperty('--dy',(Math.random()*80-100)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  }
+}
+
+function confettiAll(){
+  const em=['🐾','💗','⭐','✨','🌟','🎉','💚','🌈'];
+  for(let i=0;i<22;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*70+5+'vh';
+    el.style.setProperty('--dx',(Math.random()*120-60)+'px');el.style.setProperty('--dy',(Math.random()*100-120)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  },i*60);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────
+# Sparkiddo — robots.txt
+# Controls which pages search engines index
+# ─────────────────────────────────────────────
+
+# Allow all search engines on public pages
+User-agent: *
+
+# ── ALLOW (public-facing pages) ───────────────
+Allow: /
+Allow: /index.html
+Allow: /snake.html
+Allow: /tictactoe.html
+Allow: /memorymatch.html
+Allow: /rockpaperscissors.html
+Allow: /mathdojo.html
+Allow: /colorshapequest.html
+Allow: /emotionmatch.html
+Allow: /kindnessquest.html
+Allow: /storychoices.html
+Allow: /shareorkeep.html
+Allow: /truthorfib.html
+Allow: /cooldowncorner.html
+Allow: /mydailydojo.html
+Allow: /petdojo.html
+
+# ── DISALLOW (auth & private pages) ──────────
+Disallow: /login.html
+Disallow: /register.html
+Disallow: /forgot-password.html
+Disallow: /play.html
+Disallow: /parent-dashboard.html
+Disallow: /auth/
+Disallow: /admin/
+Disallow: /api/
+
+# ── BLOCK AI SCRAPERS ─────────────────────────
+# Prevents training AI models on Sparkiddo content
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# ── SITEMAP ───────────────────────────────────
+Sitemap: https://sparkiddo.com/sitemap.xml

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sparkiddo — Choose Your Player</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f7f3ff;min-height:100vh;font-family:'Nunito',sans-serif}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.14;pointer-events:none;z-index:0}
+  .b1{width:400px;height:400px;background:#a29bfe;top:-120px;left:-100px}
+  .b2{width:320px;height:320px;background:#fd79a8;bottom:-80px;right:-60px}
+  .b3{width:280px;height:280px;background:#55efc4;bottom:100px;left:-60px}
+
+  /* ── NAV ── */
+  nav{position:relative;z-index:10;background:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(162,155,254,.12)}
+  .nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-user{font-size:.82rem;color:#888;font-weight:700}
+  .sign-out-btn{background:#f0e8ff;border:none;padding:7px 16px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.8rem;color:#6c5ce7;cursor:pointer;transition:.2s}
+  .sign-out-btn:hover{background:#e0d7ff}
+  .parent-btn{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;border:none;padding:7px 16px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.8rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px}
+
+  /* ── MAIN ── */
+  main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:32px 20px}
+
+  /* ── PROFILE PICKER ── */
+  #profile-picker{text-align:center}
+  .pick-title{font-family:'Fredoka One',cursive;font-size:1.8rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+  .pick-sub{font-size:.88rem;color:#888;font-weight:600;margin-bottom:32px}
+  .profiles-grid{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+  .profile-card{background:#fff;border-radius:24px;padding:28px 24px;width:160px;cursor:pointer;border:3px solid transparent;box-shadow:0 4px 18px rgba(0,0,0,.08);transition:.25s;text-align:center}
+  .profile-card:hover{transform:translateY(-8px);box-shadow:0 12px 32px rgba(108,92,231,.2);border-color:#a29bfe}
+  .profile-card.selected{border-color:#00b894;background:#f0fff8}
+  .profile-avatar{font-size:4rem;margin-bottom:12px;display:block}
+  .profile-name{font-family:'Fredoka One',cursive;font-size:1.05rem;color:#444;margin-bottom:6px}
+  .profile-belt{font-size:.72rem;color:#888;font-weight:700;margin-bottom:8px}
+  .profile-xp-bar{height:6px;background:#f0e8ff;border-radius:99px;overflow:hidden;margin-bottom:4px}
+  .profile-xp-fill{height:100%;background:linear-gradient(90deg,#a29bfe,#6c5ce7);border-radius:99px}
+  .profile-xp-label{font-size:.65rem;color:#bbb;font-weight:700}
+  .add-profile-card{background:#f9f7ff;border-radius:24px;padding:28px 24px;width:160px;cursor:pointer;border:3px dashed #e0d7ff;box-shadow:none;transition:.25s;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+  .add-profile-card:hover{border-color:#a29bfe;background:#f3efff}
+  .add-icon{font-size:2.5rem;color:#c4b5fd}
+  .add-label{font-family:'Fredoka One',cursive;font-size:.88rem;color:#a29bfe}
+  .add-sub{font-size:.68rem;color:#ccc;font-weight:700}
+  .play-btn{background:linear-gradient(135deg,#00b894,#55efc4);color:#fff;border:none;padding:15px 48px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:1.15rem;cursor:pointer;box-shadow:0 6px 20px rgba(0,184,148,.35);transition:.2s;display:none}
+  .play-btn:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,184,148,.4)}
+  .play-btn.show{display:inline-block}
+
+  /* ── GAME HUB ── */
+  #game-hub{display:none}
+  .hub-header{display:flex;align-items:center;gap:14px;background:#fff;border-radius:24px;padding:18px 22px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,.07)}
+  .hub-avatar{font-size:3rem;cursor:pointer;transition:.2s}
+  .hub-avatar:hover{transform:scale(1.1)}
+  .hub-info{flex:1}
+  .hub-name{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#444;margin-bottom:4px}
+  .hub-belt{font-size:.78rem;color:#888;font-weight:700;margin-bottom:8px}
+  .hub-xp-row{display:flex;align-items:center;gap:10px}
+  .hub-xp-bar-bg{flex:1;height:10px;background:#f0e8ff;border-radius:99px;overflow:hidden}
+  .hub-xp-bar-fill{height:100%;background:linear-gradient(90deg,#a29bfe,#6c5ce7);border-radius:99px;transition:width .6s}
+  .hub-xp-label{font-size:.72rem;color:#aaa;font-weight:700;white-space:nowrap}
+  .hub-streak{background:linear-gradient(135deg,#ff9f43,#ff6b6b);color:#fff;border-radius:99px;padding:6px 14px;font-family:'Fredoka One',cursive;font-size:.82rem}
+
+  .zone-section{margin-bottom:28px}
+  .zone-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .zone-icon-wrap{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+  .zone-title{font-family:'Fredoka One',cursive;font-size:1.2rem}
+  .zone-desc{font-size:.72rem;color:#aaa;font-weight:700;letter-spacing:.5px}
+  .zone-divider{height:3px;border-radius:99px;margin-bottom:18px;opacity:.6}
+
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+  .game-card{background:#fff;border-radius:20px;padding:18px 16px;cursor:pointer;border:2px solid transparent;box-shadow:0 3px 14px rgba(0,0,0,.07);transition:.22s;text-decoration:none;display:block}
+  .game-card:hover{transform:translateY(-5px);box-shadow:0 10px 24px rgba(0,0,0,.12)}
+  .game-emoji{font-size:2.4rem;margin-bottom:10px;display:block}
+  .game-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#444;margin-bottom:4px}
+  .game-desc{font-size:.72rem;color:#888;font-weight:600;line-height:1.5;margin-bottom:10px}
+  .game-tag{font-size:.6rem;padding:3px 10px;border-radius:99px;font-family:'Fredoka One',cursive;display:inline-block;color:#fff}
+  .game-xp{font-size:.65rem;color:#bbb;font-weight:700;float:right;margin-top:3px}
+
+  .arcade-section{background:#fff;border-radius:24px;padding:20px 20px;box-shadow:0 4px 16px rgba(0,0,0,.07)}
+  .arcade-games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .arcade-card{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:16px;padding:14px 10px;text-align:center;text-decoration:none;display:block;border:2px solid #2e1b6b;transition:.2s}
+  .arcade-card:hover{border-color:#7c3aed;box-shadow:0 6px 18px rgba(124,58,237,.3);transform:translateY(-3px)}
+  .arcade-emoji{font-size:2rem;display:block;margin-bottom:6px}
+  .arcade-title{font-family:'Fredoka One',cursive;font-size:.75rem;color:#c4b5fd;margin-bottom:4px}
+  .arcade-tag{font-size:.55rem;padding:2px 8px;border-radius:99px;background:#2e1b6b;color:#a78bfa;font-family:'Fredoka One',cursive}
+
+  /* ── ADD CHILD MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:none;align-items:flex-end;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal-card{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px;width:100%;max-width:480px}
+  .modal-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#444;margin-bottom:20px}
+  .modal-input{width:100%;padding:13px 16px;border:2px solid #e0d7ff;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;outline:none;transition:.2s;margin-bottom:16px}
+  .modal-input:focus{border-color:#a29bfe}
+  .avatar-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .avatar-opt{width:46px;height:46px;border-radius:12px;border:2px solid transparent;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;transition:.2s}
+  .avatar-opt.sel{border-color:#a29bfe;background:#f3efff}
+  .modal-btns{display:flex;gap:10px}
+  .modal-btn{flex:1;padding:13px;border-radius:14px;font-family:'Fredoka One',cursive;font-size:.95rem;border:none;cursor:pointer;transition:.2s}
+  .modal-cancel{background:#f0f0f0;color:#888}
+  .modal-save{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff}
+
+  /* loading */
+  .loading{text-align:center;padding:60px 20px;font-family:'Fredoka One',cursive;font-size:1.2rem;color:#a29bfe}
+  .loading-spinner{width:48px;height:48px;border:4px solid #f0e8ff;border-top-color:#a29bfe;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .premium-badge{background:linear-gradient(135deg,#ffd93d,#ff9f43);color:#7a5c00;border-radius:99px;padding:3px 12px;font-family:'Fredoka One',cursive;font-size:.72rem}
+  .upgrade-banner{background:linear-gradient(135deg,#f3efff,#fce4f3);border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:16px;border:2px dashed #a29bfe;cursor:pointer;transition:.2s}
+  .upgrade-banner:hover{background:linear-gradient(135deg,#ede0ff,#fbd5eb)}
+  .upgrade-text h4{font-family:'Fredoka One',cursive;font-size:.95rem;color:#5e35b1;margin-bottom:2px}
+  .upgrade-text p{font-size:.75rem;color:#888;font-weight:600}
+  .upgrade-arrow{margin-left:auto;font-size:1.2rem;color:#a29bfe}
+
+  @media(max-width:640px){.arcade-games-grid{grid-template-columns:repeat(2,1fr)}.games-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<nav>
+  <a href="/" class="nav-logo">🌟 sparkiddo</a>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-user"></span>
+    <a href="/parent-dashboard" class="parent-btn">🔐 Parent Zone</a>
+    <button class="sign-out-btn" onclick="handleSignOut()">Sign out</button>
+  </div>
+</nav>
+
+<main>
+  <div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+    Loading sparkiddo...
+  </div>
+
+  <!-- ── PROFILE PICKER ── -->
+  <div id="profile-picker" style="display:none">
+    <div class="pick-title">Who's playing today? 👋</div>
+    <div class="pick-sub">Select your profile to load your progress</div>
+    <div class="profiles-grid" id="profiles-grid"></div>
+    <button class="play-btn" id="play-btn" onclick="startPlaying()">▶ Let's Play! 🌟</button>
+  </div>
+
+  <!-- ── GAME HUB ── -->
+  <div id="game-hub">
+    <!-- Child header -->
+    <div class="hub-header">
+      <div class="hub-avatar" id="hub-avatar" onclick="switchProfile()" title="Switch profile">🌟</div>
+      <div class="hub-info">
+        <div class="hub-name" id="hub-name">Loading...</div>
+        <div class="hub-belt" id="hub-belt">White Belt</div>
+        <div class="hub-xp-row">
+          <div class="hub-xp-bar-bg"><div class="hub-xp-bar-fill" id="hub-xp-fill" style="width:0%"></div></div>
+          <div class="hub-xp-label" id="hub-xp-label">0 XP</div>
+        </div>
+      </div>
+      <div class="hub-streak" id="hub-streak">🔥 0</div>
+    </div>
+
+    <!-- Fun & Learn -->
+    <div class="zone-section">
+      <div class="zone-header">
+        <div class="zone-icon-wrap" style="background:#fff9e6"><span>📚</span></div>
+        <div><div class="zone-title" style="color:#c67c00">Fun & Learn Zone</div><div class="zone-desc">MATH · COLORS · SHAPES · ALL AGES</div></div>
+      </div>
+      <div class="zone-divider" style="background:linear-gradient(90deg,#fdcb6e,#ff9f43,transparent)"></div>
+      <div class="games-grid" id="learn-grid"></div>
+    </div>
+
+    <!-- sparkiddo Morals -->
+    <div class="zone-section">
+      <div class="zone-header">
+        <div class="zone-icon-wrap" style="background:#e8f9f3"><span>🏅</span></div>
+        <div><div class="zone-title" style="color:#00695c">sparkiddo Morals</div><div class="zone-desc">KINDNESS · HONESTY · EMPATHY · BRAVERY</div></div>
+      </div>
+      <div class="zone-divider" style="background:linear-gradient(90deg,#00b894,#55efc4,transparent)"></div>
+      <div style="background:linear-gradient(135deg,#e8f9f3,#d4f8e8);border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <span style="font-size:2rem">🌱</span>
+        <div>
+          <div style="font-family:'Fredoka One',cursive;font-size:.95rem;color:#00695c;margin-bottom:2px">Games that grow great humans!</div>
+          <div style="font-size:.75rem;color:#4caf9a;font-weight:700">8 games teaching kindness, honesty, empathy &amp; bravery</div>
+        </div>
+      </div>
+      <div class="games-grid" id="morals-grid"></div>
+    </div>
+
+    <!-- Arcade -->
+    <div class="arcade-section">
+      <div class="zone-header" style="margin-bottom:14px">
+        <div class="zone-icon-wrap" style="background:#1a1a2e"><span>🎮</span></div>
+        <div><div class="zone-title" style="color:#6d28d9">Arcade Zone</div><div class="zone-desc">CLASSIC GAMES · HIGH SCORES</div></div>
+      </div>
+      <div class="arcade-games-grid" id="arcade-grid"></div>
+    </div>
+  </div>
+</main>
+
+<!-- ── ADD CHILD MODAL ── -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-card">
+    <div class="modal-title">👧 Add a child profile</div>
+    <input class="modal-input" id="child-name" type="text" placeholder="Child's first name..." maxlength="20"/>
+    <div class="avatar-grid" id="avatar-grid"></div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-save" onclick="saveChild()">Add Profile ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
+const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
+const {createClient} = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const BASE = 'https://sparkiddo.online';
+const BELTS = [
+  {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
+  {name:'Orange Belt',emoji:'🟧',xp:250},{name:'Green Belt',emoji:'🟩',xp:450},
+  {name:'Blue Belt',emoji:'🟦',xp:700},{name:'Purple Belt',emoji:'🟪',xp:1000},
+  {name:'Red Belt',emoji:'🟥',xp:1400},{name:'Black Belt',emoji:'⬛',xp:2000}
+];
+const AVATARS=['🌟','🦊','🐼','🐰','🦁','🐸','🐧','🦋','🐻','🐹','🎭','🐱'];
+
+const GAMES = {
+  learn:[
+    {id:'mathdojo',title:'Math Dojo',emoji:'➕',desc:'Number puzzles & arithmetic — 3 levels!',tag:'Ages 5+',tagColor:'#fdcb6e',tagText:'#7a5c00',xp:20},
+    {id:'colorshapequest',title:'Color & Shape Quest',emoji:'🎨',desc:'Colors, shapes & drag & drop!',tag:'Ages 3+',tagColor:'#a29bfe',tagText:'#fff',xp:20},
+  ],
+  morals:[
+    {id:'emotionmatch',title:'Emotion Match',emoji:'🎭',desc:'Match faces to feelings!',tag:'Empathy',tagColor:'#fd79a8',tagText:'#fff',xp:25},
+    {id:'kindnessquest',title:'Kindness Quest',emoji:'💗',desc:'Choose kindness — watch it spread!',tag:'Kindness',tagColor:'#00b894',tagText:'#fff',xp:25},
+    {id:'storychoices',title:'Story Choices',emoji:'📖',desc:'Your choices shape the story!',tag:'Wisdom',tagColor:'#a29bfe',tagText:'#fff',xp:30},
+    {id:'shareorkeep',title:'Share or Keep?',emoji:'🤲',desc:'Sharing dilemmas — affect everyone!',tag:'Sharing',tagColor:'#ff9f43',tagText:'#fff',xp:25},
+    {id:'truthorfib',title:'Truth or Fib?',emoji:'🔍',desc:'Spot the lie before time runs out!',tag:'Honesty',tagColor:'#74b9ff',tagText:'#fff',xp:25},
+    {id:'cooldowncorner',title:'Cool Down Corner',emoji:'☮️',desc:'Breathe, ground & affirm!',tag:'Calm',tagColor:'#55efc4',tagText:'#007a5e',xp:20},
+    {id:'mydailydojo',title:'My Daily Dojo',emoji:'🥋',desc:'Daily habits. Earn belts!',tag:'Habits',tagColor:'#ff6b6b',tagText:'#fff',xp:30},
+    {id:'petdojo',title:'Pet Dojo',emoji:'🐾',desc:'Pet that grows with responsibility!',tag:'Care',tagColor:'#00b894',tagText:'#fff',xp:30},
+  ],
+  arcade:[
+    {id:'snake',title:'Snake',emoji:'🐍',xp:15},
+    {id:'tictactoe',title:'Tic Tac Toe',emoji:'⭕',xp:15},
+    {id:'memorymatch',title:'Memory Match',emoji:'🃏',xp:15},
+    {id:'rockpaperscissors',title:'Rock Paper Scissors',emoji:'✂️',xp:15},
+  ]
+};
+
+let state={session:null,parentAccount:null,profiles:[],selectedProfileId:null,selAvatar:'🌟'};
+
+function getBelt(xp){let b=BELTS[0];for(const bb of BELTS)if(xp>=bb.xp)b=bb;return b;}
+function getNextBelt(xp){return BELTS.find(b=>xp<b.xp)||null;}
+function xpPct(xp){const b=getBelt(xp),nb=getNextBelt(xp);if(!nb)return 100;const prev=BELTS[BELTS.indexOf(b)-1]?.xp||0;return Math.min(100,((xp-prev)/(nb.xp-prev))*100);}
+
+async function init(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){
+    const isGuest=sessionStorage.getItem('sparkiddo_guest');
+    if(isGuest){showGuestHub();return;}
+    window.location.href='/login';return;
+  }
+  state.session=session;
+  document.getElementById('nav-user').textContent=session.user.email;
+  const {data:profiles}=await sb.from('child_profiles').select('*').eq('parent_id',session.user.id).order('created_at');
+  const {data:account}=await sb.from('parent_accounts').select('*').eq('id',session.user.id).single();
+  state.profiles=profiles||[];
+  state.parentAccount=account;
+  document.getElementById('loading').style.display='none';
+  if(state.profiles.length===0){showProfilePicker();}
+  else{showProfilePicker();}
+}
+
+function showProfilePicker(){
+  document.getElementById('profile-picker').style.display='block';
+  renderProfiles();
+}
+
+function renderProfiles(){
+  const grid=document.getElementById('profiles-grid');
+  grid.innerHTML='';
+  state.profiles.forEach(p=>{
+    const b=getBelt(p.xp);const nb=getNextBelt(p.xp);
+    const pct=xpPct(p.xp);
+    const card=document.createElement('div');
+    card.className='profile-card'+(state.selectedProfileId===p.id?' selected':'');
+    card.innerHTML=`
+      <span class="profile-avatar">${p.avatar}</span>
+      <div class="profile-name">${p.name}</div>
+      <div class="profile-belt">${b.emoji} ${b.name}</div>
+      <div class="profile-xp-bar"><div class="profile-xp-fill" style="width:${pct}%"></div></div>
+      <div class="profile-xp-label">${p.xp} XP · 🔥 ${p.streak} streak</div>`;
+    card.addEventListener('click',()=>{state.selectedProfileId=p.id;renderProfiles();document.getElementById('play-btn').classList.add('show');});
+    grid.appendChild(card);
+  });
+  // Add profile card
+  const isPremium=state.parentAccount?.is_premium;
+  const canAdd=isPremium?state.profiles.length<4:state.profiles.length<1;
+  const addCard=document.createElement('div');
+  addCard.className='add-profile-card';
+  if(canAdd){
+    addCard.innerHTML=`<div class="add-icon">+</div><div class="add-label">Add Child</div><div class="add-sub">${isPremium?'Up to 4 profiles':'1 free profile'}</div>`;
+    addCard.onclick=()=>openModal();
+  } else {
+    addCard.innerHTML=`<div class="add-icon">⭐</div><div class="add-label">sparkiddo Plus</div><div class="add-sub">Add up to 4 kids</div>`;
+    addCard.style.cursor='pointer';
+    addCard.onclick=()=>window.location.href='/upgrade';
+  }
+  grid.appendChild(addCard);
+}
+
+function startPlaying(){
+  if(!state.selectedProfileId)return;
+  const profile=state.profiles.find(p=>p.id===state.selectedProfileId);
+  if(!profile)return;
+  document.getElementById('profile-picker').style.display='none';
+  renderHub(profile);
+  document.getElementById('game-hub').style.display='block';
+}
+
+function renderHub(p){
+  const b=getBelt(p.xp);const nb=getNextBelt(p.xp);const pct=xpPct(p.xp);
+  document.getElementById('hub-avatar').textContent=p.avatar;
+  document.getElementById('hub-name').textContent=p.name;
+  document.getElementById('hub-belt').textContent=`${b.emoji} ${b.name}${nb?` · ${nb.xp-p.xp} XP to ${nb.name}`:'· MAX BELT! 🏆'}`;
+  document.getElementById('hub-xp-fill').style.width=pct+'%';
+  document.getElementById('hub-xp-label').textContent=`${p.xp} XP`;
+  document.getElementById('hub-streak').textContent=`🔥 ${p.streak}`;
+  renderGames('learn-grid',GAMES.learn,p);
+  renderGames('morals-grid',GAMES.morals,p);
+  renderArcade('arcade-grid',GAMES.arcade,p);
+}
+
+function renderGames(gridId,games,profile){
+  const grid=document.getElementById(gridId);
+  grid.innerHTML='';
+  games.forEach(g=>{
+    const played=profile.games_played?.includes(g.id);
+    const card=document.createElement('a');
+    card.className='game-card';
+    card.href=`${BASE}/${g.id}.html`;
+    card.target='_blank';
+    card.innerHTML=`
+      <span class="game-emoji">${g.emoji}${played?'<span style="font-size:.8rem;margin-left:4px" title="Played before">✅</span>':''}</span>
+      <div class="game-title">${g.title}</div>
+      <div class="game-desc">${g.desc}</div>
+      <span class="game-tag" style="background:${g.tagColor};color:${g.tagText}">${g.tag}</span>
+      <span class="game-xp">+${g.xp} XP</span>`;
+    card.addEventListener('click',()=>logSession(profile.id,g.id,g.xp));
+    grid.appendChild(card);
+  });
+}
+
+function renderArcade(gridId,games,profile){
+  const grid=document.getElementById(gridId);grid.innerHTML='';
+  games.forEach(g=>{
+    const card=document.createElement('a');
+    card.className='arcade-card';card.href=`${BASE}/${g.id}.html`;card.target='_blank';
+    card.innerHTML=`<span class="arcade-emoji">${g.emoji}</span><div class="arcade-title">${g.title}</div><span class="arcade-tag">ARCADE</span>`;
+    card.addEventListener('click',()=>logSession(profile.id,g.id,g.xp));
+    grid.appendChild(card);
+  });
+}
+
+async function logSession(childId,gameId,xp){
+  await sb.from('game_sessions').insert({child_id:childId,game_id:gameId,xp_earned:xp,platform:'web'});
+  await sb.rpc('safe_add_xp',{p_child_id:childId,p_amount:xp});
+  // Update local
+  const p=state.profiles.find(p=>p.id===childId);
+  if(p&&!p.games_played?.includes(gameId)){
+    p.games_played=[...(p.games_played||[]),gameId];
+    p.xp+=xp;
+  }
+}
+
+function switchProfile(){document.getElementById('game-hub').style.display='none';showProfilePicker();}
+
+// Modal
+function openModal(){
+  document.getElementById('child-name').value='';
+  state.selAvatar='🌟';
+  const grid=document.getElementById('avatar-grid');
+  grid.innerHTML=AVATARS.map(a=>`<div class="avatar-opt${a===state.selAvatar?' sel':''}" onclick="selAvatar('${a}',this)">${a}</div>`).join('');
+  document.getElementById('add-modal').classList.add('show');
+}
+function closeModal(){document.getElementById('add-modal').classList.remove('show');}
+function selAvatar(a,el){state.selAvatar=a;document.querySelectorAll('.avatar-opt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
+async function saveChild(){
+  const name=document.getElementById('child-name').value.trim();
+  if(!name)return;
+  const {data,error}=await sb.from('child_profiles').insert({parent_id:state.session.user.id,name,avatar:state.selAvatar}).select().single();
+  if(error){alert(error.message);return;}
+  state.profiles.push(data);
+  closeModal();renderProfiles();
+}
+
+async function handleSignOut(){
+  await sb.auth.signOut();
+  window.location.href='/login';
+}
+
+function showGuestHub(){
+  document.getElementById('loading').style.display='none';
+  document.getElementById('nav-user').textContent='Guest mode';
+  const fakeProfile={id:'guest',name:'Guest Player',avatar:'⭐',xp:0,streak:0,games_played:[]};
+  state.profiles=[fakeProfile];state.selectedProfileId='guest';
+  document.getElementById('profile-picker').style.display='none';
+  renderHub(fakeProfile);
+  document.getElementById('game-hub').style.display='block';
+}
+
+init();
+</script>
+</body>
+</html>

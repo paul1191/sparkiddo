@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Rock Paper Scissors</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0d0d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Press Start 2P',monospace;color:#fff;padding:20px}
+  h1{color:#fbbf24;font-size:1.2rem;margin-bottom:6px;text-shadow:0 0 12px #fbbf24}
+  .subtitle{color:#67e8f9;font-size:.45rem;letter-spacing:2px;margin-bottom:18px}
+  #scoreboard{display:flex;gap:24px;margin-bottom:20px;align-items:center}
+  .s-box{text-align:center;min-width:70px}
+  .s-label{font-size:.38rem;color:#a78bfa;margin-bottom:4px}
+  .s-val{font-size:1rem}
+  .s-val.p{color:#67e8f9} .s-val.c{color:#f472b6} .s-val.d{color:#fbbf24}
+  .vs{font-size:.5rem;color:#4c1d95}
+  #arena{display:flex;align-items:center;justify-content:center;gap:30px;margin-bottom:24px;min-height:160px}
+  .fighter{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .fighter-label{font-size:.4rem;color:#a78bfa}
+  .fighter-icon{font-size:5rem;width:110px;height:110px;background:#12122a;border:2px solid #2e1b6b;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:.3s;position:relative}
+  .fighter-icon.reveal{animation:pop .35s ease}
+  .fighter-icon.win-glow{border-color:#4ade80;box-shadow:0 0 24px #4ade8099}
+  .fighter-icon.lose-glow{border-color:#f87171;box-shadow:0 0 16px #f8717166;filter:grayscale(.5)}
+  .fighter-icon.draw-glow{border-color:#fbbf24;box-shadow:0 0 16px #fbbf2466}
+  @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+  .divider{font-size:1.6rem;color:#4c1d95}
+  #result-text{font-size:.75rem;min-height:1.4em;margin-bottom:20px;text-align:center;transition:.3s}
+  #result-text.win{color:#4ade80;text-shadow:0 0 10px #4ade80}
+  #result-text.lose{color:#f87171;text-shadow:0 0 10px #f87171}
+  #result-text.draw{color:#fbbf24;text-shadow:0 0 10px #fbbf24}
+  #choices{display:flex;gap:16px;margin-bottom:20px}
+  .choice-btn{width:90px;height:90px;background:#12122a;border:2px solid #2e1b6b;border-radius:12px;font-size:2.6rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+  .choice-btn span.lbl{font-size:.3rem;color:#6b7280;font-family:'Press Start 2P',monospace}
+  .choice-btn:hover{border-color:#fbbf24;box-shadow:0 0 14px #fbbf2466;background:#1e1b4b;transform:translateY(-4px)}
+  .choice-btn:active{transform:scale(.93)}
+  .choice-btn:disabled{opacity:.4;cursor:default;transform:none}
+  #rounds{display:flex;gap:8px;margin-bottom:18px}
+  .pip{width:12px;height:12px;border-radius:50%;background:#1e1b4b;border:1px solid #4c1d95}
+  .pip.p{background:#67e8f9;box-shadow:0 0 6px #67e8f9}
+  .pip.c{background:#f472b6;box-shadow:0 0 6px #f472b6}
+  .pip.d{background:#fbbf24}
+  #reset-btn{background:#7c3aed;color:#fff;border:none;padding:10px 28px;font-family:'Press Start 2P',monospace;font-size:.55rem;border-radius:6px;cursor:pointer;box-shadow:0 0 12px #7c3aed}
+  #reset-btn:hover{background:#a855f7}
+  #overlay{position:fixed;inset:0;background:#0d0d1acc;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+  #overlay h2{color:#fbbf24;font-size:1rem;margin-bottom:10px;text-shadow:0 0 10px #fbbf24}
+  #overlay p{font-size:.47rem;color:#a78bfa;margin-bottom:22px;text-align:center;line-height:2.2}
+  .ov-btn{background:#7c3aed;color:#fff;border:none;padding:10px 22px;font-family:'Press Start 2P',monospace;font-size:.55rem;border-radius:4px;cursor:pointer;box-shadow:0 0 12px #7c3aed}
+  #cpu-thinking{font-size:.38rem;color:#6b7280;min-height:1em;margin-top:-14px;margin-bottom:10px;letter-spacing:1px}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .shake{animation:shake .3s ease}
+</style>
+</head>
+<body>
+<h1>✂️ ROCK PAPER SCISSORS</h1>
+<p class="subtitle">SPARKIDDO ARCADE</p>
+
+<div id="scoreboard">
+  <div class="s-box"><div class="s-label">YOU</div><div class="s-val p" id="ps">0</div></div>
+  <div class="vs">VS</div>
+  <div class="s-box"><div class="s-label">CPU</div><div class="s-val c" id="cs">0</div></div>
+  <div class="vs">|</div>
+  <div class="s-box"><div class="s-label">DRAWS</div><div class="s-val d" id="ds">0</div></div>
+</div>
+
+<div id="rounds"></div>
+
+<div id="arena">
+  <div class="fighter">
+    <div class="fighter-label">YOU</div>
+    <div class="fighter-icon" id="p-icon">❓</div>
+  </div>
+  <div class="divider">⚔️</div>
+  <div class="fighter">
+    <div class="fighter-label">CPU</div>
+    <div class="fighter-icon" id="c-icon">❓</div>
+  </div>
+</div>
+
+<div id="cpu-thinking"></div>
+<div id="result-text">CHOOSE YOUR WEAPON!</div>
+
+<div id="choices">
+  <button class="choice-btn" id="rock">🪨<span class="lbl">ROCK</span></button>
+  <button class="choice-btn" id="paper">📄<span class="lbl">PAPER</span></button>
+  <button class="choice-btn" id="scissors">✂️<span class="lbl">SCISSORS</span></button>
+</div>
+
+<button id="reset-btn">↺ RESET SCORES</button>
+
+<div id="overlay">
+  <h2>✂️ ROCK PAPER SCISSORS</h2>
+  <p>CHOOSE ROCK, PAPER OR SCISSORS.<br>BEST OF 5 ROUNDS WINS!<br>ROCK beats SCISSORS<br>SCISSORS beats PAPER<br>PAPER beats ROCK</p>
+  <button class="ov-btn" id="startBtn">▶ START GAME</button>
+</div>
+
+<script>
+const CHOICES=['rock','paper','scissors'];
+const EMOJI={rock:'🪨',paper:'📄',scissors:'✂️'};
+const BEATS={rock:'scissors',scissors:'paper',paper:'rock'};
+const ROUND_MAX=5;
+let scores={p:0,c:0,d:0},rounds=[],busy=false;
+
+function renderRounds(){
+  const el=document.getElementById('rounds');
+  el.innerHTML=rounds.map(r=>`<div class="pip ${r}"></div>`).join('');
+  for(let i=rounds.length;i<ROUND_MAX;i++)el.innerHTML+=`<div class="pip"></div>`;
+}
+
+function setResult(txt,cls){
+  const el=document.getElementById('result-text');
+  el.textContent=txt;el.className=cls;
+}
+
+function disableBtns(v){
+  CHOICES.forEach(c=>document.getElementById(c).disabled=v);
+}
+
+async function play(choice){
+  if(busy)return;busy=true;disableBtns(true);
+  const pIcon=document.getElementById('p-icon'),cIcon=document.getElementById('c-icon');
+  const thinkEl=document.getElementById('cpu-thinking');
+
+  pIcon.textContent=EMOJI[choice];pIcon.className='fighter-icon reveal';
+  cIcon.textContent='⏳';thinkEl.textContent='CPU IS THINKING...';
+  setResult('','');
+
+  await delay(700);
+
+  const cpu=CHOICES[Math.floor(Math.random()*3)];
+  cIcon.textContent=EMOJI[cpu];cIcon.className='fighter-icon reveal';
+  thinkEl.textContent='';
+
+  await delay(300);
+
+  let res,rnd;
+  if(choice===cpu){res='draw';rnd='d';scores.d++;setResult("IT'S A DRAW! 🤝",'draw');pIcon.classList.add('draw-glow');cIcon.classList.add('draw-glow');}
+  else if(BEATS[choice]===cpu){res='win';rnd='p';scores.p++;setResult('YOU WIN THIS ROUND! 🎉','win');pIcon.classList.add('win-glow');cIcon.classList.add('lose-glow');}
+  else{res='lose';rnd='c';scores.c++;setResult('CPU WINS THIS ROUND! 💀','lose');cIcon.classList.add('win-glow');pIcon.classList.add('lose-glow');}
+
+  rounds.push(rnd);
+  document.getElementById('ps').textContent=scores.p;
+  document.getElementById('cs').textContent=scores.c;
+  document.getElementById('ds').textContent=scores.d;
+  renderRounds();
+
+  if(rounds.length>=ROUND_MAX){
+    await delay(800);
+    endGame();return;
+  }
+
+  await delay(1000);
+  pIcon.textContent='❓';pIcon.className='fighter-icon';
+  cIcon.textContent='❓';cIcon.className='fighter-icon';
+  setResult('CHOOSE YOUR WEAPON!','');
+  busy=false;disableBtns(false);
+}
+
+function endGame(){
+  const p=rounds.filter(r=>r==='p').length,c=rounds.filter(r=>r==='c').length;
+  let msg,cls;
+  if(p>c){msg='🏆 YOU WIN THE MATCH!';cls='win';}
+  else if(c>p){msg='💀 CPU WINS THE MATCH!';cls='lose';}
+  else{msg="🤝 MATCH DRAW!";cls='draw';}
+  setResult(msg,cls);
+  setTimeout(()=>{
+    rounds=[];renderRounds();
+    document.getElementById('p-icon').textContent='❓';document.getElementById('p-icon').className='fighter-icon';
+    document.getElementById('c-icon').textContent='❓';document.getElementById('c-icon').className='fighter-icon';
+    setResult('CHOOSE YOUR WEAPON!','');
+    busy=false;disableBtns(false);
+  },2200);
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+CHOICES.forEach(c=>document.getElementById(c).addEventListener('click',()=>play(c)));
+document.getElementById('reset-btn').addEventListener('click',()=>{
+  scores={p:0,c:0,d:0};rounds=[];busy=false;
+  document.getElementById('ps').textContent=0;
+  document.getElementById('cs').textContent=0;
+  document.getElementById('ds').textContent=0;
+  document.getElementById('p-icon').textContent='❓';document.getElementById('p-icon').className='fighter-icon';
+  document.getElementById('c-icon').textContent='❓';document.getElementById('c-icon').className='fighter-icon';
+  setResult('CHOOSE YOUR WEAPON!','');
+  renderRounds();disableBtns(false);
+});
+document.getElementById('startBtn').addEventListener('click',()=>{
+  document.getElementById('overlay').style.display='none';renderRounds();
+});
+renderRounds();
+</script>
+</body>
+</html>

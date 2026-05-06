@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sparkiddo — Create Account</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f7f3ff;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;padding:20px}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none}
+  .b1{width:300px;height:300px;background:#a29bfe;top:-80px;left:-60px}
+  .b2{width:260px;height:260px;background:#fd79a8;bottom:-60px;right:-40px}
+  .card{background:#fff;border-radius:28px;padding:36px 32px;width:100%;max-width:440px;box-shadow:0 12px 40px rgba(162,155,254,.18);position:relative;z-index:1}
+  .logo{font-family:'Fredoka One',cursive;font-size:1.8rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:4px}
+  .subtitle{text-align:center;font-size:.82rem;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:28px}
+  .section-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#444;margin-bottom:6px;text-align:center}
+  .section-sub{font-size:.8rem;color:#888;font-weight:600;text-align:center;margin-bottom:24px;line-height:1.6}
+  .form-group{margin-bottom:16px}
+  label{display:block;font-size:.78rem;font-weight:800;color:#666;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+  input[type=text],input[type=email],input[type=password]{width:100%;padding:13px 16px;border:2px solid #e0d7ff;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;color:#333;outline:none;transition:.2s;background:#fafaff}
+  input:focus{border-color:#a29bfe;background:#fff;box-shadow:0 0 0 4px rgba(162,155,254,.12)}
+  input.error{border-color:#fd79a8}
+  .error-msg{font-size:.72rem;color:#e74c3c;font-weight:700;margin-top:4px;display:none}
+  .error-msg.show{display:block}
+  .password-wrap{position:relative}
+  .toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#aaa}
+  .strength-bar{height:4px;border-radius:99px;margin-top:8px;background:#f0f0f0;overflow:hidden}
+  .strength-fill{height:100%;border-radius:99px;transition:width .3s,background .3s}
+  .strength-label{font-size:.68rem;color:#aaa;font-weight:700;margin-top:4px}
+  .consent-wrap{display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;padding:14px;background:#f0fff8;border-radius:14px;border:2px solid #d4f8e8}
+  .consent-wrap input[type=checkbox]{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:#00b894}
+  .consent-text{font-size:.78rem;color:#555;font-weight:600;line-height:1.6}
+  .consent-text a{color:#00b894;text-decoration:none}
+  .btn{width:100%;padding:15px;border-radius:14px;border:none;font-family:'Fredoka One',cursive;font-size:1.05rem;cursor:pointer;transition:.2s;margin-bottom:12px}
+  .btn-primary{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;box-shadow:0 6px 18px rgba(108,92,231,.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,92,231,.4)}
+  .btn-primary:disabled{opacity:.6;transform:none;cursor:not-allowed}
+  .btn-google{background:#fff;color:#555;border:2px solid #e0e0e0;display:flex;align-items:center;justify-content:center;gap:10px}
+  .btn-google:hover{border-color:#a29bfe;background:#fafaff}
+  .divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:#ccc;font-size:.75rem;font-weight:700}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:#f0e8ff}
+  .login-link{text-align:center;font-size:.82rem;color:#888;font-weight:600;margin-top:16px}
+  .login-link a{color:#6c5ce7;font-weight:800;text-decoration:none}
+  .login-link a:hover{text-decoration:underline}
+  .alert{padding:12px 16px;border-radius:12px;font-size:.82rem;font-weight:700;margin-bottom:16px;display:none;line-height:1.5}
+  .alert.error{background:#fde8e8;color:#9b2335;border:1px solid #f7c1c1}
+  .alert.success{background:#d4f8e8;color:#005f44;border:1px solid #9fe1cb}
+  .alert.show{display:block}
+  .spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .google-icon{width:20px;height:20px}
+  @media(max-width:480px){.card{padding:28px 20px}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="card">
+  <div class="logo">🌟 sparkiddo</div>
+  <div class="subtitle">SPARK CURIOSITY. WATCH IT GROW.</div>
+  <div class="section-title">Create Parent Account</div>
+  <div class="section-sub">Parents register — children just pick their avatar and play! No child login needed.</div>
+
+  <div class="alert" id="alert"></div>
+
+  <!-- Google sign in -->
+  <button class="btn btn-google" id="google-btn" onclick="signInGoogle()">
+    <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Continue with Google
+  </button>
+
+  <div class="divider">or sign up with email</div>
+
+  <form id="reg-form" onsubmit="handleRegister(event)">
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="name" placeholder="e.g. Sarah Johnson" autocomplete="name"/>
+      <div class="error-msg" id="name-err">Please enter your name</div>
+    </div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+      <div class="error-msg" id="email-err">Please enter a valid email</div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="password-wrap">
+        <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+        <button type="button" class="toggle-pw" onclick="togglePw('password',this)">👁️</button>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strength-fill" style="width:0%"></div></div>
+      <div class="strength-label" id="strength-label"></div>
+      <div class="error-msg" id="pw-err">Password must be at least 8 characters</div>
+    </div>
+    <div class="form-group">
+      <label>Confirm password</label>
+      <div class="password-wrap">
+        <input type="password" id="confirm" placeholder="Repeat password" autocomplete="new-password"/>
+        <button type="button" class="toggle-pw" onclick="togglePw('confirm',this)">👁️</button>
+      </div>
+      <div class="error-msg" id="confirm-err">Passwords do not match</div>
+    </div>
+
+    <div class="consent-wrap">
+      <input type="checkbox" id="consent"/>
+      <div class="consent-text">
+        I confirm I am an adult (18+) creating this account for my child's use on sparkiddo. I agree to the <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms of Service</a>. I understand that no personal data is collected from children.
+      </div>
+    </div>
+    <div class="error-msg show" id="consent-err" style="display:none;margin-bottom:12px">You must confirm you are an adult to continue</div>
+
+    <button type="submit" class="btn btn-primary" id="reg-btn">Create Account 🌟</button>
+  </form>
+
+  <div class="login-link">Already have an account? <a href="/login">Sign in here</a></div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
+const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+function showAlert(msg, type='error'){
+  const el=document.getElementById('alert');
+  el.textContent=msg;el.className=`alert ${type} show`;
+}
+function hideAlert(){document.getElementById('alert').className='alert';}
+
+function togglePw(id,btn){
+  const inp=document.getElementById(id);
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁️':'🙈';
+}
+
+function checkStrength(pw){
+  const fill=document.getElementById('strength-fill');
+  const lbl=document.getElementById('strength-label');
+  let score=0;
+  if(pw.length>=8)score++;
+  if(/[A-Z]/.test(pw))score++;
+  if(/[0-9]/.test(pw))score++;
+  if(/[^A-Za-z0-9]/.test(pw))score++;
+  const map=[
+    {w:'0%',bg:'#f0f0f0',t:''},
+    {w:'25%',bg:'#ff7675',t:'Weak'},
+    {w:'50%',bg:'#fdcb6e',t:'Fair'},
+    {w:'75%',bg:'#74b9ff',t:'Good'},
+    {w:'100%',bg:'#00b894',t:'Strong 💪'},
+  ];
+  const m=map[score];
+  fill.style.width=m.w;fill.style.background=m.bg;
+  lbl.textContent=m.t;lbl.style.color=m.bg;
+}
+
+function validate(){
+  let ok=true;
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const pw=document.getElementById('password').value;
+  const conf=document.getElementById('confirm').value;
+  const consent=document.getElementById('consent').checked;
+  const show=(id,show)=>{
+    const el=document.getElementById(id);
+    el.style.display=show?'block':'none';
+  };
+  if(!name){show('name-err',true);document.getElementById('name').classList.add('error');ok=false;}
+  else{show('name-err',false);document.getElementById('name').classList.remove('error');}
+  if(!email||!/\S+@\S+\.\S+/.test(email)){show('email-err',true);document.getElementById('email').classList.add('error');ok=false;}
+  else{show('email-err',false);document.getElementById('email').classList.remove('error');}
+  if(!pw||pw.length<8){show('pw-err',true);document.getElementById('password').classList.add('error');ok=false;}
+  else{show('pw-err',false);document.getElementById('password').classList.remove('error');}
+  if(pw!==conf){show('confirm-err',true);document.getElementById('confirm').classList.add('error');ok=false;}
+  else{show('confirm-err',false);document.getElementById('confirm').classList.remove('error');}
+  if(!consent){show('consent-err',true);ok=false;}
+  else{show('consent-err',false);}
+  return ok;
+}
+
+async function handleRegister(e){
+  e.preventDefault();
+  hideAlert();
+  if(!validate())return;
+  const btn=document.getElementById('reg-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Creating account...';
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const pw=document.getElementById('password').value;
+  const {data,error}=await sb.auth.signUp({
+    email,password:pw,
+    options:{data:{display_name:name},emailRedirectTo:'https://sparkiddo.online/auth/callback'}
+  });
+  if(error){
+    showAlert(error.message==='User already registered'
+      ?'An account with this email already exists. <a href="/login">Sign in instead</a>.'
+      :error.message);
+    btn.disabled=false;btn.innerHTML='Create Account 🌟';
+    return;
+  }
+  showAlert('🎉 Account created! Please check your email to confirm your address, then sign in.','success');
+  btn.innerHTML='✅ Check your email!';
+  setTimeout(()=>window.location.href='/login',4000);
+}
+
+async function signInGoogle(){
+  const {error}=await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:'https://sparkiddo.online/auth/callback'}
+  });
+  if(error)showAlert(error.message);
+}
+</script>
+</body>
+</html>

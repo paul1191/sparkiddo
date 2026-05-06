@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Math Dojo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a0a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Press Start 2P',monospace;color:#fff;padding:20px}
+  h1{color:#fde68a;font-size:1.2rem;margin-bottom:4px;text-shadow:0 0 14px #fbbf24}
+  .subtitle{color:#86efac;font-size:.42rem;letter-spacing:2px;margin-bottom:16px}
+
+  /* level select */
+  #level-select{display:flex;gap:10px;margin-bottom:16px}
+  .lv-btn{background:#1e1b4b;border:2px solid #7c3aed;color:#c4b5fd;font-family:'Press Start 2P',monospace;font-size:.38rem;padding:7px 11px;border-radius:8px;cursor:pointer;transition:.2s}
+  .lv-btn.active,.lv-btn:hover{background:#7c3aed;color:#fff;box-shadow:0 0 10px #7c3aed}
+
+  /* top bar */
+  #topbar{display:flex;gap:22px;margin-bottom:16px}
+  .tb{text-align:center}
+  .tb-label{font-size:.35rem;color:#a78bfa;margin-bottom:3px}
+  .tb-val{font-size:.78rem;color:#fde68a}
+
+  /* character */
+  #sensei{font-size:3.5rem;margin-bottom:8px;animation:float 2.5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  /* question box */
+  #question-box{background:#12122a;border:3px solid #7c3aed;border-radius:16px;padding:22px 32px;margin-bottom:20px;text-align:center;box-shadow:0 0 20px #7c3aed44;min-width:300px}
+  #question-label{font-size:.38rem;color:#a78bfa;margin-bottom:10px}
+  #question{font-size:1.8rem;color:#fde68a;text-shadow:0 0 8px #fbbf24;min-height:2rem}
+  #question .op{color:#f472b6}
+  #question .eq{color:#67e8f9}
+
+  /* answer options */
+  #answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;width:100%;max-width:340px}
+  .ans-btn{background:#1e1b4b;border:2px solid #2e1b6b;color:#fff;font-family:'Press Start 2P',monospace;font-size:.7rem;padding:16px 10px;border-radius:10px;cursor:pointer;transition:.2s}
+  .ans-btn:hover:not(:disabled){background:#312e81;border-color:#7c3aed;box-shadow:0 0 12px #7c3aed55;transform:translateY(-2px)}
+  .ans-btn:disabled{cursor:default}
+  .ans-btn.correct{background:#14532d;border-color:#4ade80;box-shadow:0 0 16px #4ade8088;color:#4ade80}
+  .ans-btn.wrong{background:#450a0a;border-color:#f87171;color:#f87171}
+  .ans-btn.reveal{background:#14532d;border-color:#4ade80;color:#4ade80}
+
+  /* feedback */
+  #feedback{font-size:.55rem;min-height:1.2em;margin-bottom:16px;text-align:center}
+  #feedback.correct{color:#4ade80;text-shadow:0 0 8px #4ade80}
+  #feedback.wrong{color:#f87171;text-shadow:0 0 8px #f87171}
+
+  /* progress bar */
+  #prog-wrap{width:100%;max-width:340px;background:#1e1b4b;border-radius:99px;height:10px;margin-bottom:18px;overflow:hidden}
+  #prog-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#f472b6);border-radius:99px;transition:width .4s}
+
+  /* buttons */
+  .action-btn{background:#7c3aed;color:#fff;border:none;padding:10px 24px;font-family:'Press Start 2P',monospace;font-size:.52rem;border-radius:8px;cursor:pointer;box-shadow:0 0 12px #7c3aed;transition:.2s}
+  .action-btn:hover{background:#a855f7}
+
+  /* overlay */
+  #overlay{position:fixed;inset:0;background:#0a0a2eee;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:20px}
+  #overlay h2{color:#fde68a;font-size:1rem;margin-bottom:10px;text-shadow:0 0 10px #fbbf24;text-align:center}
+  #overlay p{font-size:.43rem;color:#c4b5fd;margin-bottom:6px;text-align:center;line-height:2.4}
+  .ov-btn{background:#7c3aed;color:#fff;border:none;padding:10px 22px;font-family:'Press Start 2P',monospace;font-size:.52rem;border-radius:6px;cursor:pointer;box-shadow:0 0 12px #7c3aed;margin-top:18px}
+
+  /* end screen */
+  #end-screen{position:fixed;inset:0;background:#0a0a2eee;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20;padding:20px}
+  #end-screen h2{font-size:1rem;margin-bottom:10px;text-align:center}
+  #end-screen .grade{font-size:2.5rem;margin:10px 0}
+  #end-screen p{font-size:.45rem;color:#c4b5fd;margin-bottom:6px;text-align:center}
+  #end-screen .score-final{color:#fde68a;font-size:.65rem;margin:10px 0 20px}
+
+  /* stars */
+  .stars{font-size:1.6rem;margin:8px 0}
+
+  /* confetti burst */
+  @keyframes burst{0%{transform:scale(0) rotate(0);opacity:1}100%{transform:scale(2.5) rotate(360deg);opacity:0}}
+  .burst{position:fixed;font-size:1.8rem;pointer-events:none;animation:burst .7s ease forwards}
+</style>
+</head>
+<body>
+<h1>➕ MATH DOJO</h1>
+<p class="subtitle">SPARKIDDO LEARN</p>
+
+<div id="level-select">
+  <button class="lv-btn active" id="easy-btn">⭐ EASY</button>
+  <button class="lv-btn" id="med-btn">⭐⭐ MED</button>
+  <button class="lv-btn" id="hard-btn">⭐⭐⭐ HARD</button>
+</div>
+
+<div id="topbar">
+  <div class="tb"><div class="tb-label">SCORE</div><div class="tb-val" id="score">0</div></div>
+  <div class="tb"><div class="tb-label">QUESTION</div><div class="tb-val" id="qnum">1/10</div></div>
+  <div class="tb"><div class="tb-label">STREAK 🔥</div><div class="tb-val" id="streak">0</div></div>
+</div>
+
+<div id="sensei">🧙</div>
+
+<div id="question-box">
+  <div id="question-label">WHAT IS THE ANSWER?</div>
+  <div id="question">_ <span class="op">+</span> _ <span class="eq">=</span> ?</div>
+</div>
+
+<div id="prog-wrap"><div id="prog-bar" style="width:0%"></div></div>
+<div id="feedback">&nbsp;</div>
+<div id="answers"></div>
+
+<div id="overlay">
+  <div style="font-size:3rem;margin-bottom:10px">🧙</div>
+  <h2>WELCOME TO MATH DOJO!</h2>
+  <p>ANSWER 10 MATH QUESTIONS.<br>PICK THE RIGHT ANSWER.<br>BUILD YOUR STREAK FOR BONUS POINTS!<br><br>⭐ EASY — Addition & Subtraction<br>⭐⭐ MED — Multiplication<br>⭐⭐⭐ HARD — Division & Mixed</p>
+  <button class="ov-btn" id="startBtn">▶ START TRAINING</button>
+</div>
+
+<div id="end-screen">
+  <div id="end-emoji" style="font-size:3rem;margin-bottom:8px">🧙</div>
+  <h2 id="end-title" style="color:#fde68a;text-shadow:0 0 10px #fbbf24">TRAINING COMPLETE!</h2>
+  <div class="stars" id="end-stars">⭐⭐⭐</div>
+  <div class="score-final" id="end-score"></div>
+  <p id="end-msg"></p>
+  <button class="ov-btn" id="playAgainBtn">▶ TRAIN AGAIN</button>
+</div>
+
+<script>
+const TOTAL=10;
+const SENSEIS={correct:['🧙','🎉','✨','🌟'],wrong:['😅','💪','🔥','👊']};
+const MSGS={S:'PERFECT SCORE! YOU ARE A MATH MASTER!',A:'AMAZING WORK! SO CLOSE TO PERFECT!',B:"GREAT JOB! KEEP TRAINING!",C:"GOOD EFFORT! PRACTICE MAKES PERFECT!"};
+
+let level='easy',qIndex=0,score=0,streak=0,correct=0,busy=false;
+
+const LEVELS={
+  easy:{gen:()=>{
+    const op=['+','-'][Math.floor(Math.random()*2)];
+    let a=rnd(1,20),b=rnd(1,20);
+    if(op==='-'&&b>a)[a,b]=[b,a];
+    return{q:`${a} <span class="op">${op}</span> ${b} <span class="eq">=</span> ?`,ans:op==='+'?a+b:a-b};
+  }},
+  med:{gen:()=>{
+    const op=['×','÷'][Math.floor(Math.random()*2)];
+    if(op==='×'){const a=rnd(2,12),b=rnd(2,12);return{q:`${a} <span class="op">×</span> ${b} <span class="eq">=</span> ?`,ans:a*b};}
+    const b=rnd(2,10),a=b*rnd(2,10);return{q:`${a} <span class="op">÷</span> ${b} <span class="eq">=</span> ?`,ans:a/b};
+  }},
+  hard:{gen:()=>{
+    const ops=['+','-','×','÷'];
+    const op=ops[Math.floor(Math.random()*4)];
+    if(op==='+'){const a=rnd(10,100),b=rnd(10,100);return{q:`${a} <span class="op">+</span> ${b} <span class="eq">=</span> ?`,ans:a+b};}
+    if(op==='-'){let a=rnd(20,100),b=rnd(10,50);if(b>a)[a,b]=[b,a];return{q:`${a} <span class="op">-</span> ${b} <span class="eq">=</span> ?`,ans:a-b};}
+    if(op==='×'){const a=rnd(6,15),b=rnd(6,15);return{q:`${a} <span class="op">×</span> ${b} <span class="eq">=</span> ?`,ans:a*b};}
+    const b=rnd(2,12),a=b*rnd(2,12);return{q:`${a} <span class="op">÷</span> ${b} <span class="eq">=</span> ?`,ans:a/b};
+  }}
+};
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function genWrongAnswers(ans){
+  const s=new Set([ans]);
+  while(s.size<4){
+    const off=rnd(1,Math.max(5,Math.floor(Math.abs(ans)*.3)||5));
+    const v=ans+(Math.random()<.5?off:-off);
+    if(v!==ans&&v>=0)s.add(v);
+  }
+  return shuffle([...s]);
+}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
+
+let current=null;
+
+function nextQuestion(){
+  if(qIndex>=TOTAL){endGame();return;}
+  busy=false;
+  current=LEVELS[level].gen();
+  document.getElementById('question').innerHTML=current.q;
+  document.getElementById('qnum').textContent=`${qIndex+1}/${TOTAL}`;
+  document.getElementById('prog-bar').style.width=`${(qIndex/TOTAL)*100}%`;
+  document.getElementById('feedback').innerHTML='&nbsp;';
+  document.getElementById('sensei').textContent='🧙';
+
+  const opts=genWrongAnswers(current.ans);
+  const answersEl=document.getElementById('answers');
+  answersEl.innerHTML='';
+  opts.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn';btn.textContent=v;
+    btn.addEventListener('click',()=>answer(v,btn,opts));
+    answersEl.appendChild(btn);
+  });
+}
+
+function answer(val,btn,opts){
+  if(busy)return;busy=true;
+  const isCorrect=val===current.ans;
+  document.querySelectorAll('.ans-btn').forEach(b=>{
+    b.disabled=true;
+    if(+b.textContent===current.ans)b.classList.add('reveal');
+  });
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    streak++;correct++;
+    const bonus=streak>=3?streak*2:0;
+    score+=10+bonus;
+    document.getElementById('score').textContent=score;
+    document.getElementById('streak').textContent=streak;
+    const fb=document.getElementById('feedback');
+    fb.className='correct';
+    fb.textContent=streak>=3?`✨ CORRECT! +${10+bonus} (STREAK BONUS!)`:'✅ CORRECT! +10';
+    document.getElementById('sensei').textContent=SENSEIS.correct[Math.floor(Math.random()*4)];
+    confetti();
+  } else {
+    btn.classList.add('wrong');streak=0;
+    document.getElementById('streak').textContent=0;
+    const fb=document.getElementById('feedback');
+    fb.className='wrong';fb.textContent=`❌ ANSWER WAS ${current.ans}`;
+    document.getElementById('sensei').textContent=SENSEIS.wrong[Math.floor(Math.random()*4)];
+  }
+
+  qIndex++;
+  setTimeout(nextQuestion,1200);
+}
+
+function endGame(){
+  document.getElementById('prog-bar').style.width='100%';
+  const pct=correct/TOTAL;
+  let stars='⭐',grade='C',emoji='😅';
+  if(pct===1){stars='⭐⭐⭐';grade='S';emoji='🏆';}
+  else if(pct>=.8){stars='⭐⭐⭐';grade='A';emoji='🎉';}
+  else if(pct>=.6){stars='⭐⭐';grade='B';emoji='💪';}
+  document.getElementById('end-emoji').textContent=emoji;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent=`SCORE: ${score} | CORRECT: ${correct}/${TOTAL}`;
+  document.getElementById('end-msg').textContent=MSGS[grade];
+  document.getElementById('end-screen').style.display='flex';
+}
+
+function confetti(){
+  const emojis=['⭐','✨','💫','🌟','🎉'];
+  for(let i=0;i<5;i++){
+    const el=document.createElement('div');
+    el.className='burst';el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left=Math.random()*80+10+'vw';el.style.top=Math.random()*60+10+'vh';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),800);
+  }
+}
+
+function startGame(){
+  qIndex=0;score=0;streak=0;correct=0;
+  document.getElementById('score').textContent=0;
+  document.getElementById('streak').textContent=0;
+  document.getElementById('end-screen').style.display='none';
+  nextQuestion();
+}
+
+['easy','med','hard'].forEach(d=>{
+  document.getElementById(`${d}-btn`).addEventListener('click',()=>{
+    level=d;
+    document.querySelectorAll('.lv-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(`${d}-btn`).classList.add('active');
+    startGame();
+  });
+});
+document.getElementById('startBtn').addEventListener('click',()=>{document.getElementById('overlay').style.display='none';startGame();});
+document.getElementById('playAgainBtn').addEventListener('click',startGame);
+</script>
+</body>
+</html>

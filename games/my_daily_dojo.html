@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — My Daily Dojo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#fff8f5;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(65px);opacity:.15;pointer-events:none;z-index:0}
+  .b1{width:320px;height:320px;background:#ff9f43;top:-80px;left:-60px}
+  .b2{width:260px;height:260px;background:#a29bfe;top:50px;right:-50px}
+  .b3{width:240px;height:240px;background:#55efc4;bottom:-60px;left:20px}
+  .b4{width:200px;height:200px;background:#fd79a8;bottom:30px;right:-30px}
+  main{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center}
+
+  h1{font-family:'Fredoka One',cursive;font-size:2rem;background:linear-gradient(135deg,#ff9f43,#ff6b6b,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;text-align:center}
+  .tagline{font-size:.85rem;color:#999;font-weight:600;letter-spacing:1px;margin-bottom:16px;text-align:center}
+
+  /* belt display */
+  #belt-wrap{width:100%;background:#fff;border-radius:22px;padding:18px 20px;box-shadow:0 5px 20px rgba(0,0,0,.09);margin-bottom:16px;text-align:center}
+  #belt-icon{font-size:3.5rem;display:block;margin-bottom:6px;animation:float 2.5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  #belt-name{font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:4px}
+  #belt-subtitle{font-size:.75rem;color:#aaa;font-weight:700;margin-bottom:12px;letter-spacing:1px}
+  #xp-bar-wrap{background:#f0f0f0;border-radius:99px;height:14px;overflow:hidden;margin-bottom:6px}
+  #xp-bar{height:100%;border-radius:99px;transition:width .7s;background:linear-gradient(90deg,#ff9f43,#ff6b6b)}
+  #xp-label{font-size:.72rem;color:#bbb;font-weight:700}
+  #streak-badge{display:inline-block;background:linear-gradient(135deg,#ff6b6b,#ff9f43);color:#fff;border-radius:99px;padding:5px 16px;font-family:'Fredoka One',cursive;font-size:.9rem;margin-top:10px}
+
+  /* date nav */
+  #date-bar{display:flex;align-items:center;justify-content:space-between;width:100%;background:#fff;border-radius:14px;padding:10px 16px;box-shadow:0 3px 10px rgba(0,0,0,.07);margin-bottom:14px}
+  #date-bar button{background:none;border:2px solid #e0d7ff;border-radius:8px;padding:5px 12px;font-family:'Fredoka One',cursive;font-size:.85rem;color:#a29bfe;cursor:pointer;transition:.2s}
+  #date-bar button:hover{background:#f5f3ff}
+  #date-bar button:disabled{opacity:.3;cursor:default}
+  #date-label{font-family:'Fredoka One',cursive;font-size:.95rem;color:#555}
+
+  /* week dots */
+  #week-dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+  .wday{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .wday-label{font-size:.58rem;color:#bbb;font-weight:800;text-transform:uppercase}
+  .wday-dot{width:30px;height:30px;border-radius:50%;border:2px solid #e0e0e0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#ccc;transition:.3s}
+  .wday-dot.done{background:linear-gradient(135deg,#55efc4,#00b894);border-color:#00b894;color:#fff}
+  .wday-dot.today{border-color:#ff9f43;color:#ff9f43;font-weight:900}
+  .wday-dot.today.done{background:linear-gradient(135deg,#ff9f43,#ff6b6b);border-color:#ff6b6b;color:#fff}
+
+  /* category filter */
+  #cats{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+  .cat-btn{padding:5px 14px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.78rem;cursor:pointer;border:2px solid transparent;transition:.2s;color:#fff;opacity:.5}
+  .cat-btn.active{opacity:1;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+  .cat-btn.all{background:#a29bfe;border-color:#a29bfe}
+  .cat-btn.morning{background:#ff9f43;border-color:#ff9f43}
+  .cat-btn.school{background:#74b9ff;border-color:#74b9ff}
+  .cat-btn.chores{background:#55efc4;border-color:#55efc4}
+  .cat-btn.kindness{background:#fd79a8;border-color:#fd79a8}
+  .cat-btn.evening{background:#a29bfe;border-color:#6c5ce7}
+
+  /* tasks */
+  #tasks-wrap{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .task{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.07);display:flex;align-items:center;gap:12px;cursor:pointer;border:2px solid transparent;transition:.2s;position:relative;overflow:hidden}
+  .task::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+  .task.morning::before{background:#ff9f43}
+  .task.school::before{background:#74b9ff}
+  .task.chores::before{background:#55efc4}
+  .task.kindness::before{background:#fd79a8}
+  .task.evening::before{background:#a29bfe}
+  .task:hover:not(.done){transform:translateX(4px);border-color:#e0d7ff}
+  .task.done{opacity:.65}
+  .task.done .task-title{text-decoration:line-through;color:#aaa}
+  .task-check{width:34px;height:34px;border-radius:50%;border:2.5px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:.3s;background:#f9f9f9}
+  .task.done .task-check{background:linear-gradient(135deg,#55efc4,#00b894);border-color:#00b894;color:#fff}
+  .task-emoji{font-size:1.6rem;flex-shrink:0}
+  .task-info{flex:1}
+  .task-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#444;margin-bottom:2px}
+  .task-desc{font-size:.72rem;color:#aaa;font-weight:600}
+  .task-xp{font-family:'Fredoka One',cursive;font-size:.8rem;padding:3px 10px;border-radius:99px;color:#fff;flex-shrink:0}
+  .task.morning .task-xp{background:#ff9f43}
+  .task.school .task-xp{background:#74b9ff}
+  .task.chores .task-xp{background:#55efc4;color:#007a5e}
+  .task.kindness .task-xp{background:#fd79a8}
+  .task.evening .task-xp{background:#a29bfe}
+  .task.done .task-xp{background:#ddd;color:#aaa}
+
+  /* add custom task */
+  #add-wrap{width:100%;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.07);margin-bottom:16px}
+  #add-wrap h3{font-family:'Fredoka One',cursive;font-size:.9rem;color:#666;margin-bottom:10px}
+  #add-row{display:flex;gap:8px;flex-wrap:wrap}
+  #add-input{flex:1;min-width:140px;padding:8px 12px;border:2px solid #e0d7ff;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:600;color:#444;outline:none;transition:.2s}
+  #add-input:focus{border-color:#a29bfe}
+  #add-cat-sel{padding:8px 10px;border:2px solid #e0d7ff;border-radius:10px;font-family:'Fredoka One',cursive;font-size:.78rem;color:#666;outline:none;background:#fff;cursor:pointer}
+  #add-btn{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;border:none;padding:8px 18px;font-family:'Fredoka One',cursive;font-size:.85rem;border-radius:10px;cursor:pointer;transition:.2s}
+  #add-btn:hover{transform:scale(1.05)}
+
+  /* summary */
+  #summary{width:100%;background:#fff;border-radius:16px;padding:14px 18px;box-shadow:0 3px 12px rgba(0,0,0,.07);margin-bottom:16px;text-align:center}
+  #summary h3{font-family:'Fredoka One',cursive;font-size:.9rem;color:#666;margin-bottom:10px}
+  #summary-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .sum-box{text-align:center;background:#f9f9f9;border-radius:12px;padding:10px 16px}
+  .sum-val{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#ff9f43}
+  .sum-lbl{font-size:.6rem;color:#bbb;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+
+  /* level up overlay */
+  #levelup{position:fixed;inset:0;background:rgba(255,248,245,.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:200;text-align:center;padding:24px}
+  #levelup .lu-icon{font-size:5rem;animation:float 1.5s ease-in-out infinite;margin-bottom:12px}
+  #levelup h2{font-family:'Fredoka One',cursive;font-size:2rem;background:linear-gradient(135deg,#ff9f43,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  #levelup p{font-size:.9rem;color:#888;font-weight:600;margin-bottom:20px;line-height:1.8}
+  #levelup button{background:linear-gradient(135deg,#ff9f43,#ff6b6b);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(255,159,67,.4)}
+
+  /* overlay */
+  #overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;background:rgba(255,248,245,.97)}
+  .ov-icon{font-size:4rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  .ov-h{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,#ff9f43,#ff6b6b,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .ov-p{font-size:.87rem;color:#999;font-weight:600;line-height:2.1;margin-bottom:4px}
+  .ov-btn{background:linear-gradient(135deg,#ff9f43,#ff6b6b);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(255,159,67,.4);margin-top:16px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .85s ease forwards;z-index:999}
+  @media(max-width:420px){h1{font-size:1.7rem}#add-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<main>
+  <h1>🥋 My Daily Dojo</h1>
+  <p class="tagline">Complete tasks. Earn XP. Level up!</p>
+
+  <!-- Belt display -->
+  <div id="belt-wrap">
+    <span id="belt-icon">⬜</span>
+    <div id="belt-name">White Belt</div>
+    <div id="belt-subtitle">DOJO BEGINNER</div>
+    <div id="xp-bar-wrap"><div id="xp-bar" style="width:0%"></div></div>
+    <div id="xp-label">0 / 100 XP to next belt</div>
+    <div id="streak-badge">🔥 0 Day Streak</div>
+  </div>
+
+  <!-- Date navigation -->
+  <div id="date-bar">
+    <button id="prev-btn" onclick="changeDay(-1)" disabled>← Yesterday</button>
+    <span id="date-label">Today</span>
+    <button id="next-btn" onclick="changeDay(1)" disabled>Tomorrow →</button>
+  </div>
+
+  <!-- Week view -->
+  <div id="week-dots"></div>
+
+  <!-- Category filter -->
+  <div id="cats">
+    <button class="cat-btn all active" onclick="filterCat('all',this)">All</button>
+    <button class="cat-btn morning" onclick="filterCat('morning',this)">🌅 Morning</button>
+    <button class="cat-btn school" onclick="filterCat('school',this)">📚 School</button>
+    <button class="cat-btn chores" onclick="filterCat('chores',this)">🧹 Chores</button>
+    <button class="cat-btn kindness" onclick="filterCat('kindness',this)">💗 Kindness</button>
+    <button class="cat-btn evening" onclick="filterCat('evening',this)">🌙 Evening</button>
+  </div>
+
+  <!-- Tasks -->
+  <div id="tasks-wrap"></div>
+
+  <!-- Add custom task -->
+  <div id="add-wrap">
+    <h3>➕ Add Your Own Task</h3>
+    <div id="add-row">
+      <input id="add-input" type="text" placeholder="e.g. Feed the cat..." maxlength="40"/>
+      <select id="add-cat-sel">
+        <option value="morning">🌅 Morning</option>
+        <option value="school">📚 School</option>
+        <option value="chores">🧹 Chores</option>
+        <option value="kindness">💗 Kindness</option>
+        <option value="evening">🌙 Evening</option>
+      </select>
+      <button id="add-btn" onclick="addCustomTask()">Add Task</button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div id="summary">
+    <h3>📊 Today's Summary</h3>
+    <div id="summary-row">
+      <div class="sum-box"><div class="sum-val" id="sum-done">0</div><div class="sum-lbl">Done</div></div>
+      <div class="sum-box"><div class="sum-val" id="sum-total">0</div><div class="sum-lbl">Total</div></div>
+      <div class="sum-box"><div class="sum-val" id="sum-xp" style="color:#a29bfe">0</div><div class="sum-lbl">XP Earned</div></div>
+      <div class="sum-box"><div class="sum-val" id="sum-pct" style="color:#55efc4">0%</div><div class="sum-lbl">Complete</div></div>
+    </div>
+  </div>
+</main>
+
+<!-- Level up screen -->
+<div id="levelup">
+  <div class="lu-icon" id="lu-icon">🥋</div>
+  <h2 id="lu-title">Belt Unlocked!</h2>
+  <p id="lu-msg">You earned a new belt!</p>
+  <button onclick="document.getElementById('levelup').style.display='none'">Keep Going! 🔥</button>
+</div>
+
+<div id="overlay">
+  <div class="ov-icon">🥋</div>
+  <h2 class="ov-h">My Daily Dojo!</h2>
+  <p class="ov-p">Complete daily tasks to earn XP and level up!<br>🌅 Morning habits → 📚 School tasks<br>🧹 Chores → 💗 Kindness → 🌙 Evening<br><br>Earn belts from White all the way to Black!<br>Build streaks by completing tasks every day!<br>Add your own custom tasks too! ✨</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none'">Start Training! 🥋</button>
+</div>
+
+<script>
+// ── BELT SYSTEM ───────────────────────────────────────────────────────────────
+const BELTS=[
+  {name:'White Belt',icon:'⬜',sub:'DOJO BEGINNER',xp:0,color:'#ddd'},
+  {name:'Yellow Belt',icon:'🟨',sub:'RISING STAR',xp:100,color:'#ffd93d'},
+  {name:'Orange Belt',icon:'🟧',sub:'HABIT BUILDER',xp:250,color:'#ff9f43'},
+  {name:'Green Belt',icon:'🟩',sub:'RESPONSIBILITY RANGER',xp:450,color:'#55efc4'},
+  {name:'Blue Belt',icon:'🟦',sub:'KINDNESS KEEPER',xp:700,color:'#74b9ff'},
+  {name:'Purple Belt',icon:'🟪',sub:'DISCIPLINE MASTER',xp:1000,color:'#a29bfe'},
+  {name:'Red Belt',icon:'🟥',sub:'DOJO CHAMPION',xp:1400,color:'#ff6b6b'},
+  {name:'Black Belt',icon:'⬛',sub:'ULTIMATE DOJO MASTER',xp:2000,color:'#2d3436'},
+];
+
+// ── DEFAULT TASKS ─────────────────────────────────────────────────────────────
+const DEFAULT_TASKS=[
+  {id:'t1',emoji:'🪥',title:'Brush my teeth',desc:'Morning brush for a healthy smile!',cat:'morning',xp:10},
+  {id:'t2',emoji:'🛏️',title:'Make my bed',desc:'Start the day with a tidy space.',cat:'morning',xp:10},
+  {id:'t3',emoji:'🥣',title:'Eat a good breakfast',desc:'Fuel up for the day ahead!',cat:'morning',xp:10},
+  {id:'t4',emoji:'👕',title:'Get dressed on time',desc:'Ready before it\'s time to go!',cat:'morning',xp:10},
+  {id:'t5',emoji:'📓',title:'Do my homework',desc:'Complete all assignments today.',cat:'school',xp:20},
+  {id:'t6',emoji:'📖',title:'Read for 15 minutes',desc:'A chapter a day keeps boredom away!',cat:'school',xp:15},
+  {id:'t7',emoji:'🎒',title:'Pack my school bag',desc:'Get everything ready for tomorrow.',cat:'school',xp:10},
+  {id:'t8',emoji:'🧹',title:'Tidy my room',desc:'A clean space = a clear mind!',cat:'chores',xp:15},
+  {id:'t9',emoji:'🍽️',title:'Help set the table',desc:'Pitch in at mealtimes!',cat:'chores',xp:10},
+  {id:'t10',emoji:'🗑️',title:'Take out the rubbish',desc:'Keep the home clean and fresh.',cat:'chores',xp:10},
+  {id:'t11',emoji:'💗',title:'Say something kind today',desc:'One kind word can change someone\'s day.',cat:'kindness',xp:20},
+  {id:'t12',emoji:'🤝',title:'Help someone without being asked',desc:'Surprise someone with your help!',cat:'kindness',xp:25},
+  {id:'t13',emoji:'😊',title:'Say thank you to someone',desc:'Gratitude is a superpower!',cat:'kindness',xp:15},
+  {id:'t14',emoji:'🛁',title:'Have a bath or shower',desc:'Stay clean and fresh!',cat:'evening',xp:10},
+  {id:'t15',emoji:'😴',title:'Get to bed on time',desc:'Rest is how champions recharge!',cat:'evening',xp:15},
+  {id:'t16',emoji:'📵',title:'No screens 30 min before bed',desc:'Let your brain wind down naturally.',cat:'evening',xp:20},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+// Use in-memory state (no localStorage)
+let state={
+  xp:0,
+  streak:0,
+  lastDate:'',
+  completedByDate:{}, // {dateStr: [taskId, ...]}
+  customTasks:[],
+};
+let curDateOffset=0; // 0=today, -1=yesterday etc
+let curFilter='all';
+
+function getDateStr(offset=0){
+  const d=new Date();d.setDate(d.getDate()+offset);
+  return d.toISOString().split('T')[0];
+}
+function getTodayStr(){return getDateStr(0);}
+function getDisplayDate(offset=0){
+  if(offset===0)return'Today';
+  if(offset===-1)return'Yesterday';
+  const d=new Date();d.setDate(d.getDate()+offset);
+  return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+function getDayOfWeek(offset=0){
+  const d=new Date();d.setDate(d.getDate()+offset);
+  return['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+}
+
+function getAllTasks(){return [...DEFAULT_TASKS,...state.customTasks];}
+
+function getCompleted(dateStr){return state.completedByDate[dateStr]||[];}
+
+function isCompleted(taskId,dateStr){return getCompleted(dateStr).includes(taskId);}
+
+function toggleTask(taskId){
+  const dateStr=getDateStr(curDateOffset);
+  if(!state.completedByDate[dateStr])state.completedByDate[dateStr]=[];
+  const arr=state.completedByDate[dateStr];
+  const idx=arr.indexOf(taskId);
+  if(idx>=0){
+    arr.splice(idx,1);
+    const t=getAllTasks().find(x=>x.id===taskId);
+    state.xp=Math.max(0,state.xp-(t?t.xp:10));
+  } else {
+    arr.push(taskId);
+    const t=getAllTasks().find(x=>x.id===taskId);
+    const oldBelt=getBelt(state.xp);
+    state.xp+=(t?t.xp:10);
+    const newBelt=getBelt(state.xp);
+    if(newBelt.name!==oldBelt.name)showLevelUp(newBelt);
+    else confettiBurst();
+  }
+  updateStreak();
+  render();
+}
+
+function getBelt(xp){
+  let belt=BELTS[0];
+  for(const b of BELTS){if(xp>=b.xp)belt=b;}
+  return belt;
+}
+
+function getNextBelt(xp){
+  for(const b of BELTS){if(xp<b.xp)return b;}
+  return null;
+}
+
+function updateStreak(){
+  let s=0;
+  const today=getTodayStr();
+  for(let i=0;i<30;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    const comp=getCompleted(ds);
+    const total=getAllTasks().length;
+    if(comp.length>0&&comp.length>=Math.floor(total*.5)){s++;}
+    else if(ds<today)break;
+  }
+  state.streak=s;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  renderBelt();renderWeek();renderTasks();renderSummary();
+  document.getElementById('date-label').textContent=getDisplayDate(curDateOffset);
+  document.getElementById('prev-btn').disabled=curDateOffset<=-6;
+  document.getElementById('next-btn').disabled=curDateOffset>=0;
+}
+
+function renderBelt(){
+  const belt=getBelt(state.xp);
+  const next=getNextBelt(state.xp);
+  document.getElementById('belt-icon').textContent=belt.icon;
+  document.getElementById('belt-name').textContent=belt.name;
+  document.getElementById('belt-subtitle').textContent=belt.sub;
+  document.getElementById('streak-badge').textContent=`🔥 ${state.streak} Day Streak`;
+  if(next){
+    const prog=((state.xp-belt.xp)/(next.xp-belt.xp))*100;
+    document.getElementById('xp-bar').style.width=prog+'%';
+    document.getElementById('xp-label').textContent=`${state.xp} / ${next.xp} XP → ${next.name}`;
+  } else {
+    document.getElementById('xp-bar').style.width='100%';
+    document.getElementById('xp-label').textContent=`${state.xp} XP — MAX BELT! 🏆`;
+  }
+}
+
+function renderWeek(){
+  const el=document.getElementById('week-dots');el.innerHTML='';
+  for(let i=-6;i<=0;i++){
+    const dateStr=getDateStr(i);
+    const comp=getCompleted(dateStr).length;
+    const done=comp>0;
+    const isToday=i===0;
+    const isCur=i===curDateOffset;
+    const wrap=document.createElement('div');wrap.className='wday';
+    const lbl=document.createElement('div');lbl.className='wday-label';lbl.textContent=getDayOfWeek(i);
+    const dot=document.createElement('div');dot.className='wday-dot'+(done?' done':'')+(isToday?' today':'');
+    dot.textContent=done?'✓':isToday?'★':'·';
+    dot.style.cursor='pointer';
+    if(isCur){dot.style.outline='3px solid #ff9f43';dot.style.outlineOffset='2px';}
+    dot.addEventListener('click',()=>{curDateOffset=i;render();});
+    wrap.appendChild(lbl);wrap.appendChild(dot);el.appendChild(wrap);
+  }
+}
+
+function renderTasks(){
+  const el=document.getElementById('tasks-wrap');el.innerHTML='';
+  const dateStr=getDateStr(curDateOffset);
+  const tasks=getAllTasks().filter(t=>curFilter==='all'||t.cat===curFilter);
+  tasks.forEach(t=>{
+    const done=isCompleted(t.id,dateStr);
+    const card=document.createElement('div');
+    card.className=`task ${t.cat}${done?' done':''}`;
+    card.innerHTML=`
+      <div class="task-check">${done?'✓':''}</div>
+      <div class="task-emoji">${t.emoji}</div>
+      <div class="task-info">
+        <div class="task-title">${t.title}</div>
+        <div class="task-desc">${t.desc}</div>
+      </div>
+      <div class="task-xp">+${t.xp} XP</div>`;
+    card.addEventListener('click',()=>toggleTask(t.id));
+    el.appendChild(card);
+  });
+  if(tasks.length===0){el.innerHTML='<div style="text-align:center;color:#ccc;font-family:Fredoka One,cursive;padding:20px">No tasks in this category yet!</div>';}
+}
+
+function renderSummary(){
+  const dateStr=getDateStr(curDateOffset);
+  const all=getAllTasks();
+  const done=getCompleted(dateStr).filter(id=>getAllTasks().find(t=>t.id===id)).length;
+  const xpToday=getCompleted(dateStr).reduce((s,id)=>{const t=getAllTasks().find(x=>x.id===id);return s+(t?t.xp:0);},0);
+  const pct=all.length?Math.round(done/all.length*100):0;
+  document.getElementById('sum-done').textContent=done;
+  document.getElementById('sum-total').textContent=all.length;
+  document.getElementById('sum-xp').textContent=xpToday;
+  document.getElementById('sum-pct').textContent=pct+'%';
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+function filterCat(cat,btn){
+  curFilter=cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTasks();
+}
+
+// ── DATE NAV ──────────────────────────────────────────────────────────────────
+function changeDay(dir){
+  curDateOffset=Math.max(-6,Math.min(0,curDateOffset+dir));
+  render();
+}
+
+// ── ADD CUSTOM ────────────────────────────────────────────────────────────────
+function addCustomTask(){
+  const val=document.getElementById('add-input').value.trim();
+  const cat=document.getElementById('add-cat-sel').value;
+  if(!val)return;
+  const emojis={morning:'🌅',school:'📚',chores:'🧹',kindness:'💗',evening:'🌙'};
+  const task={id:'c'+Date.now(),emoji:emojis[cat],title:val,desc:'Custom task — you got this!',cat,xp:15};
+  state.customTasks.push(task);
+  document.getElementById('add-input').value='';
+  render();
+}
+
+// ── LEVEL UP ──────────────────────────────────────────────────────────────────
+function showLevelUp(belt){
+  document.getElementById('lu-icon').textContent=belt.icon;
+  document.getElementById('lu-title').textContent=belt.name+' Unlocked! 🎉';
+  document.getElementById('lu-msg').textContent=`You reached ${belt.sub}! Keep training every day!\nYou now have ${state.xp} XP total. 🔥`;
+  document.getElementById('levelup').style.display='flex';
+  confettiAll();
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+function confettiBurst(){
+  const em=['⭐','✨','💫','🥋','🔥','🌟'];
+  for(let i=0;i<6;i++){
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*80+10+'vw';el.style.top=Math.random()*40+20+'vh';
+    el.style.setProperty('--dx',(Math.random()*80-40)+'px');el.style.setProperty('--dy',(Math.random()*80-100)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  }
+}
+function confettiAll(){
+  const em=['🥋','⭐','✨','🔥','💫','🏅','🌟','🎉'];
+  for(let i=0;i<24;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*70+5+'vh';
+    el.style.setProperty('--dx',(Math.random()*120-60)+'px');el.style.setProperty('--dy',(Math.random()*100-120)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  },i*55);
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Cool Down Corner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f0f4ff;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;z-index:0}
+  .b1{width:340px;height:340px;background:#a29bfe;top:-100px;left:-80px}
+  .b2{width:280px;height:280px;background:#74b9ff;top:60px;right:-60px}
+  .b3{width:260px;height:260px;background:#55efc4;bottom:-70px;left:10px}
+  .b4{width:220px;height:220px;background:#ffeaa7;bottom:40px;right:-40px}
+  main{position:relative;z-index:1;width:100%;max-width:540px;display:flex;flex-direction:column;align-items:center}
+
+  h1{font-family:'Fredoka One',cursive;font-size:2rem;background:linear-gradient(135deg,#a29bfe,#74b9ff,#55efc4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;text-align:center}
+  .tagline{font-size:.85rem;color:#999;font-weight:600;letter-spacing:1px;margin-bottom:18px;text-align:center}
+
+  /* mode selector */
+  #mode-wrap{width:100%;margin-bottom:18px}
+  #mode-wrap h2{font-family:'Fredoka One',cursive;font-size:1rem;color:#666;margin-bottom:12px;text-align:center}
+  #mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mode-card{background:#fff;border-radius:20px;padding:16px 14px;text-align:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.08);border:3px solid transparent;transition:.2s}
+  .mode-card:hover{transform:translateY(-4px);box-shadow:0 8px 22px rgba(0,0,0,.12)}
+  .mode-card .mc-icon{font-size:2.6rem;margin-bottom:8px}
+  .mode-card .mc-title{font-family:'Fredoka One',cursive;font-size:1rem;color:#444;margin-bottom:4px}
+  .mode-card .mc-desc{font-size:.75rem;color:#aaa;font-weight:600;line-height:1.5}
+  .mode-card.breathing{border-color:#a29bfe}
+  .mode-card.counting{border-color:#74b9ff}
+  .mode-card.grounding{border-color:#55efc4}
+  .mode-card.affirmation{border-color:#fdcb6e}
+
+  /* calm zone */
+  #calm-zone{width:100%;display:none;flex-direction:column;align-items:center}
+  #back-btn{background:#fff;color:#aaa;border:2px solid #e0e0e0;padding:7px 18px;font-family:'Fredoka One',cursive;font-size:.85rem;border-radius:99px;cursor:pointer;margin-bottom:16px;transition:.2s;align-self:flex-start}
+  #back-btn:hover{border-color:#a29bfe;color:#a29bfe}
+
+  /* calm-o-meter */
+  #calm-meter-wrap{width:100%;background:#fff;border-radius:18px;padding:12px 18px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:16px}
+  .cm-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .cm-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#666}
+  .cm-val{font-family:'Fredoka One',cursive;font-size:1rem;color:#a29bfe}
+  #calm-bar-bg{background:#f0f0f0;border-radius:99px;height:16px;overflow:hidden}
+  #calm-bar{height:100%;border-radius:99px;transition:width .8s,background .8s;background:linear-gradient(90deg,#fd79a8,#fdcb6e)}
+
+  /* main activity card */
+  #activity-card{background:#fff;border-radius:24px;padding:24px 22px 20px;box-shadow:0 6px 26px rgba(0,0,0,.1);width:100%;margin-bottom:16px;text-align:center;position:relative;overflow:hidden}
+  #activity-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#a29bfe,#74b9ff,#55efc4)}
+
+  /* ── BREATHING ── */
+  #breathing-wrap{display:none;flex-direction:column;align-items:center}
+  #breath-circle{width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,#c7b8ff,#a29bfe);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:3rem;box-shadow:0 0 0 0 rgba(162,155,254,.4);transition:transform 4s ease,box-shadow 4s ease}
+  #breath-circle.inhale{transform:scale(1.5);box-shadow:0 0 0 40px rgba(162,155,254,.1)}
+  #breath-circle.hold{transform:scale(1.5);box-shadow:0 0 0 40px rgba(162,155,254,.15)}
+  #breath-circle.exhale{transform:scale(1);box-shadow:0 0 0 0 rgba(162,155,254,.0)}
+  #breath-label{font-family:'Fredoka One',cursive;font-size:1.5rem;color:#a29bfe;margin-bottom:6px;min-height:2rem}
+  #breath-count{font-size:.9rem;color:#bbb;font-weight:700;margin-bottom:16px}
+  #breath-tip{font-size:.82rem;color:#888;font-weight:600;line-height:1.7;background:#f5f3ff;border-radius:12px;padding:10px 14px;margin-bottom:14px}
+  #breath-progress{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:4px}
+  .brnd{width:14px;height:14px;border-radius:50%;background:#e0d7ff;transition:.4s}
+  .brnd.done{background:#a29bfe}
+
+  /* ── COUNTING ── */
+  #counting-wrap{display:none;flex-direction:column;align-items:center}
+  #count-display{font-family:'Fredoka One',cursive;font-size:5rem;color:#74b9ff;line-height:1;margin:10px 0 6px;text-shadow:0 4px 12px rgba(116,185,255,.3);transition:transform .15s}
+  #count-display.pop{transform:scale(1.25)}
+  #count-label{font-size:.9rem;color:#bbb;font-weight:700;margin-bottom:16px}
+  #count-items{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;min-height:60px}
+  .cnt-item{font-size:2rem;animation:popin .3s ease}
+  @keyframes popin{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+  #count-btn{background:linear-gradient(135deg,#74b9ff,#6c5ce7);color:#fff;border:none;padding:14px 36px;font-family:'Fredoka One',cursive;font-size:1.2rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 16px rgba(116,185,255,.4);transition:.2s;margin-bottom:10px}
+  #count-btn:hover{transform:scale(1.05)}
+  #count-tip{font-size:.82rem;color:#888;font-weight:600;line-height:1.7;background:#f0f6ff;border-radius:12px;padding:10px 14px}
+
+  /* ── GROUNDING ── */
+  #grounding-wrap{display:none;flex-direction:column;align-items:center}
+  #ground-step-label{font-family:'Fredoka One',cursive;font-size:.8rem;color:#bbb;letter-spacing:2px;margin-bottom:8px}
+  #ground-icon{font-size:4rem;margin:8px 0;animation:float 2.5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  #ground-title{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#55efc4;margin-bottom:8px}
+  #ground-instruction{font-size:.95rem;color:#555;font-weight:700;line-height:1.7;margin-bottom:14px;background:#f0fff8;border-radius:14px;padding:12px 16px;border-left:4px solid #55efc4}
+  #ground-input{width:100%;padding:10px 14px;border:2px solid #d0f0e0;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;color:#444;outline:none;margin-bottom:10px;transition:.2s}
+  #ground-input:focus{border-color:#55efc4;box-shadow:0 0 0 4px rgba(85,239,196,.15)}
+  #ground-items-display{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px;min-height:40px}
+  .ground-tag{background:#d4f8e8;color:#00695c;border-radius:99px;padding:5px 14px;font-family:'Fredoka One',cursive;font-size:.85rem;animation:popin .3s ease}
+  #ground-next-btn{background:linear-gradient(135deg,#55efc4,#00b894);color:#fff;border:none;padding:11px 28px;font-family:'Fredoka One',cursive;font-size:1rem;border-radius:99px;cursor:pointer;box-shadow:0 4px 14px rgba(85,239,196,.4);transition:.2s}
+  #ground-next-btn:hover{transform:scale(1.05)}
+  #ground-dots{display:flex;gap:8px;justify-content:center;margin-top:10px}
+  .gdot{width:12px;height:12px;border-radius:50%;background:#d0f0e0;transition:.3s}
+  .gdot.done{background:#00b894}
+  .gdot.current{background:#55efc4;transform:scale(1.3)}
+
+  /* ── AFFIRMATIONS ── */
+  #affirmation-wrap{display:none;flex-direction:column;align-items:center}
+  #aff-card{background:linear-gradient(135deg,#fff9e6,#fff3cd);border-radius:20px;padding:20px;margin-bottom:14px;width:100%;border-left:5px solid #fdcb6e;animation:fadein .5s ease}
+  @keyframes fadein{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+  #aff-icon{font-size:3.5rem;display:block;text-align:center;margin-bottom:10px}
+  #aff-text{font-family:'Fredoka One',cursive;font-size:1.15rem;color:#7a5c00;text-align:center;line-height:1.6}
+  #aff-sub{font-size:.82rem;color:#aaa;font-weight:600;text-align:center;margin-top:6px;line-height:1.6}
+  #aff-mirror{background:#fff;border-radius:14px;padding:10px 14px;font-size:.85rem;color:#888;font-weight:700;text-align:center;margin-bottom:14px;border:2px dashed #fdcb6e}
+  #aff-repeat-btn{background:linear-gradient(135deg,#fdcb6e,#ff9f43);color:#fff;border:none;padding:11px 26px;font-family:'Fredoka One',cursive;font-size:.95rem;border-radius:99px;cursor:pointer;box-shadow:0 4px 14px rgba(253,203,110,.4);transition:.2s;margin-bottom:10px}
+  #aff-repeat-btn:hover{transform:scale(1.05)}
+  #aff-next-btn{background:#fff;color:#aaa;border:2px solid #e0e0e0;padding:8px 20px;font-family:'Fredoka One',cursive;font-size:.85rem;border-radius:99px;cursor:pointer;transition:.2s}
+  #aff-next-btn:hover{border-color:#fdcb6e;color:#e6a817}
+  #aff-progress{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+  .adot{width:12px;height:12px;border-radius:50%;background:#ffe0a0;transition:.3s}
+  .adot.done{background:#fdcb6e}
+
+  /* complete card */
+  #complete-card{background:#fff;border-radius:24px;padding:24px 20px;box-shadow:0 6px 24px rgba(0,0,0,.1);width:100%;text-align:center;display:none}
+  #complete-card .cc-icon{font-size:4rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  #complete-card h3{font-family:'Fredoka One',cursive;font-size:1.4rem;margin-bottom:8px}
+  #complete-card p{font-size:.88rem;color:#888;font-weight:600;line-height:1.7;margin-bottom:16px}
+  .try-more{background:linear-gradient(135deg,#a29bfe,#74b9ff);color:#fff;border:none;padding:11px 26px;font-family:'Fredoka One',cursive;font-size:.95rem;border-radius:99px;cursor:pointer;box-shadow:0 4px 14px rgba(162,155,254,.4);margin-right:8px;transition:.2s}
+  .try-more:hover{transform:scale(1.05)}
+
+  /* action btn shared */
+  .action-btn{background:linear-gradient(135deg,#a29bfe,#74b9ff);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 16px rgba(162,155,254,.4);transition:.2s;margin-top:4px}
+  .action-btn:hover{transform:scale(1.05)}
+
+  /* overlays */
+  #overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;background:rgba(240,244,255,.97)}
+  .ov-icon{font-size:4rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  .ov-h{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,#a29bfe,#74b9ff,#55efc4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .ov-p{font-size:.87rem;color:#999;font-weight:600;line-height:2.1;margin-bottom:4px}
+  .ov-btn{background:linear-gradient(135deg,#a29bfe,#74b9ff);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(162,155,254,.4);margin-top:16px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.5rem;animation:cfburst .9s ease forwards;z-index:999}
+  @media(max-width:420px){h1{font-size:1.7rem}#count-display{font-size:4rem}#mode-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<main>
+  <h1>☮️ Cool Down Corner</h1>
+  <p class="tagline">Breathe. Count. Ground. Believe.</p>
+
+  <!-- Mode picker -->
+  <div id="mode-wrap">
+    <h2>🌈 How would you like to calm down?</h2>
+    <div id="mode-grid">
+      <div class="mode-card breathing" onclick="startMode('breathing')">
+        <div class="mc-icon">🫧</div>
+        <div class="mc-title">Bubble Breathing</div>
+        <div class="mc-desc">Breathe in and out slowly like blowing bubbles</div>
+      </div>
+      <div class="mode-card counting" onclick="startMode('counting')">
+        <div class="mc-icon">🔢</div>
+        <div class="mc-title">Calm Counting</div>
+        <div class="mc-desc">Count down slowly to settle your mind</div>
+      </div>
+      <div class="mode-card grounding" onclick="startMode('grounding')">
+        <div class="mc-icon">🌿</div>
+        <div class="mc-title">5-4-3-2-1 Grounding</div>
+        <div class="mc-desc">Use your senses to connect to the present moment</div>
+      </div>
+      <div class="mode-card affirmation" onclick="startMode('affirmation')">
+        <div class="mc-icon">⭐</div>
+        <div class="mc-title">Sunshine Affirmations</div>
+        <div class="mc-desc">Say kind things to yourself and feel the warmth</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calm zone -->
+  <div id="calm-zone">
+    <button id="back-btn" onclick="goBack()">← Choose another</button>
+
+    <!-- Calm-o-meter -->
+    <div id="calm-meter-wrap">
+      <div class="cm-header">
+        <span class="cm-label">🌊 Calm-o-Meter</span>
+        <span class="cm-val" id="calm-val">0%</span>
+      </div>
+      <div id="calm-bar-bg"><div id="calm-bar" style="width:0%"></div></div>
+    </div>
+
+    <!-- Activity card -->
+    <div id="activity-card">
+
+      <!-- BREATHING -->
+      <div id="breathing-wrap">
+        <div id="breath-label">Get Ready...</div>
+        <div id="breath-count"></div>
+        <div id="breath-circle">🫧</div>
+        <div id="breath-tip">Follow the circle — breathe in as it grows, hold, then breathe out as it shrinks.</div>
+        <div id="breath-progress"></div>
+        <button class="action-btn" id="breath-start-btn" onclick="startBreathing()">Start Breathing 🫧</button>
+      </div>
+
+      <!-- COUNTING -->
+      <div id="counting-wrap">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#74b9ff;margin-bottom:10px">Tap to count down calmly</div>
+        <div id="count-display">10</div>
+        <div id="count-label">taps to go</div>
+        <div id="count-items"></div>
+        <button id="count-btn" onclick="doCount()">TAP TO COUNT ✨</button>
+        <div id="count-tip">With each tap, take a slow breath. Let your mind get quieter with every number.</div>
+      </div>
+
+      <!-- GROUNDING -->
+      <div id="grounding-wrap">
+        <div id="ground-step-label">STEP 1 OF 5</div>
+        <div id="ground-icon">👁️</div>
+        <div id="ground-title">5 Things You Can SEE</div>
+        <div id="ground-instruction">Look around you right now. Name 5 things you can see. Type each one and press Enter!</div>
+        <div id="ground-items-display"></div>
+        <input id="ground-input" type="text" placeholder="Type something you can see..." maxlength="30" onkeydown="if(event.key==='Enter')addGroundItem()"/>
+        <button id="ground-next-btn" onclick="addGroundItem()">Add ✓</button>
+        <div id="ground-dots"></div>
+      </div>
+
+      <!-- AFFIRMATIONS -->
+      <div id="affirmation-wrap">
+        <div id="aff-card">
+          <span id="aff-icon">⭐</span>
+          <div id="aff-text">Loading...</div>
+          <div id="aff-sub"></div>
+        </div>
+        <div id="aff-mirror">Say it out loud to yourself in the mirror! 🪞</div>
+        <button id="aff-repeat-btn" onclick="repeatAff()">I said it! ✨ +Calm</button>
+        <button id="aff-next-btn" onclick="nextAff()">Next Affirmation →</button>
+        <div id="aff-progress"></div>
+      </div>
+    </div>
+
+    <!-- Complete card -->
+    <div id="complete-card">
+      <div class="cc-icon" id="cc-icon">🌈</div>
+      <h3 id="cc-title" style="color:#a29bfe">You did it!</h3>
+      <p id="cc-msg">Amazing work taking care of yourself today.</p>
+      <button class="try-more" onclick="goBack()">Try Another Activity 🌟</button>
+    </div>
+  </div>
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">☮️</div>
+  <h2 class="ov-h">Cool Down Corner</h2>
+  <p class="ov-p">Feeling angry, worried, or overwhelmed?<br>This is your safe space to calm down! 💙<br><br>🫧 Bubble Breathing — slow your breath<br>🔢 Calm Counting — settle your mind<br>🌿 5-4-3-2-1 Grounding — feel present<br>⭐ Affirmations — believe in yourself</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none'">Enter the Corner ☮️</button>
+</div>
+
+<script>
+let calmLevel=0,curMode='';
+
+// ── CALM METER ────────────────────────────────────────────────────────────────
+function addCalm(amt){
+  calmLevel=Math.min(100,calmLevel+amt);
+  document.getElementById('calm-val').textContent=calmLevel+'%';
+  const bar=document.getElementById('calm-bar');
+  bar.style.width=calmLevel+'%';
+  bar.style.background=calmLevel>70?'linear-gradient(90deg,#55efc4,#00b894)':calmLevel>40?'linear-gradient(90deg,#74b9ff,#a29bfe)':'linear-gradient(90deg,#fd79a8,#fdcb6e)';
+  if(calmLevel>=100)showComplete();
+}
+
+function startMode(mode){
+  curMode=mode;calmLevel=0;
+  document.getElementById('calm-val').textContent='0%';
+  document.getElementById('calm-bar').style.width='0%';
+  document.getElementById('complete-card').style.display='none';
+  document.getElementById('mode-wrap').style.display='none';
+  document.getElementById('calm-zone').style.display='flex';
+  document.getElementById('calm-zone').style.flexDirection='column';
+  document.getElementById('calm-zone').style.alignItems='center';
+  document.getElementById('calm-zone').style.width='100%';
+  document.getElementById('activity-card').style.display='block';
+  ['breathing','counting','grounding','affirmation'].forEach(m=>{
+    document.getElementById(m+'-wrap').style.display='none';
+  });
+  document.getElementById(mode+'-wrap').style.display='flex';
+  document.getElementById(mode+'-wrap').style.flexDirection='column';
+  document.getElementById(mode+'-wrap').style.alignItems='center';
+  if(mode==='counting')resetCounting();
+  if(mode==='grounding')resetGrounding();
+  if(mode==='affirmation')resetAffirmation();
+  if(mode==='breathing')resetBreathing();
+}
+
+function goBack(){
+  stopBreathing();
+  document.getElementById('calm-zone').style.display='none';
+  document.getElementById('mode-wrap').style.display='block';
+}
+
+// ── BREATHING ─────────────────────────────────────────────────────────────────
+const BREATH_ROUNDS=6;
+let breathRound=0,breathInt=null,breathRunning=false;
+const PHASES=[{label:'Breathe In 🌬️',cls:'inhale',dur:4},{label:'Hold 🤫',cls:'hold',dur:2},{label:'Breathe Out 😮‍💨',cls:'exhale',dur:4}];
+
+function resetBreathing(){
+  stopBreathing();breathRound=0;breathRunning=false;
+  document.getElementById('breath-label').textContent='Ready to breathe? 🫧';
+  document.getElementById('breath-count').textContent='';
+  document.getElementById('breath-circle').className='';
+  document.getElementById('breath-circle').textContent='🫧';
+  document.getElementById('breath-start-btn').style.display='block';
+  document.getElementById('breath-start-btn').textContent='Start Breathing 🫧';
+  buildBreathDots();
+}
+
+function buildBreathDots(){
+  const el=document.getElementById('breath-progress');el.innerHTML='';
+  for(let i=0;i<BREATH_ROUNDS;i++){const d=document.createElement('div');d.className='brnd'+(i<breathRound?' done':'');el.appendChild(d);}
+}
+
+function startBreathing(){
+  if(breathRunning)return;
+  breathRunning=true;
+  document.getElementById('breath-start-btn').style.display='none';
+  runPhase(0);
+}
+
+function runPhase(pi){
+  if(!breathRunning)return;
+  const p=PHASES[pi];
+  document.getElementById('breath-label').textContent=p.label;
+  const circle=document.getElementById('breath-circle');
+  circle.className=p.cls;
+  let t=p.dur;
+  document.getElementById('breath-count').textContent=t+'s';
+  breathInt=setInterval(()=>{
+    t--;document.getElementById('breath-count').textContent=t+'s';
+    if(t<=0){
+      clearInterval(breathInt);
+      const next=pi+1;
+      if(next<PHASES.length){runPhase(next);}
+      else{
+        breathRound++;addCalm(14);buildBreathDots();
+        if(breathRound<BREATH_ROUNDS){setTimeout(()=>runPhase(0),800);}
+        else{breathRunning=false;document.getElementById('breath-label').textContent='Amazing! 🌈';document.getElementById('breath-count').textContent='All done!';}
+      }
+    }
+  },1000);
+}
+
+function stopBreathing(){clearInterval(breathInt);breathRunning=false;}
+
+// ── COUNTING ──────────────────────────────────────────────────────────────────
+const COUNT_ITEMS=['🌟','🌸','☁️','🌊','🍃','🦋','✨','🌙','🌈','🕊️'];
+let countNum=10;
+
+function resetCounting(){
+  countNum=10;
+  document.getElementById('count-display').textContent=10;
+  document.getElementById('count-label').textContent='taps to go';
+  document.getElementById('count-items').innerHTML='';
+  document.getElementById('count-btn').disabled=false;
+  document.getElementById('count-btn').textContent='TAP TO COUNT ✨';
+}
+
+function doCount(){
+  if(countNum<=0)return;
+  const disp=document.getElementById('count-display');
+  disp.textContent=countNum;
+  disp.classList.add('pop');setTimeout(()=>disp.classList.remove('pop'),150);
+  const item=document.createElement('span');item.className='cnt-item';item.textContent=COUNT_ITEMS[10-countNum];
+  document.getElementById('count-items').appendChild(item);
+  addCalm(9);countNum--;
+  document.getElementById('count-label').textContent=countNum>0?'taps to go':'🎉 All done!';
+  if(countNum===0){
+    document.getElementById('count-display').textContent='😌';
+    document.getElementById('count-btn').disabled=true;
+    document.getElementById('count-btn').textContent='Well done! 🌟';
+  }
+}
+
+// ── GROUNDING ─────────────────────────────────────────────────────────────────
+const GROUND_STEPS=[
+  {icon:'👁️',sense:'SEE',count:5,instruction:'Look around you right now. Name 5 things you can SEE. Type each one!',placeholder:'Something I can see...'},
+  {icon:'✋',sense:'TOUCH',count:4,instruction:'Notice 4 things you can TOUCH or feel right now. The floor, your clothes, the air...'},
+  {icon:'👂',sense:'HEAR',count:3,instruction:'Listen carefully. What are 3 things you can HEAR right now?',placeholder:'Something I can hear...'},
+  {icon:'👃',sense:'SMELL',count:2,instruction:'Take a slow breath. What are 2 things you can SMELL or remember smelling?',placeholder:'Something I can smell...'},
+  {icon:'👅',sense:'TASTE',count:1,instruction:'What is 1 thing you can TASTE right now or recently tasted?',placeholder:'Something I can taste...'},
+];
+let groundStep=0,groundItems=[];
+
+function resetGrounding(){
+  groundStep=0;groundItems=[];
+  loadGroundStep();
+  buildGroundDots();
+}
+
+function loadGroundStep(){
+  const s=GROUND_STEPS[groundStep];
+  document.getElementById('ground-step-label').textContent=`STEP ${groundStep+1} OF 5`;
+  document.getElementById('ground-icon').textContent=s.icon;
+  document.getElementById('ground-title').textContent=`${s.count} Thing${s.count>1?'s':''} You Can ${s.sense}`;
+  document.getElementById('ground-instruction').textContent=s.instruction;
+  document.getElementById('ground-input').placeholder=s.placeholder||`Something I can ${s.sense.toLowerCase()}...`;
+  document.getElementById('ground-items-display').innerHTML='';
+  document.getElementById('ground-input').value='';
+  groundItems=[];
+  buildGroundDots();
+}
+
+function addGroundItem(){
+  const s=GROUND_STEPS[groundStep];
+  const val=document.getElementById('ground-input').value.trim();
+  if(!val)return;
+  if(groundItems.length>=s.count)return;
+  groundItems.push(val);
+  document.getElementById('ground-input').value='';
+  const tag=document.createElement('div');tag.className='ground-tag';tag.textContent=val;
+  document.getElementById('ground-items-display').appendChild(tag);
+  addCalm(4);
+  if(groundItems.length>=s.count){
+    setTimeout(()=>{
+      groundStep++;
+      if(groundStep>=GROUND_STEPS.length){showComplete();}
+      else{loadGroundStep();}
+    },700);
+  }
+}
+
+function buildGroundDots(){
+  const el=document.getElementById('ground-dots');el.innerHTML='';
+  GROUND_STEPS.forEach((_,i)=>{const d=document.createElement('div');d.className='gdot'+(i<groundStep?' done':i===groundStep?' current':'');el.appendChild(d);});
+}
+
+// ── AFFIRMATIONS ──────────────────────────────────────────────────────────────
+const AFFIRMATIONS=[
+  {icon:'💪',text:'I am strong and I can handle hard things.',sub:'Say it slowly. Feel it in your chest.'},
+  {icon:'💙',text:'It is okay to feel my feelings. They will pass.',sub:'Every storm passes. You are safe.'},
+  {icon:'🌟',text:'I am enough, exactly as I am right now.',sub:'You don\'t need to be perfect. You are enough.'},
+  {icon:'🤗',text:'I can ask for help when I need it — that is brave.',sub:'Asking for help is a superpower!'},
+  {icon:'🌱',text:'I am learning and growing every single day.',sub:'Mistakes are how we grow. You are doing great!'},
+  {icon:'🌈',text:'I choose calm. I choose kindness. I choose me.',sub:'Breathe in calm. Let out the worry.'},
+  {icon:'✨',text:'I deserve love — from others and from myself.',sub:'You are worthy of every good thing. Always.'},
+  {icon:'🦋',text:'I have the courage to try again, even when it is hard.',sub:'One more try. You\'ve got this!'},
+];
+let affIdx=0,affRepeated=false;
+
+function resetAffirmation(){
+  affIdx=0;affRepeated=false;
+  loadAff();buildAffDots();
+}
+
+function loadAff(){
+  const a=AFFIRMATIONS[affIdx];
+  document.getElementById('aff-icon').textContent=a.icon;
+  document.getElementById('aff-text').textContent='"'+a.text+'"';
+  document.getElementById('aff-sub').textContent=a.sub;
+  affRepeated=false;
+  document.getElementById('aff-card').style.animation='none';
+  setTimeout(()=>document.getElementById('aff-card').style.animation='',50);
+  buildAffDots();
+}
+
+function repeatAff(){
+  if(!affRepeated){affRepeated=true;addCalm(11);confettiAll();}
+}
+
+function nextAff(){
+  affIdx=(affIdx+1)%AFFIRMATIONS.length;
+  loadAff();
+  buildAffDots();
+}
+
+function buildAffDots(){
+  const el=document.getElementById('aff-progress');el.innerHTML='';
+  AFFIRMATIONS.forEach((_,i)=>{const d=document.createElement('div');d.className='adot'+(i<affIdx?' done':i===affIdx?' done':'');el.appendChild(d);});
+}
+
+// ── COMPLETE ──────────────────────────────────────────────────────────────────
+const COMPLETE={
+  breathing:{icon:'🌬️',title:'Breathing Complete! 💙',msg:'You calmed your body with 6 full breathing rounds. Your heart rate has slowed and your mind is clearer. You took care of yourself today — that\'s wonderful!'},
+  counting:{icon:'🔢',title:'Mind Settled! ✨',msg:'Counting down with intention really works! Your mind is quieter and you\'re more present. Great job taking a moment for yourself!'},
+  grounding:{icon:'🌿',title:'Fully Grounded! 🌈',msg:'You connected all 5 senses to the present moment. The 5-4-3-2-1 technique is a powerful tool you can use any time anxiety creeps in!'},
+  affirmation:{icon:'⭐',title:'You Believed It! 💛',msg:'Saying kind things to yourself rewires your brain over time. Keep these affirmations close — say them every morning and watch how they change how you feel!'},
+};
+
+function showComplete(){
+  const c=COMPLETE[curMode]||COMPLETE.breathing;
+  document.getElementById('activity-card').style.display='none';
+  document.getElementById('cc-icon').textContent=c.icon;
+  document.getElementById('cc-title').textContent=c.title;
+  document.getElementById('cc-msg').textContent=c.msg;
+  document.getElementById('complete-card').style.display='block';
+  confettiAll();
+}
+
+function confettiAll(){
+  const em=['☮️','💙','✨','🌸','⭐','🌈','💚','🫧'];
+  for(let i=0;i<20;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*70+5+'vh';
+    el.style.setProperty('--dx',(Math.random()*120-60)+'px');el.style.setProperty('--dy',(Math.random()*100-120)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  },i*60);
+}
+</script>
+</body>
+</html>

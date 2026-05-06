@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Tic Tac Toe</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0d0d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Press Start 2P',monospace;color:#fff}
+  h1{color:#f472b6;font-size:1.3rem;margin-bottom:6px;text-shadow:0 0 12px #f472b6}
+  .subtitle{color:#67e8f9;font-size:.45rem;letter-spacing:2px;margin-bottom:18px}
+  #mode-select{display:flex;gap:12px;margin-bottom:18px}
+  .mode-btn{background:#1e1b4b;border:2px solid #7c3aed;color:#c4b5fd;font-family:'Press Start 2P',monospace;font-size:.45rem;padding:8px 14px;border-radius:6px;cursor:pointer;transition:.2s}
+  .mode-btn.active,.mode-btn:hover{background:#7c3aed;color:#fff;box-shadow:0 0 10px #7c3aed}
+  #status{font-size:.55rem;margin-bottom:16px;min-height:1.2em;text-align:center}
+  #status.x{color:#67e8f9} #status.o{color:#f472b6} #status.draw{color:#fbbf24} #status.win{color:#4ade80}
+  #scoreboard{display:flex;gap:30px;margin-bottom:16px}
+  .s-box{text-align:center}
+  .s-label{font-size:.4rem;color:#a78bfa;margin-bottom:4px}
+  .s-val{font-size:.85rem}
+  .s-val.x{color:#67e8f9} .s-val.o{color:#f472b6} .s-val.d{color:#fbbf24}
+  #board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+  .cell{width:110px;height:110px;background:#12122a;border:2px solid #2e1b6b;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+  .cell:hover:not(.taken){background:#1e1b4b;border-color:#7c3aed;box-shadow:0 0 12px #7c3aed44}
+  .cell.taken{cursor:default}
+  .cell.x-mark{border-color:#67e8f9;box-shadow:0 0 14px #67e8f944}
+  .cell.o-mark{border-color:#f472b6;box-shadow:0 0 14px #f472b644}
+  .cell.winner{animation:pulse .5s infinite alternate}
+  @keyframes pulse{from{box-shadow:0 0 8px #4ade80}to{box-shadow:0 0 24px #4ade80;border-color:#4ade80}}
+  .x-sym{color:#67e8f9;text-shadow:0 0 10px #67e8f9}
+  .o-sym{color:#f472b6;text-shadow:0 0 10px #f472b6}
+  #reset-btn{background:#7c3aed;color:#fff;border:none;padding:10px 28px;font-family:'Press Start 2P',monospace;font-size:.55rem;border-radius:6px;cursor:pointer;box-shadow:0 0 12px #7c3aed;transition:.2s}
+  #reset-btn:hover{background:#a855f7}
+  #overlay{position:fixed;inset:0;background:#0d0d1acc;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+  #overlay h2{font-size:1.1rem;margin-bottom:10px;text-shadow:0 0 10px currentColor}
+  #overlay p{font-size:.5rem;color:#a78bfa;margin-bottom:22px}
+  @media(max-width:420px){.cell{width:90px;height:90px;font-size:2.2rem}}
+</style>
+</head>
+<body>
+<h1>⭕ TIC TAC TOE</h1>
+<p class="subtitle">SPARKIDDO ARCADE</p>
+
+<div id="mode-select">
+  <button class="mode-btn active" id="pve-btn">👤 VS CPU</button>
+  <button class="mode-btn" id="pvp-btn">👥 2 PLAYER</button>
+</div>
+
+<div id="scoreboard">
+  <div class="s-box"><div class="s-label">PLAYER X</div><div class="s-val x" id="sx">0</div></div>
+  <div class="s-box"><div class="s-label">DRAWS</div><div class="s-val d" id="sd">0</div></div>
+  <div class="s-box"><div class="s-label">PLAYER O</div><div class="s-val o" id="so">0</div></div>
+</div>
+
+<div id="status" class="x">PLAYER X'S TURN</div>
+<div id="board"></div>
+<button id="reset-btn">↺ NEW GAME</button>
+
+<div id="overlay">
+  <h2 style="color:#f472b6">⭕ TIC TAC TOE</h2>
+  <p>X GOES FIRST. GET 3 IN A ROW!</p>
+  <button id="startBtn" style="background:#7c3aed;color:#fff;border:none;padding:10px 22px;font-family:'Press Start 2P',monospace;font-size:.55rem;border-radius:4px;cursor:pointer;box-shadow:0 0 12px #7c3aed">▶ START GAME</button>
+</div>
+
+<script>
+let board=Array(9).fill(''),curr='X',scores={X:0,O:0,D:0},gameOver=false,pvp=false;
+const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+const boardEl=document.getElementById('board');
+const statusEl=document.getElementById('status');
+
+function renderBoard(){
+  boardEl.innerHTML='';
+  board.forEach((v,i)=>{
+    const c=document.createElement('div');
+    c.className='cell'+(v?' taken':'')+(v===' X'?' x-mark':v==='O'?' o-mark':'');
+    if(v==='X'){c.innerHTML=`<span class="x-sym">✕</span>`;c.classList.add('x-mark')}
+    if(v==='O'){c.innerHTML=`<span class="o-sym">◯</span>`;c.classList.add('o-mark')}
+    c.addEventListener('click',()=>move(i));
+    boardEl.appendChild(c);
+  });
+}
+
+function setStatus(msg,cls){statusEl.textContent=msg;statusEl.className=cls}
+
+function move(i){
+  if(board[i]||gameOver)return;
+  board[i]=curr;
+  renderBoard();
+  const w=checkWin();
+  if(w){
+    highlightWin(w);scores[curr]++;updateScores();
+    setStatus(`PLAYER ${curr} WINS! 🎉`,'win');
+    gameOver=true;return;
+  }
+  if(board.every(v=>v)){scores.D++;updateScores();setStatus("IT'S A DRAW!",'draw');gameOver=true;return;}
+  curr=curr==='X'?'O':'X';
+  setStatus(`PLAYER ${curr}'S TURN`,curr==='X'?'x':'o');
+  if(!pvp&&curr==='O'&&!gameOver)setTimeout(cpuMove,420);
+}
+
+function cpuMove(){
+  // minimax
+  const best=minimax(board,'O');
+  move(best.idx);
+}
+
+function minimax(b,player){
+  const w=checkWinFor(b);
+  if(w==='O')return{score:10};
+  if(w==='X')return{score:-10};
+  if(b.every(v=>v))return{score:0};
+  const moves=[];
+  b.forEach((v,i)=>{
+    if(!v){
+      const nb=[...b];nb[i]=player;
+      const res=minimax(nb,player==='O'?'X':'O');
+      moves.push({idx:i,score:res.score});
+    }
+  });
+  return moves.reduce((a,m)=>player==='O'?(m.score>a.score?m:a):(m.score<a.score?m:a));
+}
+
+function checkWinFor(b){
+  for(const [a,bv,c] of wins)if(b[a]&&b[a]===b[bv]&&b[a]===b[c])return b[a];
+  return null;
+}
+
+function checkWin(){
+  for(const combo of wins){
+    const [a,b,c]=combo;
+    if(board[a]&&board[a]===board[b]&&board[a]===board[c])return combo;
+  }return null;
+}
+
+function highlightWin(combo){
+  const cells=boardEl.querySelectorAll('.cell');
+  combo.forEach(i=>cells[i].classList.add('winner'));
+}
+
+function updateScores(){
+  document.getElementById('sx').textContent=scores.X;
+  document.getElementById('so').textContent=scores.O;
+  document.getElementById('sd').textContent=scores.D;
+}
+
+function reset(){
+  board=Array(9).fill('');curr='X';gameOver=false;
+  setStatus("PLAYER X'S TURN",'x');renderBoard();
+  if(!pvp)setStatus("PLAYER X'S TURN (YOU)",'x');
+}
+
+document.getElementById('reset-btn').addEventListener('click',reset);
+document.getElementById('startBtn').addEventListener('click',()=>{
+  document.getElementById('overlay').style.display='none';reset();
+});
+document.getElementById('pve-btn').addEventListener('click',()=>{
+  pvp=false;document.getElementById('pve-btn').classList.add('active');
+  document.getElementById('pvp-btn').classList.remove('active');
+  document.getElementById('so').parentElement.querySelector('.s-label').textContent='CPU O';
+  reset();
+});
+document.getElementById('pvp-btn').addEventListener('click',()=>{
+  pvp=true;document.getElementById('pvp-btn').classList.add('active');
+  document.getElementById('pve-btn').classList.remove('active');
+  document.getElementById('so').parentElement.querySelector('.s-label').textContent='PLAYER O';
+  reset();
+});
+
+renderBoard();
+</script>
+</body>
+</html>

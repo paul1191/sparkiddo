@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Truth or Fib?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f0f8ff;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.16;pointer-events:none;z-index:0}
+  .b1{width:300px;height:300px;background:#74b9ff;top:-80px;left:-60px}
+  .b2{width:260px;height:260px;background:#ffeaa7;top:50px;right:-50px}
+  .b3{width:240px;height:240px;background:#fd79a8;bottom:-60px;left:20px}
+  .b4{width:200px;height:200px;background:#55efc4;bottom:30px;right:-30px}
+  main{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center}
+
+  h1{font-family:'Fredoka One',cursive;font-size:2.1rem;background:linear-gradient(135deg,#74b9ff,#a29bfe,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;text-align:center}
+  .tagline{font-size:.85rem;color:#999;font-weight:600;letter-spacing:1px;margin-bottom:14px;text-align:center}
+
+  /* level */
+  #levels{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+  .lv{padding:7px 18px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;border:3px solid transparent;transition:.2s;color:#fff;opacity:.45}
+  .lv.active{opacity:1;transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+  .lv.easy{background:#55efc4;border-color:#00b894}
+  .lv.med{background:#74b9ff;border-color:#0984e3}
+  .lv.hard{background:#a29bfe;border-color:#6c5ce7}
+
+  /* topbar */
+  #topbar{display:flex;gap:10px;margin-bottom:14px;width:100%;justify-content:center;flex-wrap:wrap}
+  .tb{background:#fff;border-radius:14px;padding:8px 16px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .tb-label{font-size:.58rem;color:#bbb;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .tb-val{font-size:1.15rem;font-family:'Fredoka One',cursive;color:#555}
+
+  /* trust meter */
+  #trust-wrap{width:100%;background:#fff;border-radius:18px;padding:12px 18px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:14px}
+  .trust-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .trust-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#555}
+  .trust-val{font-family:'Fredoka One',cursive;font-size:1rem;color:#74b9ff}
+  #trust-bar-wrap{background:#f0f0f0;border-radius:99px;height:14px;overflow:hidden}
+  #trust-bar{height:100%;border-radius:99px;transition:width .6s,background .4s;background:linear-gradient(90deg,#74b9ff,#a29bfe)}
+
+  /* timer */
+  #timer-wrap{width:100%;background:#fff;border-radius:14px;padding:8px 16px;box-shadow:0 3px 10px rgba(0,0,0,.07);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .timer-label{font-size:.7rem;color:#bbb;font-weight:800;letter-spacing:1px}
+  #timer-bar-wrap{flex:1;background:#f0f0f0;border-radius:99px;height:10px;overflow:hidden}
+  #timer-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#55efc4,#74b9ff);transition:width .1s linear}
+  #timer-num{font-family:'Fredoka One',cursive;font-size:.9rem;color:#555;min-width:24px;text-align:right}
+
+  /* card */
+  #card{background:#fff;border-radius:24px;padding:22px 20px 18px;box-shadow:0 6px 26px rgba(0,0,0,.1);width:100%;margin-bottom:14px;text-align:center;position:relative;overflow:hidden;transition:.3s}
+  #card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;transition:background .3s}
+  #card.truth::before{background:linear-gradient(90deg,#55efc4,#00b894)}
+  #card.fib::before{background:linear-gradient(90deg,#fd79a8,#e74c3c)}
+  #card.neutral::before{background:linear-gradient(90deg,#74b9ff,#a29bfe)}
+  #q-num{font-size:.6rem;color:#ddd;font-family:'Fredoka One',cursive;letter-spacing:2px;margin-bottom:10px}
+  #char-icon{font-size:3.8rem;display:block;margin:0 auto 10px;animation:bounce 2s ease-in-out infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  #char-name{font-family:'Fredoka One',cursive;font-size:1rem;color:#777;margin-bottom:10px}
+  #statement-box{background:#f8f9ff;border-radius:16px;padding:14px 16px;margin-bottom:14px;border-left:4px solid #74b9ff}
+  #statement{font-size:1rem;color:#444;font-weight:700;line-height:1.7;text-align:left}
+  #clue-strip{font-size:.8rem;color:#aaa;font-weight:700;text-align:center;min-height:1.2em;font-style:italic}
+
+  /* big buttons */
+  #btns{display:flex;gap:14px;width:100%;margin-bottom:12px}
+  .big-btn{flex:1;padding:18px 10px;border-radius:20px;border:none;cursor:pointer;font-family:'Fredoka One',cursive;font-size:1.3rem;transition:.2s;box-shadow:0 5px 16px rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;gap:4px}
+  .big-btn span.lbl{font-size:.65rem;letter-spacing:1px}
+  #truth-btn{background:linear-gradient(135deg,#55efc4,#00b894);color:#fff}
+  #fib-btn{background:linear-gradient(135deg,#fd79a8,#e74c3c);color:#fff}
+  .big-btn:hover:not(:disabled){transform:translateY(-4px);box-shadow:0 8px 22px rgba(0,0,0,.18)}
+  .big-btn:disabled{opacity:.5;cursor:default;transform:none}
+  .big-btn:active:not(:disabled){transform:scale(.96)}
+
+  /* outcome */
+  #outcome{border-radius:18px;padding:14px 18px;margin-bottom:12px;display:none;width:100%;animation:slidein .3s ease}
+  @keyframes slidein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  #outcome.correct{background:#d4f8e8;border-left:5px solid #00b894;color:#005f44}
+  #outcome.wrong{background:#fde8e8;border-left:5px solid #e74c3c;color:#9b2335}
+  .ot{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-bottom:6px}
+  .od{font-size:.86rem;font-weight:600;line-height:1.7}
+  .lesson-box{margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.65);font-size:.8rem;font-weight:700}
+
+  /* next btn */
+  #next-btn{background:linear-gradient(135deg,#74b9ff,#a29bfe);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 16px rgba(116,185,255,.4);display:none;margin-bottom:12px;transition:.2s}
+  #next-btn:hover{transform:scale(1.05)}
+
+  /* streak banner */
+  #streak-banner{background:linear-gradient(135deg,#ffeaa7,#fdcb6e);border-radius:14px;padding:10px 18px;font-family:'Fredoka One',cursive;font-size:.95rem;color:#7a5c00;text-align:center;margin-bottom:12px;display:none;animation:slidein .3s ease}
+
+  /* overlays */
+  #overlay,#end-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;background:rgba(240,248,255,.97)}
+  #end-screen{display:none;overflow-y:auto}
+  .ov-icon{font-size:4rem;margin-bottom:10px;animation:bounce 2s ease-in-out infinite}
+  .ov-h{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,#74b9ff,#a29bfe,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .ov-p{font-size:.87rem;color:#999;font-weight:600;line-height:2.1;margin-bottom:4px}
+  .ov-btn{background:linear-gradient(135deg,#74b9ff,#a29bfe);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(116,185,255,.4);margin-top:16px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  .stars-big{font-size:2rem;margin:8px 0}
+  .final-score{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#74b9ff;margin:6px 0}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0 14px}
+  .badge{padding:6px 14px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.85rem;color:#fff}
+
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .8s ease forwards;z-index:999}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .shake{animation:shake .35s ease}
+  @media(max-width:420px){h1{font-size:1.7rem}#char-icon{font-size:3rem}.big-btn{font-size:1.1rem}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<main>
+  <h1>🔍 Truth or Fib?</h1>
+  <p class="tagline">Can you spot the lie?</p>
+
+  <div id="levels">
+    <button class="lv easy active" id="lv-easy" onclick="setLevel('easy',this)">⭐ Easy</button>
+    <button class="lv med" id="lv-med" onclick="setLevel('med',this)">⭐⭐ Medium</button>
+    <button class="lv hard" id="lv-hard" onclick="setLevel('hard',this)">⭐⭐⭐ Hard</button>
+  </div>
+
+  <div id="topbar">
+    <div class="tb"><div class="tb-label">Score</div><div class="tb-val" id="score">0</div></div>
+    <div class="tb"><div class="tb-label">Question</div><div class="tb-val" id="qnum">1/12</div></div>
+    <div class="tb"><div class="tb-label">🔥 Streak</div><div class="tb-val" id="streak">0</div></div>
+  </div>
+
+  <div id="trust-wrap">
+    <div class="trust-header">
+      <span class="trust-label">🏅 Trust Meter</span>
+      <span class="trust-val" id="trust-val">50%</span>
+    </div>
+    <div id="trust-bar-wrap"><div id="trust-bar" style="width:50%"></div></div>
+  </div>
+
+  <div id="timer-wrap">
+    <span class="timer-label">⏱ TIME</span>
+    <div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>
+    <span id="timer-num">15</span>
+  </div>
+
+  <div id="streak-banner"></div>
+
+  <div id="card" class="neutral">
+    <div id="q-num">QUESTION 1 OF 12</div>
+    <span id="char-icon">🧒</span>
+    <div id="char-name">Loading...</div>
+    <div id="statement-box"><div id="statement">...</div></div>
+    <div id="clue-strip"></div>
+  </div>
+
+  <div id="outcome"></div>
+
+  <div id="btns">
+    <button class="big-btn" id="truth-btn" onclick="answer('truth')">✅<span class="lbl">TRUTH</span></button>
+    <button class="big-btn" id="fib-btn" onclick="answer('fib')">❌<span class="lbl">FIB</span></button>
+  </div>
+  <button id="next-btn" onclick="nextQ()">Next Question ➡️</button>
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">🔍</div>
+  <h2 class="ov-h">Truth or Fib?</h2>
+  <p class="ov-p">A character tells you something.<br>You decide — is it a TRUTH or a FIB?<br><br>✅ Truth = they are being honest<br>❌ Fib = they are telling a lie<br><br>⏱ Answer before time runs out!<br>🔥 Streaks earn bonus points!<br>Watch your Trust Meter grow! 🏅</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none';startGame()">Start Detecting! 🔍</button>
+</div>
+
+<div id="end-screen">
+  <div class="ov-icon" id="end-icon">🌟</div>
+  <h2 class="ov-h" id="end-title">Truth Seeker!</h2>
+  <div class="stars-big" id="end-stars">⭐⭐⭐</div>
+  <div class="final-score" id="end-score">0 pts</div>
+  <div class="badge-row" id="badges"></div>
+  <p class="ov-p" id="end-msg"></p>
+  <button class="ov-btn" onclick="document.getElementById('end-screen').style.display='none';startGame()">Play Again! 🔍</button>
+</div>
+
+<script>
+const QUESTIONS={
+  easy:[
+    {char:'🐰',name:'Benny the Bunny',statement:'"I ate ALL my vegetables for dinner last night!" says Benny. But his mum later says she found his broccoli hidden under the table.',answer:'fib',clue:'Hint: Where did the broccoli end up? 🥦',explain:'Benny hid the broccoli — so his claim was a FIB! Hiding food and then saying you ate it is dishonest.',lesson:'It\'s always better to say "I don\'t like broccoli" than to hide it and lie about it!'},
+    {char:'🦊',name:'Mia the Fox',statement:'"I finished all my homework before watching TV!" says Mia proudly. Her teacher confirms she handed in a complete assignment.',answer:'truth',clue:'Hint: Did the teacher confirm it? 📚',explain:'Mia really did finish her homework — that\'s a TRUTH! Her teacher can confirm it.',lesson:'Doing the right thing first and telling the truth about it builds real trust!'},
+    {char:'🐻',name:'Bruno the Bear',statement:'"I didn\'t eat any cookies!" says Bruno. But there are crumbs on his nose and an empty cookie jar behind him.',answer:'fib',clue:'Hint: Look at the clues on his face! 🍪',explain:'Crumbs on his nose and an empty jar — classic FIB! The evidence tells the real story.',lesson:'Lies leave clues! Honesty saves us from getting caught AND makes us feel better inside!'},
+    {char:'🐧',name:'Pip the Penguin',statement:'"I brushed my teeth this morning!" says Pip. His toothbrush is wet and there\'s toothpaste in the sink.',answer:'truth',clue:'Hint: Check the toothbrush! 🪥',explain:'A wet toothbrush and toothpaste in the sink — that\'s evidence of TRUTH!',lesson:'Telling the truth about small things like brushing teeth builds great habits for life!'},
+    {char:'🦁',name:'Leo the Lion',statement:'"I didn\'t break the window — the ball just rolled there by itself!" says Leo.',answer:'fib',clue:'Hint: Can balls roll by themselves? ⚽',explain:'Balls don\'t move by themselves — Leo is making up an excuse! That\'s a FIB.',lesson:'Accidents happen! Owning up to a mistake is always braver than making up a story.'},
+    {char:'🐨',name:'Koko the Koala',statement:'"I was nice to my little sister all day — I didn\'t take any of her toys!" says Koko. His sister nods and agrees.',answer:'truth',clue:'Hint: What does the sister say? 👧',explain:'When the person who would know best agrees — that\'s a strong sign it\'s TRUE!',lesson:'Being kind to siblings — and telling the truth about it — is something to be really proud of!'},
+  ],
+  med:[
+    {char:'🦓',name:'Zara the Zebra',statement:'"I got full marks on the spelling test because I studied really hard all week!" But her notebook has zero practice words written in it.',answer:'fib',clue:'Hint: Is there any evidence she studied? 📓',explain:'An empty practice notebook contradicts her claim — that\'s a FIB! Actions speak louder than words.',lesson:'If you want to tell the truth about studying hard, you have to actually study hard!'},
+    {char:'🐼',name:'Panda Pete',statement:'"I returned the book I borrowed from the library on time," says Pete. The librarian has no record of a late fee.',answer:'truth',clue:'Hint: What does the librarian\'s record show? 📚',explain:'No late fee on record = no late return. The evidence supports a TRUTH!',lesson:'Being responsible with things you borrow — and honest about it — shows real integrity!'},
+    {char:'🦔',name:'Hector the Hedgehog',statement:'"I didn\'t push anyone at recess — I was just playing!" But two classmates and a teacher saw him push someone.',answer:'fib',clue:'Hint: How many witnesses are there? 👀',explain:'Three witnesses saw it happen — this is a FIB and also an attempt to avoid responsibility.',lesson:'When several people witness something, denying it hurts trust much more than owning up would!'},
+    {char:'🐸',name:'Freddy the Frog',statement:'"I saved up my pocket money for three whole months to buy this present for Mum!" He shows his empty piggy bank.',answer:'truth',clue:'Hint: What does the empty piggy bank mean? 🐷',explain:'An empty piggy bank after buying something is exactly what saving up looks like — TRUTH!',lesson:'Saving up and being honest about the effort behind a gift makes it even more meaningful!'},
+    {char:'🦋',name:'Bella the Butterfly',statement:'"I only played one hour of games — I checked the timer!" But the game console shows 4 hours of playtime today.',answer:'fib',clue:'Hint: What does the console history show? 🎮',explain:'4 hours on the console versus "1 hour" claimed — the device\'s own record reveals the FIB!',lesson:'Devices keep records! But more importantly — honesty about screen time builds healthy habits!'},
+    {char:'🐦',name:'Tweety the Bird',statement:'"I wrote this poem all by myself — every single word!" Her teacher checks and confirms no copied lines exist.',answer:'truth',clue:'Hint: Did the teacher find any copied words?✍️',explain:'Teacher verification found nothing copied — this is a TRUTH worth celebrating!',lesson:'Creating something original and being honest about it is something to be truly proud of!'},
+  ],
+  hard:[
+    {char:'🦅',name:'Eagle Ed',statement:'"I told my friend the truth about not finishing the project — even though it was embarrassing." His friend confirms the honest conversation.',answer:'truth',clue:'Hint: Being honest is hard — would someone lie about being honest? 🤔',explain:'His friend confirms the honest conversation happened — a TRUTH that shows real courage!',lesson:'Being honest when it\'s embarrassing is one of the hardest and most admirable things anyone can do!'},
+    {char:'🐺',name:'Willa the Wolf',statement:'"I didn\'t tell anyone your secret — I promise!" But three people already know details that only Willa was told.',answer:'fib',clue:'Hint: How did three people learn something only Willa knew? 🔐',explain:'If only Willa knew the secret and now three others know — someone talked! That\'s a FIB.',lesson:'Keeping secrets entrusted to us is a sign of deep trustworthiness. Breaking them damages friendships.'},
+    {char:'🦊',name:'Felix the Fox',statement:'"I\'m not sure if I broke the rule — I might have gone a little past the boundary," Felix admits to his coach.',answer:'truth',clue:'Hint: Is admitting uncertainty a form of honesty? 🤷',explain:'Saying "I\'m not sure but I might have" is actually courageous honesty — a TRUTH!',lesson:'Admitting uncertainty instead of defending yourself is a sign of real honesty and maturity!'},
+    {char:'🐘',name:'Ellie the Elephant',statement:'"I told my parents I was at Maya\'s house, but actually I was at the park with a group they don\'t know."',answer:'fib',clue:'Hint: Did she tell her parents where she actually was? 🏠',explain:'She said one place but went to another — a FIB that also put her safety at risk.',lesson:'Telling parents your real location isn\'t just honest — it\'s how they keep you safe!'},
+    {char:'🦁',name:'Luna the Lioness',statement:'"I told my teacher I needed more time because I was struggling — not because I wanted to avoid the test."',answer:'truth',clue:'Hint: Is asking for help when struggling honest? 💪',explain:'Asking for help because you genuinely need it — not to avoid work — is a brave TRUTH!',lesson:'Asking for help honestly is one of the bravest and smartest things a student can ever do!'},
+    {char:'🐯',name:'Ty the Tiger',statement:'"I didn\'t cheat on the test. I just happened to get the same wrong answers as my neighbour — what a coincidence!"',answer:'fib',clue:'Hint: Is having identical wrong answers really a coincidence? 📝',explain:'Identical wrong answers are almost never coincidence — this sounds like a FIB with a weak excuse.',lesson:'Cheating and then lying about it damages both your learning AND your reputation. Honesty always wins!'},
+  ]
+};
+
+const TOTAL=12;
+const TIMES={easy:15,med:12,hard:8};
+let level='easy',qIdx=0,score=0,streak=0,trust=50,correct=0,busy=false,timerInt=null,timeLeft=0,pool=[];
+
+function setLevel(l,btn){
+  level=l;
+  document.querySelectorAll('.lv').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  startGame();
+}
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r;}
+function clamp(v){return Math.max(0,Math.min(100,v));}
+
+function startGame(){
+  clearInterval(timerInt);
+  qIdx=0;score=0;streak=0;trust=50;correct=0;busy=false;
+  const all=[...QUESTIONS[level]];
+  // pad to 12 by cycling
+  pool=shuffle(all);
+  while(pool.length<TOTAL)pool.push(...shuffle(all));
+  pool=pool.slice(0,TOTAL);
+  document.getElementById('end-screen').style.display='none';
+  document.getElementById('streak-banner').style.display='none';
+  updateTopbar();loadQ();
+}
+
+function loadQ(){
+  busy=false;
+  clearInterval(timerInt);
+  document.getElementById('outcome').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('streak-banner').style.display='none';
+  document.getElementById('truth-btn').disabled=false;
+  document.getElementById('fib-btn').disabled=false;
+  document.getElementById('card').className='card neutral';
+
+  const q=pool[qIdx];
+  document.getElementById('q-num').textContent=`QUESTION ${qIdx+1} OF ${TOTAL}`;
+  document.getElementById('char-icon').textContent=q.char;
+  document.getElementById('char-icon').style.animation='none';
+  setTimeout(()=>document.getElementById('char-icon').style.animation='',50);
+  document.getElementById('char-name').textContent=q.name;
+  document.getElementById('statement').textContent=q.statement;
+  document.getElementById('clue-strip').textContent=q.clue||'';
+  updateTopbar();startTimer();
+}
+
+function startTimer(){
+  timeLeft=TIMES[level];
+  document.getElementById('timer-num').textContent=timeLeft;
+  document.getElementById('timer-bar').style.width='100%';
+  document.getElementById('timer-bar').style.background='linear-gradient(90deg,#55efc4,#74b9ff)';
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    const pct=(timeLeft/TIMES[level])*100;
+    document.getElementById('timer-bar').style.width=pct+'%';
+    document.getElementById('timer-num').textContent=timeLeft;
+    if(pct<40)document.getElementById('timer-bar').style.background='linear-gradient(90deg,#fdcb6e,#ff9f43)';
+    if(pct<20)document.getElementById('timer-bar').style.background='linear-gradient(90deg,#fd79a8,#e74c3c)';
+    if(timeLeft<=0){clearInterval(timerInt);timeUp();}
+  },1000);
+}
+
+function timeUp(){
+  if(busy)return;busy=true;
+  clearInterval(timerInt);
+  document.getElementById('truth-btn').disabled=true;
+  document.getElementById('fib-btn').disabled=true;
+  streak=0;trust=clamp(trust-8);
+  const q=pool[qIdx];
+  const oc=document.getElementById('outcome');
+  oc.className='outcome wrong';
+  oc.innerHTML=`<div class="ot">⏰ Time's Up! The answer was: ${q.answer.toUpperCase()}</div><div class="od">${q.explain}</div><div class="lesson-box">💡 ${q.lesson}</div>`;
+  oc.style.display='block';
+  document.getElementById('card').classList.add('shake');
+  updateTopbar();qIdx++;
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('next-btn').textContent=qIdx>=TOTAL?'See Results! 🌟':'Next Question ➡️';
+}
+
+function answer(pick){
+  if(busy)return;busy=true;
+  clearInterval(timerInt);
+  document.getElementById('truth-btn').disabled=true;
+  document.getElementById('fib-btn').disabled=true;
+  const q=pool[qIdx];
+  const isCorrect=pick===q.answer;
+  const timeBonus=Math.floor(timeLeft/TIMES[level]*5);
+
+  if(isCorrect){
+    streak++;correct++;
+    const bonus=streak>=3?streak*3:0;
+    score+=10+timeBonus+bonus;
+    trust=clamp(trust+10);
+    document.getElementById('card').className=`card ${q.answer}`;
+    const oc=document.getElementById('outcome');
+    oc.className='outcome correct';
+    oc.innerHTML=`<div class="ot">✅ Correct! +${10+timeBonus+bonus} pts${bonus>0?' (Streak Bonus! 🔥)':timeBonus>0?' (Speed Bonus! ⚡)':''}</div><div class="od">${q.explain}</div><div class="lesson-box">💡 ${q.lesson}</div>`;
+    oc.style.display='block';
+    confetti(document.getElementById(pick+'-btn'));
+    if(streak>=3){
+      const sb=document.getElementById('streak-banner');
+      sb.textContent=`🔥 ${streak} in a row! You're on fire, Truth Detective!`;
+      sb.style.display='block';
+    }
+  } else {
+    streak=0;trust=clamp(trust-8);
+    document.getElementById('card').className=`card ${q.answer}`;
+    document.getElementById('card').classList.add('shake');
+    const oc=document.getElementById('outcome');
+    oc.className='outcome wrong';
+    oc.innerHTML=`<div class="ot">❌ Not quite! It was a ${q.answer.toUpperCase()}!</div><div class="od">${q.explain}</div><div class="lesson-box">💡 ${q.lesson}</div>`;
+    oc.style.display='block';
+  }
+
+  updateTopbar();qIdx++;
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('next-btn').textContent=qIdx>=TOTAL?'See Results! 🌟':'Next Question ➡️';
+}
+
+function nextQ(){
+  if(qIdx>=TOTAL){endGame();return;}
+  loadQ();
+}
+
+function updateTopbar(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('streak').textContent=streak;
+  document.getElementById('qnum').textContent=`${Math.min(qIdx+1,TOTAL)}/${TOTAL}`;
+  const t=trust;
+  document.getElementById('trust-val').textContent=t+'%';
+  document.getElementById('trust-bar').style.width=t+'%';
+  document.getElementById('trust-bar').style.background=t>65?'linear-gradient(90deg,#55efc4,#00b894)':t>35?'linear-gradient(90deg,#74b9ff,#a29bfe)':'linear-gradient(90deg,#fd79a8,#e74c3c)';
+}
+
+function endGame(){
+  const pct=correct/TOTAL;
+  let stars='⭐',icon='🔍',title='Keep Investigating!',msg='Every question teaches us more about honesty!';
+  if(pct>=.9){stars='⭐⭐⭐';icon='🏆';title='Master Truth Detective!';msg='Nearly perfect! You have an incredible eye for honesty and deception! 🔍💙';}
+  else if(pct>=.7){stars='⭐⭐⭐';icon='🌟';title='Expert Truth Seeker!';msg='Fantastic detecting! You understand honesty really well! Keep going! ⭐';}
+  else if(pct>=.5){stars='⭐⭐';icon:'😊',title='Good Detective!';msg='You caught most of the fibs! Keep practising your truth-spotting skills! 🔍';}
+  document.getElementById('end-icon').textContent=icon;
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent=`${score} pts · ${correct}/${TOTAL} correct · Trust: ${trust}%`;
+  document.getElementById('end-msg').textContent=msg;
+  const badges=document.getElementById('badges');badges.innerHTML='';
+  const earned=[];
+  if(correct===TOTAL)earned.push({label:'🏆 Perfect Detective',bg:'#74b9ff'});
+  if(streak>=4)earned.push({label:'🔥 Streak Master',bg:'#fd79a8'});
+  if(trust>=80)earned.push({label:'🏅 Trust Champion',bg:'#00b894'});
+  if(score>=150)earned.push({label:'⚡ Speed Detective',bg:'#a29bfe'});
+  earned.push({label:'🔍 Truth Seeker',bg:'#fdcb6e'});
+  earned.forEach(b=>{const el=document.createElement('span');el.className='badge';el.textContent=b.label;el.style.background=b.bg;badges.appendChild(el);});
+  document.getElementById('end-screen').style.display='flex';
+  confettiAll();
+}
+
+function confettiAll(){
+  const em=['🔍','✅','⭐','✨','💙','🌟','🏅'];
+  for(let i=0;i<16;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*60+10+'vh';
+    el.style.setProperty('--dx',(Math.random()*100-50)+'px');el.style.setProperty('--dy',(Math.random()*80-100)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  },i*80);
+}
+
+function confetti(ref){
+  const r=ref.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const em=['✅','⭐','🔍','💙','✨','🌟'];
+  for(let i=0;i<9;i++){
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=cx+'px';el.style.top=cy+'px';
+    const a=Math.random()*Math.PI*2,d=70+Math.random()*70;
+    el.style.setProperty('--dx',Math.cos(a)*d+'px');el.style.setProperty('--dy',Math.sin(a)*d+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),850);
+  }
+}
+</script>
+</body>
+</html>

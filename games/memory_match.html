@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Memory Match</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0d0d1a;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Press Start 2P',monospace;color:#fff;padding:20px}
+  h1{color:#34d399;font-size:1.3rem;margin-bottom:6px;text-shadow:0 0 12px #34d399}
+  .subtitle{color:#67e8f9;font-size:.45rem;letter-spacing:2px;margin-bottom:14px}
+  #diff-select{display:flex;gap:10px;margin-bottom:14px}
+  .d-btn{background:#1e1b4b;border:2px solid #7c3aed;color:#c4b5fd;font-family:'Press Start 2P',monospace;font-size:.4rem;padding:7px 12px;border-radius:6px;cursor:pointer;transition:.2s}
+  .d-btn.active,.d-btn:hover{background:#7c3aed;color:#fff;box-shadow:0 0 10px #7c3aed}
+  #stats{display:flex;gap:28px;margin-bottom:14px}
+  .stat{text-align:center}
+  .stat-label{font-size:.38rem;color:#a78bfa;margin-bottom:3px}
+  .stat-val{font-size:.8rem;color:#f0abfc}
+  #board{display:grid;gap:8px;margin-bottom:18px}
+  .card{width:80px;height:80px;perspective:600px;cursor:pointer}
+  .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .4s}
+  .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
+  .card-front,.card-back{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+  .card-back{background:#12122a;border:2px solid #2e1b6b;transform:rotateY(0deg)}
+  .card-back::after{content:'?';font-family:'Press Start 2P',monospace;font-size:.8rem;color:#4c1d95}
+  .card-front{background:#1e1b4b;border:2px solid #7c3aed;transform:rotateY(180deg);box-shadow:0 0 10px #7c3aed55}
+  .card.matched .card-front{border-color:#34d399;box-shadow:0 0 16px #34d39988;animation:matched .4s ease}
+  @keyframes matched{0%{transform:rotateY(180deg) scale(1)}50%{transform:rotateY(180deg) scale(1.15)}100%{transform:rotateY(180deg) scale(1)}}
+  .card:hover:not(.flipped):not(.matched) .card-back{border-color:#7c3aed;box-shadow:0 0 12px #7c3aed}
+  button#reset-btn{background:#7c3aed;color:#fff;border:none;padding:10px 28px;font-family:'Press Start 2P',monospace;font-size:.55rem;border-radius:6px;cursor:pointer;box-shadow:0 0 12px #7c3aed}
+  button#reset-btn:hover{background:#a855f7}
+  #overlay{position:fixed;inset:0;background:#0d0d1acc;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+  #overlay h2{font-size:1rem;margin-bottom:10px}
+  #overlay p{font-size:.48rem;color:#a78bfa;margin-bottom:22px;text-align:center;line-height:2.2}
+  .ov-btn{background:#7c3aed;color:#fff;border:none;padding:10px 22px;font-family:'Press Start 2P',monospace;font-size:.55rem;border-radius:4px;cursor:pointer;box-shadow:0 0 12px #7c3aed}
+  #win-screen{position:fixed;inset:0;background:#0d0d1aee;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20}
+  #win-screen h2{color:#34d399;font-size:1.1rem;margin-bottom:12px;text-shadow:0 0 12px #34d399}
+  #win-screen p{font-size:.5rem;color:#f0abfc;margin-bottom:8px}
+  #win-screen .stats-final{color:#fbbf24;font-size:.6rem;margin:10px 0 20px}
+  @media(max-width:480px){.card{width:65px;height:65px}.card-front,.card-back{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<h1>🃏 MEMORY MATCH</h1>
+<p class="subtitle">SPARKIDDO ARCADE</p>
+<div id="diff-select">
+  <button class="d-btn active" id="easy-btn">⭐ EASY</button>
+  <button class="d-btn" id="med-btn">⭐⭐ MED</button>
+  <button class="d-btn" id="hard-btn">⭐⭐⭐ HARD</button>
+</div>
+<div id="stats">
+  <div class="stat"><div class="stat-label">MOVES</div><div class="stat-val" id="moves">0</div></div>
+  <div class="stat"><div class="stat-label">PAIRS</div><div class="stat-val" id="pairs">0</div></div>
+  <div class="stat"><div class="stat-label">TIME</div><div class="stat-val" id="timer">0s</div></div>
+  <div class="stat"><div class="stat-label">BEST</div><div class="stat-val" id="best">--</div></div>
+</div>
+<div id="board"></div>
+<button id="reset-btn">↺ NEW GAME</button>
+
+<div id="overlay">
+  <h2 style="color:#34d399;text-shadow:0 0 10px #34d399">🃏 MEMORY MATCH</h2>
+  <p>FLIP CARDS TO FIND<br>MATCHING PAIRS.<br>FEWEST MOVES WINS!</p>
+  <button class="ov-btn" id="startBtn">▶ START GAME</button>
+</div>
+
+<div id="win-screen">
+  <h2>🎉 YOU WIN!</h2>
+  <p>ALL PAIRS FOUND!</p>
+  <div class="stats-final" id="final-stats"></div>
+  <button class="ov-btn" id="playAgainBtn">▶ PLAY AGAIN</button>
+</div>
+
+<script>
+const EMOJIS=['🐉','⚔️','🌸','🦊','🎴','🏯','🌙','🎋','🦄','🔮','🎯','🌊','🎪','🦋','🐼','🌺','⭐','🎭','🦅','🔥','💎','🌈'];
+const DIFFS={easy:{pairs:6,cols:4},med:{pairs:10,cols:5},hard:{pairs:16,cols:8}};
+let diff='easy',cards=[],flipped=[],matched=0,moves=0,pairs=0,timerVal=0,timerInt=null,lock=false,started=false;
+let bests={easy:null,med:null,hard:null};
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
+
+function init(){
+  clearInterval(timerInt);moves=0;matched=0;timerVal=0;flipped=[];lock=false;started=false;
+  const {pairs:p,cols}=DIFFS[diff];
+  pairs=p;
+  const chosen=shuffle([...EMOJIS]).slice(0,p);
+  cards=shuffle([...chosen,...chosen].map((e,i)=>({id:i,emoji:e,flipped:false,matched:false})));
+  document.getElementById('moves').textContent=0;
+  document.getElementById('pairs').textContent=`0/${p}`;
+  document.getElementById('timer').textContent='0s';
+  const best=bests[diff];
+  document.getElementById('best').textContent=best?`${best}m`:' --';
+  const board=document.getElementById('board');
+  board.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  board.innerHTML='';
+  cards.forEach((c,i)=>{
+    const el=document.createElement('div');
+    el.className='card';el.dataset.i=i;
+    el.innerHTML=`<div class="card-inner"><div class="card-back"></div><div class="card-front">${c.emoji}</div></div>`;
+    el.addEventListener('click',()=>flip(i,el));
+    board.appendChild(el);
+  });
+}
+
+function flip(i,el){
+  if(lock||cards[i].flipped||cards[i].matched)return;
+  if(!started){started=true;timerInt=setInterval(()=>{timerVal++;document.getElementById('timer').textContent=timerVal+'s';},1000);}
+  cards[i].flipped=true;el.classList.add('flipped');flipped.push({i,el});
+  if(flipped.length===2){
+    moves++;document.getElementById('moves').textContent=moves;
+    lock=true;
+    const[a,b]=flipped;
+    if(cards[a.i].emoji===cards[b.i].emoji){
+      cards[a.i].matched=cards[b.i].matched=true;
+      a.el.classList.add('matched');b.el.classList.add('matched');
+      matched++;document.getElementById('pairs').textContent=`${matched}/${pairs}`;
+      flipped=[];lock=false;
+      if(matched===pairs)setTimeout(winGame,500);
+    } else {
+      setTimeout(()=>{
+        cards[a.i].flipped=cards[b.i].flipped=false;
+        a.el.classList.remove('flipped');b.el.classList.remove('flipped');
+        flipped=[];lock=false;
+      },900);
+    }
+  }
+}
+
+function winGame(){
+  clearInterval(timerInt);
+  if(!bests[diff]||moves<bests[diff])bests[diff]=moves;
+  document.getElementById('final-stats').textContent=`MOVES: ${moves} | TIME: ${timerVal}s`;
+  document.getElementById('win-screen').style.display='flex';
+}
+
+['easy','med','hard'].forEach(d=>{
+  document.getElementById(`${d}-btn`).addEventListener('click',()=>{
+    diff=d;
+    document.querySelectorAll('.d-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(`${d}-btn`).classList.add('active');
+    document.getElementById('win-screen').style.display='none';
+    init();
+  });
+});
+document.getElementById('reset-btn').addEventListener('click',()=>{document.getElementById('win-screen').style.display='none';init();});
+document.getElementById('startBtn').addEventListener('click',()=>{document.getElementById('overlay').style.display='none';init();});
+document.getElementById('playAgainBtn').addEventListener('click',()=>{document.getElementById('win-screen').style.display='none';init();});
+</script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Share or Keep?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#fff8f0;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.17;pointer-events:none;z-index:0}
+  .b1{width:300px;height:300px;background:#fdcb6e;top:-80px;left:-60px}
+  .b2{width:260px;height:260px;background:#fd79a8;top:50px;right:-50px}
+  .b3{width:240px;height:240px;background:#74b9ff;bottom:-60px;left:20px}
+  .b4{width:200px;height:200px;background:#55efc4;bottom:30px;right:-30px}
+  main{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center}
+
+  h1{font-family:'Fredoka One',cursive;font-size:2.1rem;background:linear-gradient(135deg,#fdcb6e,#fd79a8,#74b9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;text-align:center}
+  .tagline{font-size:.85rem;color:#999;font-weight:600;letter-spacing:1px;margin-bottom:14px;text-align:center}
+
+  /* topbar */
+  #topbar{display:flex;gap:10px;margin-bottom:14px;width:100%;justify-content:center;flex-wrap:wrap}
+  .tb{background:#fff;border-radius:14px;padding:8px 16px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .tb-label{font-size:.58rem;color:#bbb;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .tb-val{font-size:1.15rem;font-family:'Fredoka One',cursive;color:#555}
+
+  /* happiness bars */
+  #happiness-section{width:100%;background:#fff;border-radius:20px;padding:14px 18px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:14px}
+  .hap-title{font-family:'Fredoka One',cursive;font-size:.9rem;color:#555;margin-bottom:10px;text-align:center}
+  .hap-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .hap-label{font-size:.8rem;font-weight:800;color:#666;min-width:60px}
+  .hap-bar-wrap{flex:1;background:#f0f0f0;border-radius:99px;height:14px;overflow:hidden}
+  .hap-bar{height:100%;border-radius:99px;transition:width .6s,background .4s}
+  .hap-val{font-family:'Fredoka One',cursive;font-size:.85rem;min-width:36px;text-align:right;color:#888}
+  .hap-bar.you{background:linear-gradient(90deg,#fdcb6e,#ff9f43)}
+  .hap-bar.them{background:linear-gradient(90deg,#74b9ff,#6c5ce7)}
+  .hap-bar.world{background:linear-gradient(90deg,#55efc4,#00b894)}
+
+  /* scene */
+  #scene{background:#fff;border-radius:24px;padding:20px 20px 16px;box-shadow:0 6px 24px rgba(0,0,0,.1);width:100%;margin-bottom:14px;text-align:center;position:relative;overflow:hidden}
+  #scene::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#fdcb6e,#fd79a8,#74b9ff)}
+  #scene-num{font-size:.65rem;color:#ddd;font-family:'Fredoka One',cursive;letter-spacing:2px;margin-bottom:8px}
+  #scene-icon{font-size:4.2rem;display:block;margin:0 auto 10px;animation:bounce 2s ease-in-out infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  #scene-who{font-family:'Fredoka One',cursive;font-size:1.05rem;color:#555;margin-bottom:6px}
+  #scene-text{font-size:.9rem;color:#666;font-weight:600;line-height:1.7;margin-bottom:12px;padding:0 4px}
+  #resource-display{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;background:#fff8f0;border-radius:14px;padding:10px}
+  .res-item{font-size:1.6rem}
+  #scene-q{font-family:'Fredoka One',cursive;font-size:1rem;color:#fd79a8}
+
+  /* choice buttons */
+  #choices{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:12px}
+  .ch{background:#fff;border-radius:18px;padding:14px 16px;cursor:pointer;border:3px solid #f0e8ff;box-shadow:0 3px 12px rgba(0,0,0,.07);transition:.2s;text-align:left;width:100%}
+  .ch:hover:not(:disabled){transform:translateX(5px);border-color:#fdcb6e;box-shadow:0 5px 16px rgba(253,203,110,.3)}
+  .ch:disabled{cursor:default}
+  .ch-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .ch-icon{font-size:1.7rem;flex-shrink:0}
+  .ch-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#444}
+  .ch-tag{font-size:.65rem;padding:3px 10px;border-radius:99px;font-family:'Fredoka One',cursive;color:#fff;margin-left:auto;flex-shrink:0}
+  .ch-desc{font-size:.8rem;color:#888;font-weight:600;line-height:1.5;padding-left:2px}
+  .tag-generous{background:#00b894}
+  .tag-fair{background:#fdcb6e;color:#7a5c00 !important}
+  .tag-selfish{background:#ff7675}
+  .ch.picked-generous{background:#f0fff4;border-color:#00b894}
+  .ch.picked-fair{background:#fffbf0;border-color:#fdcb6e}
+  .ch.picked-selfish{background:#fff5f5;border-color:#ff7675}
+
+  /* outcome */
+  #outcome{border-radius:18px;padding:14px 18px;margin-bottom:12px;display:none;width:100%;animation:slidein .3s ease}
+  @keyframes slidein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  #outcome.generous{background:#d4f8e8;border-left:5px solid #00b894;color:#005f44}
+  #outcome.fair{background:#fffbf0;border-left:5px solid #fdcb6e;color:#7a5c00}
+  #outcome.selfish{background:#fde8e8;border-left:5px solid #ff7675;color:#9b2335}
+  .ot{font-family:'Fredoka One',cursive;font-size:1.05rem;margin-bottom:5px}
+  .od{font-size:.84rem;font-weight:600;line-height:1.7}
+  .lesson-box{font-size:.78rem;margin-top:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.65);font-weight:700}
+
+  /* next btn */
+  #next-btn{background:linear-gradient(135deg,#fdcb6e,#ff9f43);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 16px rgba(253,203,110,.45);display:none;margin-bottom:12px;transition:.2s}
+  #next-btn:hover{transform:scale(1.05)}
+
+  /* world happiness ticker */
+  #world-ticker{background:#fff;border-radius:14px;padding:10px 16px;box-shadow:0 3px 10px rgba(0,0,0,.07);font-size:.78rem;font-weight:700;color:#555;text-align:center;margin-bottom:14px;width:100%;display:none}
+  #world-ticker span{font-family:'Fredoka One',cursive;font-size:1rem}
+
+  /* overlays */
+  #overlay,#end-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;background:rgba(255,248,240,.97)}
+  #end-screen{display:none;overflow-y:auto}
+  .ov-icon{font-size:4.2rem;margin-bottom:10px;animation:bounce 2s ease-in-out infinite}
+  .ov-h{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,#fdcb6e,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .ov-p{font-size:.87rem;color:#999;font-weight:600;line-height:2.1;margin-bottom:4px}
+  .ov-btn{background:linear-gradient(135deg,#fdcb6e,#ff9f43);color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(253,203,110,.4);margin-top:16px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  .stars-big{font-size:2rem;margin:8px 0}
+  .final-score{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#fdcb6e;margin:6px 0}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0 14px}
+  .badge{padding:6px 14px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.85rem;color:#fff}
+  .title-card{background:#fff;border-radius:18px;padding:14px 18px;margin:10px 0;box-shadow:0 4px 14px rgba(0,0,0,.08);width:100%;max-width:440px;font-size:.83rem;font-weight:700;color:#666;line-height:1.7;text-align:left}
+  .title-card b{font-family:'Fredoka One',cursive;font-size:.95rem;display:block;margin-bottom:4px}
+
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .8s ease forwards;z-index:999}
+  @media(max-width:420px){h1{font-size:1.7rem}#scene-icon{font-size:3.2rem}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<main>
+  <h1>🤲 Share or Keep?</h1>
+  <p class="tagline">Your choices affect everyone!</p>
+
+  <div id="topbar">
+    <div class="tb"><div class="tb-label">Score</div><div class="tb-val" id="score">0</div></div>
+    <div class="tb"><div class="tb-label">Round</div><div class="tb-val" id="rnum">1/10</div></div>
+    <div class="tb"><div class="tb-label">🌍 World Joy</div><div class="tb-val" id="world-val">50%</div></div>
+  </div>
+
+  <div id="happiness-section">
+    <div class="hap-title">🌈 Happiness Tracker</div>
+    <div class="hap-row">
+      <div class="hap-label">😊 You</div>
+      <div class="hap-bar-wrap"><div class="hap-bar you" id="bar-you" style="width:50%"></div></div>
+      <div class="hap-val" id="val-you">50</div>
+    </div>
+    <div class="hap-row">
+      <div class="hap-label">👥 Others</div>
+      <div class="hap-bar-wrap"><div class="hap-bar them" id="bar-them" style="width:50%"></div></div>
+      <div class="hap-val" id="val-them">50</div>
+    </div>
+    <div class="hap-row" style="margin-bottom:0">
+      <div class="hap-label">🌍 World</div>
+      <div class="hap-bar-wrap"><div class="hap-bar world" id="bar-world" style="width:50%"></div></div>
+      <div class="hap-val" id="val-world">50</div>
+    </div>
+  </div>
+
+  <div id="world-ticker"></div>
+
+  <div id="scene">
+    <div id="scene-num">SCENE 1 OF 10</div>
+    <span id="scene-icon">🎁</span>
+    <div id="scene-who"></div>
+    <div id="scene-text"></div>
+    <div id="resource-display"></div>
+    <div id="scene-q">What do you do?</div>
+  </div>
+
+  <div id="outcome"></div>
+  <div id="choices"></div>
+  <button id="next-btn" onclick="nextScene()">Next Scene ➡️</button>
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">🤲</div>
+  <h2 class="ov-h">Share or Keep?</h2>
+  <p class="ov-p">Every round gives you something valuable.<br>How you use it affects YOUR happiness,<br>OTHERS' happiness, and the WORLD! 🌍<br><br>🟢 Generous = everyone wins more<br>🟡 Fair = balanced choice<br>🔴 Selfish = you gain, others lose<br><br>Watch the Happiness Tracker change!</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none';startGame()">Let's Share! 🤲</button>
+</div>
+
+<div id="end-screen">
+  <div class="ov-icon" id="end-icon">🌟</div>
+  <h2 class="ov-h" id="end-title">Amazing!</h2>
+  <div class="stars-big" id="end-stars">⭐⭐⭐</div>
+  <div class="final-score" id="end-score">0 pts</div>
+  <div class="badge-row" id="badges"></div>
+  <div id="end-cards" style="width:100%;max-width:440px"></div>
+  <p class="ov-p" id="end-msg" style="margin-top:8px"></p>
+  <button class="ov-btn" onclick="document.getElementById('end-screen').style.display='none';startGame()">Play Again! 🤲</button>
+</div>
+
+<script>
+const SCENES=[
+  {icon:'🍕',who:'Pizza Party!',res:['🍕','🍕','🍕','🍕','🍕','🍕','🍕','🍕'],
+   text:'You have 8 slices of pizza. Your 4 friends are hungry but there is only enough for 2 slices each if shared. You could keep more for yourself.',
+   q:'How do you share the pizza?',
+   choices:[
+    {icon:'🤲',title:'Give everyone 2 slices equally — including yourself.',tag:'generous',tagLabel:'Generous',pts:20,you:+3,them:+15,world:+10,outcome:'Everyone got full and happy! The party was SO much more fun when nobody felt left out.',lesson:'Equal sharing creates equal happiness — and that happiness comes right back to you!'},
+    {icon:'😊',title:'Keep 3 for yourself, give 5 to share among friends.',tag:'fair',tagLabel:'Fair',pts:10,you:+6,them:+8,world:+5,outcome:'You had a little extra and friends had enough. A decent balance!',lesson:'A fair share usually feels better than a feast you eat alone!'},
+    {icon:'😤',title:'Keep 6 slices for yourself and give 1 each to two friends.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+10,them:-10,world:-8,outcome:'You were stuffed, but your friends left hungry. The party felt awkward and sad.',lesson:'Keeping too much for ourselves often costs us the joy of connection!'}
+   ]},
+  {icon:'🖍️',who:'Art class with Mia',res:['🖍️','🖍️','🖍️','🖍️','🖍️','🖍️'],
+   text:'You have 6 crayons and your classmate Mia forgot hers. She is sitting quietly, unable to do the art project.',
+   q:'What do you do with your crayons?',
+   choices:[
+    {icon:'🤝',title:'Share half your crayons with Mia so you both can draw.',tag:'generous',tagLabel:'Generous',pts:20,you:+5,them:+18,world:+12,outcome:'You both made beautiful drawings! Mia was so grateful she taught you a new drawing technique.',lesson:'Sharing opens doors — you gain just as much as you give!'},
+    {icon:'🤔',title:'Lend Mia one crayon at a time when you\'re not using it.',tag:'fair',tagLabel:'Fair',pts:10,you:+8,them:+6,world:+4,outcome:'Mia managed and appreciated the help, even if it was a little awkward.',lesson:'Partial help is still help — but full generosity is even more beautiful!'},
+    {icon:'🙅',title:'Keep all your crayons — you might need them all.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+2,them:-12,world:-8,outcome:'Mia sat with a blank page. You finished your art, but it felt hollow seeing her struggle.',lesson:'Having everything and enjoying nothing — that\'s what hoarding costs us!'}
+   ]},
+  {icon:'☂️',who:'Rainy day at the bus stop',res:['☂️'],
+   text:'You have one umbrella and it is raining hard. A younger child is getting soaked at the same bus stop, shivering.',
+   q:'What do you do with your umbrella?',
+   choices:[
+    {icon:'💞',title:'Share the umbrella and stand together under it.',tag:'generous',tagLabel:'Generous',pts:20,you:+5,them:+20,world:+14,outcome:'You both stayed drier and the child smiled the whole bus ride. You felt warm inside despite the rain!',lesson:'A small act of sharing in a tough moment creates the biggest warmth!'},
+    {icon:'🤷',title:'Offer the child the umbrella and get a little wet yourself.',tag:'fair',tagLabel:'Fair',pts:12,you:-2,them:+20,world:+10,outcome:'The child was dry and safe. You got a little wet but felt like a hero!',lesson:'Sometimes generosity costs us a little — and is completely worth it!'},
+    {icon:'😐',title:'Stay dry under your umbrella and hope the child is okay.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+8,them:-14,world:-8,outcome:'You stayed dry, but watching the child shiver made you feel uncomfortable the whole ride.',lesson:'Our comfort feels hollow when we know someone near us is struggling!'}
+   ]},
+  {icon:'📚',who:'Test prep with Leo',res:['📖','📖','📖'],
+   text:'You spent weeks making amazing study notes. Your classmate Leo asks if he can borrow them before the big test. You worked hard for them!',
+   q:'What do you do with your notes?',
+   choices:[
+    {icon:'📤',title:'Share your notes happily — learning is better together!',tag:'generous',tagLabel:'Generous',pts:20,you:+4,them:+18,world:+12,outcome:'Leo aced the test and thanked you with a heartfelt card. You both felt proud together!',lesson:'Shared knowledge grows — it doesn\'t shrink! Helping others learn lifts everyone up!'},
+    {icon:'📋',title:'Let him copy a few pages but keep your best notes.',tag:'fair',tagLabel:'Fair',pts:10,you:+8,them:+8,world:+5,outcome:'Leo got some help and appreciated it. A decent choice that helped a little.',lesson:'Even partial help is meaningful — and full generosity would have been even better!'},
+    {icon:'🔒',title:'Say no — you worked hard and he should have done his own!',tag:'selfish',tagLabel:'Selfish',pts:0,you:+4,them:-12,world:-6,outcome:'Leo struggled and felt hurt by your refusal. Your grades stayed the same but the friendship cooled.',lesson:'Protecting our work is fair — but refusing to ever help holds everyone back!'}
+   ]},
+  {icon:'🍎',who:'Snack time!',res:['🍎','🍊','🍌','🍇','🫐'],
+   text:'You have 5 different snacks — more than enough for yourself. Three friends have no snacks today.',
+   q:'How do you handle your snacks?',
+   choices:[
+    {icon:'🌈',title:'Lay them all out and invite friends to take one each.',tag:'generous',tagLabel:'Generous',pts:20,you:+4,them:+16,world:+14,outcome:'Snack time became a sharing party! Everyone tried something new and laughed together.',lesson:'The joy of sharing a table is always greater than eating alone with plenty!'},
+    {icon:'😊',title:'Give away two snacks and keep three for yourself.',tag:'fair',tagLabel:'Fair',pts:10,you:+8,them:+8,world:+6,outcome:'Two friends got a treat and were grateful. A fair and kind choice!',lesson:'Even sharing a little changes someone\'s whole day!'},
+    {icon:'😬',title:'Eat all your snacks quickly before anyone asks.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+5,them:-10,world:-8,outcome:'You finished everything but felt guilty seeing your hungry friends. The taste felt a little sour.',lesson:'Eating alone while others go without is hard on the heart — even if the snacks are great!'}
+   ]},
+  {icon:'🎮',who:'Game time with Pip',res:['🕹️','🕹️'],
+   text:'There are two controllers but three kids want to play — you, Pip, and a new kid named Sam who has never played before.',
+   q:'Who gets to play?',
+   choices:[
+    {icon:'🔄',title:'Take turns — everyone gets equal rounds including Sam.',tag:'generous',tagLabel:'Generous',pts:20,you:+5,them:+16,world:+14,outcome:'Sam turned out to be amazing once he learned! You discovered a new friend AND a worthy rival!',lesson:'Including newcomers almost always brings unexpected joy to everyone!'},
+    {icon:'⏱️',title:'You and Pip play first, then let Sam have a short turn.',tag:'fair',tagLabel:'Fair',pts:10,you:+8,them:+6,world:+4,outcome:'Sam got a taste of the game and felt included enough. A decent solution!',lesson:'A shorter turn beats no turn — but true fairness means equal turns for all!'},
+    {icon:'🚫',title:'You and Pip play — Sam can watch since he doesn\'t know the game.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+5,them:-14,world:-10,outcome:'Sam sat alone watching. The game was fun but a quiet discomfort settled over everyone.',lesson:'Exclusion — even for practical reasons — always leaves someone feeling like they don\'t belong!'}
+   ]},
+  {icon:'💧',who:'The dry garden',res:['🪣','💧','💧','💧','💧'],
+   text:'There is a water shortage. You have a full bucket. Your neighbour\'s vegetable garden is dying — they feed their whole family from it.',
+   q:'What do you do with your water?',
+   choices:[
+    {icon:'🌱',title:'Share half your water to save their garden.',tag:'generous',tagLabel:'Generous',pts:20,you:+3,them:+20,world:+16,outcome:'The garden was saved! Your neighbour brought you fresh vegetables all summer as a thank you.',lesson:'Sharing essential resources creates bonds and returns that money never can!'},
+    {icon:'💧',title:'Give a little water to keep the most important plants alive.',tag:'fair',tagLabel:'Fair',pts:12,you:+6,them:+10,world:+8,outcome:'The most important crops survived. A thoughtful and practical act of kindness!',lesson:'Even a small share of something precious makes a real difference!'},
+    {icon:'🔐',title:'Keep all your water — you might need it too.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+10,them:-18,world:-12,outcome:'Their garden died and the family struggled with food. Your bucket sat full and the guilt sat heavy.',lesson:'When we have more than enough, holding all of it costs others everything!'}
+   ]},
+  {icon:'🏆',who:'The trophy moment',res:['🏅','🏅','🏅'],
+   text:'Your team won a competition and there are only 3 medals — but 5 people helped. You are the team captain and decide who gets them.',
+   q:'What do you decide?',
+   choices:[
+    {icon:'🌟',title:'Give medals to the 3 who helped most AND find another reward for all.',tag:'generous',tagLabel:'Generous',pts:20,you:+6,them:+16,world:+14,outcome:'Everyone felt honoured. The two without medals got hand-written thank you notes. They cried happy tears!',lesson:'Recognition doesn\'t have to be official to be meaningful — creative inclusion matters!'},
+    {icon:'🎖️',title:'Give medals to the top 3 contributors fairly.',tag:'fair',tagLabel:'Fair',pts:10,you:+8,them:+8,world:+5,outcome:'A fair decision. The other two were a little sad but understood the reasoning.',lesson:'Fairness is good — creative inclusion is even better when possible!'},
+    {icon:'😏',title:'Give yourself one and let the team argue about the rest.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+5,them:-14,world:-10,outcome:'The team argued and felt hurt. The victory celebration turned sour for everyone.',lesson:'A leader who grabs the prize first loses the respect that makes leadership worth having!'}
+   ]},
+  {icon:'🌻',who:'The community garden',res:['🌻','🌻','🌻','🌻','🌻','🌻','🌻','🌻'],
+   text:'You grew 8 sunflowers in the community garden. They are beautiful. Visitors keep stopping to admire them.',
+   q:'What do you do with your flowers?',
+   choices:[
+    {icon:'💐',title:'Leave them in the garden for everyone to enjoy all season.',tag:'generous',tagLabel:'Generous',pts:20,you:+6,them:+20,world:+18,outcome:'Hundreds of people smiled at your sunflowers all summer! You became the hero of the whole neighbourhood.',lesson:'Some gifts are multiplied when shared with everyone — don\'t pick what\'s better left blooming!'},
+    {icon:'🌷',title:'Keep 4 and give 4 to neighbours and friends.',tag:'fair',tagLabel:'Fair',pts:10,you:+10,them:+10,world:+8,outcome:'Your home was bright and several families got a beautiful gift. A warm and balanced choice!',lesson:'Splitting what you love is a beautiful way to spread beauty further than it could reach alone!'},
+    {icon:'🏠',title:'Cut them all and keep them for your own home.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+12,them:-8,world:-10,outcome:'Your home was gorgeous, but the garden looked empty and neighbours felt sad.',lesson:'Some things we create belong to a bigger world than just ourselves!'}
+   ]},
+  {icon:'⏰',who:'The last seat',res:['💺'],
+   text:'You arrive early at a crowded community event and save the last good seat. An elderly person arrives just after you, looking tired.',
+   q:'What do you do with your seat?',
+   choices:[
+    {icon:'🧓',title:'Stand up and offer your seat with a warm smile.',tag:'generous',tagLabel:'Generous',pts:20,you:-2,them:+22,world:+18,outcome:'The elder sat down gratefully. "Bless you, child," they said. You stood comfortably, feeling ten feet tall.',lesson:'Sometimes the smallest sacrifice creates the biggest moment of grace!'},
+    {icon:'🤝',title:'Offer the seat but also look for another chair to bring over.',tag:'fair',tagLabel:'Fair',pts:14,you:+4,them:+18,world:+12,outcome:'You solved the problem creatively! Both of you sat comfortably and the elder was so impressed.',lesson:'Generous problem-solving — helping AND finding a better solution — is true leadership!'},
+    {icon:'📱',title:'Pretend to look at your phone and hope they find another seat.',tag:'selfish',tagLabel:'Selfish',pts:0,you:+6,them:-14,world:-10,outcome:'The elder stood for an hour. You noticed their struggle the whole time and couldn\'t enjoy the event.',lesson:'Pretending not to see someone who needs help is a choice — and it weighs on us!'}
+   ]}
+];
+
+const TOTAL=10;
+let idx=0,score=0,hYou=50,hThem=50,hWorld=50,busy=false,genCount=0;
+
+function clamp(v){return Math.max(0,Math.min(100,v));}
+
+function startGame(){
+  idx=0;score=0;hYou=50;hThem=50;hWorld=50;busy=false;genCount=0;
+  document.getElementById('end-screen').style.display='none';
+  document.getElementById('world-ticker').style.display='none';
+  updateBars();updateTopbar();loadScene();
+}
+
+function loadScene(){
+  busy=false;
+  document.getElementById('outcome').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('world-ticker').style.display='none';
+  const s=SCENES[idx];
+  document.getElementById('scene-num').textContent=`SCENE ${idx+1} OF ${TOTAL}`;
+  document.getElementById('scene-icon').textContent=s.icon;
+  document.getElementById('scene-icon').style.animation='none';
+  setTimeout(()=>document.getElementById('scene-icon').style.animation='',50);
+  document.getElementById('scene-who').textContent=s.who;
+  document.getElementById('scene-text').textContent=s.text;
+  document.getElementById('scene-q').textContent=s.q;
+  document.getElementById('resource-display').innerHTML=s.res.map(r=>`<span class="res-item">${r}</span>`).join('');
+  updateTopbar();
+
+  const el=document.getElementById('choices');el.innerHTML='';
+  s.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');btn.className='ch';
+    btn.innerHTML=`<div class="ch-header"><span class="ch-icon">${c.icon}</span><span class="ch-title">${c.title}</span><span class="ch-tag tag-${c.tag}">${c.tagLabel}</span></div><div class="ch-desc">You: ${c.you>0?'+'+c.you:c.you} happiness | Others: ${c.them>0?'+'+c.them:c.them} happiness</div>`;
+    btn.addEventListener('click',()=>pick(btn,c));
+    el.appendChild(btn);
+  });
+}
+
+function pick(btn,choice){
+  if(busy)return;busy=true;
+  document.querySelectorAll('.ch').forEach(b=>b.disabled=true);
+  btn.classList.add(`picked-${choice.tag}`);
+  score+=choice.pts;
+  if(choice.tag==='generous')genCount++;
+  hYou=clamp(hYou+choice.you);
+  hThem=clamp(hThem+choice.them);
+  hWorld=clamp(hWorld+choice.world);
+  updateBars();updateTopbar();
+
+  const oc=document.getElementById('outcome');
+  oc.className=`outcome ${choice.tag==='selfish'?'selfish':choice.tag==='generous'?'generous':'fair'}`;
+  oc.innerHTML=`<div class="ot">${choice.tag==='generous'?'💚 So Generous! +'+choice.pts+' pts':choice.tag==='fair'?'🟡 Fair Choice! +'+choice.pts+' pts':'❌ That was selfish...'}</div><div class="od">${choice.outcome}</div><div class="lesson-box">💡 ${choice.lesson}</div>`;
+  oc.style.display='block';
+  if(choice.tag==='generous')confetti(btn);
+
+  const wt=document.getElementById('world-ticker');
+  wt.style.display='block';
+  wt.innerHTML=`🌍 World Happiness is now <span style="color:${hWorld>60?'#00b894':hWorld>35?'#fdcb6e':'#ff7675'}">${hWorld}%</span> — ${hWorld>70?'The world feels wonderful! 🌈':hWorld>45?'The world is okay 😊':'The world needs more kindness! 💙'}`;
+
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('next-btn').textContent=idx+1>=TOTAL?'See your results! 🌟':'Next Scene ➡️';
+  idx++;
+}
+
+function nextScene(){
+  if(idx>=TOTAL){endGame();return;}
+  loadScene();
+}
+
+function updateBars(){
+  ['you','them','world'].forEach(k=>{
+    const val=k==='you'?hYou:k==='them'?hThem:hWorld;
+    document.getElementById('bar-'+k).style.width=val+'%';
+    document.getElementById('val-'+k).textContent=val;
+    document.getElementById('bar-'+k).style.background=val>60?(k==='you'?'linear-gradient(90deg,#fdcb6e,#ff9f43)':k==='them'?'linear-gradient(90deg,#74b9ff,#6c5ce7)':'linear-gradient(90deg,#55efc4,#00b894)'):val>35?'linear-gradient(90deg,#fdcb6e,#ffeaa7)':'linear-gradient(90deg,#ff7675,#fd79a8)';
+  });
+}
+
+function updateTopbar(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('rnum').textContent=`${Math.min(idx+1,TOTAL)}/${TOTAL}`;
+  document.getElementById('world-val').textContent=hWorld+'%';
+}
+
+function endGame(){
+  const pct=score/(TOTAL*20);
+  let stars='⭐',icon='💪',title='Keep Growing!',msg='Every act of generosity makes the world a little brighter!';
+  if(pct>=.9){stars='⭐⭐⭐';icon='🏆';title='Generosity Champion!';msg='You chose generosity almost every time! The world is SO much better with you in it! 🌍💚';}
+  else if(pct>=.65){stars='⭐⭐⭐';icon='🌟';title='Big-Hearted Hero!';msg='You made so many wonderful sharing choices! Your kindness really added up! 💛';}
+  else if(pct>=.4){stars='⭐⭐';icon:'😊',title='Getting Generous!';msg='You\'re learning how sharing creates more happiness for everyone. Keep it up! 🌱';}
+  document.getElementById('end-icon').textContent=icon;
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent=`${score} pts · World Happiness: ${hWorld}%`;
+  document.getElementById('end-msg').textContent=msg;
+  const ec=document.getElementById('end-cards');ec.innerHTML='';
+  [{label:'😊 Your Happiness',val:hYou,col:'#fdcb6e'},{label:'👥 Others\' Happiness',val:hThem,col:'#74b9ff'},{label:'🌍 World Happiness',val:hWorld,col:'#00b894'}].forEach(item=>{
+    const d=document.createElement('div');d.className='title-card';
+    d.innerHTML=`<b style="color:${item.col}">${item.label}</b>Ended at <strong>${item.val}%</strong> — ${item.val>70?'Thriving! 🌈':item.val>45?'Doing okay 😊':'Needs more kindness 💙'}`;
+    ec.appendChild(d);
+  });
+  const badges=document.getElementById('badges');badges.innerHTML='';
+  const earned=[];
+  if(genCount===TOTAL)earned.push({label:'💯 Pure Generosity',bg:'#00b894'});
+  if(hWorld>=80)earned.push({label:'🌍 World Healer',bg:'#55efc4'});
+  if(hThem>=80)earned.push({label:'💙 Friend of All',bg:'#74b9ff'});
+  if(genCount>=7)earned.push({label:'💚 Generous Heart',bg:'#fdcb6e'});
+  earned.push({label:'🤲 Sharer',bg:'#fd79a8'});
+  earned.forEach(b=>{const el=document.createElement('span');el.className='badge';el.textContent=b.label;el.style.background=b.bg;badges.appendChild(el);});
+  document.getElementById('end-screen').style.display='flex';
+  confettiAll();
+}
+
+function confettiAll(){
+  const em=['🤲','💚','⭐','✨','💛','🌍','🌟'];
+  for(let i=0;i<18;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*60+10+'vh';
+    el.style.setProperty('--dx',(Math.random()*100-50)+'px');el.style.setProperty('--dy',(Math.random()*80-100)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  },i*80);
+}
+
+function confetti(ref){
+  const r=ref.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const em=['💚','🌸','⭐','✨','💛','🤲'];
+  for(let i=0;i<9;i++){
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=cx+'px';el.style.top=cy+'px';
+    const a=Math.random()*Math.PI*2,d=70+Math.random()*70;
+    el.style.setProperty('--dx',Math.cos(a)*d+'px');el.style.setProperty('--dy',Math.sin(a)*d+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),850);
+  }
+}
+
+startGame();
+</script>
+</body>
+</html>

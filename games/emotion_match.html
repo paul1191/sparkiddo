@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Emotion Match</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#fff9f0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+
+  /* BG blobs */
+  .blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.18;pointer-events:none;z-index:0}
+  .b1{width:320px;height:320px;background:#ff6fb7;top:-80px;left:-80px}
+  .b2{width:280px;height:280px;background:#ffd93d;top:60px;right:-60px}
+  .b3{width:260px;height:260px;background:#6bceff;bottom:-60px;left:30px}
+  .b4{width:220px;height:220px;background:#a29bfe;bottom:40px;right:-40px}
+
+  main{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center}
+
+  /* header */
+  header{text-align:center;margin-bottom:18px}
+  h1{font-family:'Fredoka One',cursive;font-size:2.2rem;background:linear-gradient(135deg,#ff6fb7,#ffd93d,#6bceff,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
+  .tagline{font-size:.85rem;color:#888;font-weight:600;letter-spacing:1px}
+
+  /* level pills */
+  #levels{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+  .lv{padding:7px 18px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;border:3px solid transparent;transition:.2s;color:#fff}
+  .lv.easy{background:#ff6fb7;border-color:#ff6fb7}
+  .lv.med{background:#ffa94d;border-color:#ffa94d}
+  .lv.hard{background:#a29bfe;border-color:#a29bfe}
+  .lv:not(.active){opacity:.45}
+  .lv.active{opacity:1;transform:scale(1.08);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+
+  /* topbar */
+  #topbar{display:flex;gap:14px;margin-bottom:16px;width:100%;justify-content:center}
+  .tb{background:#fff;border-radius:14px;padding:8px 18px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .tb-label{font-size:.65rem;color:#aaa;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .tb-val{font-size:1.3rem;font-family:'Fredoka One',cursive;color:#555}
+
+  /* progress */
+  #prog-wrap{width:100%;background:#ffe0f0;border-radius:99px;height:12px;margin-bottom:18px;overflow:hidden}
+  #prog-bar{height:100%;background:linear-gradient(90deg,#ff6fb7,#ffd93d);border-radius:99px;transition:width .4s}
+
+  /* character display */
+  #char-wrap{position:relative;margin-bottom:20px}
+  #char-bubble{background:#fff;border-radius:24px;padding:16px 24px;box-shadow:0 6px 24px rgba(0,0,0,.1);text-align:center;min-width:280px}
+  #char-face{font-size:5rem;display:block;animation:bounce 1.8s ease-in-out infinite;line-height:1}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+  #char-name{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-top:6px;color:#555}
+  #situation{font-size:.88rem;color:#777;font-weight:600;margin-top:6px;line-height:1.5;max-width:280px}
+
+  /* question label */
+  #q-label{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#444;margin-bottom:14px;text-align:center}
+
+  /* answer grid */
+  #answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-bottom:16px}
+  .ans{background:#fff;border-radius:18px;padding:14px 10px;text-align:center;cursor:pointer;transition:.18s;box-shadow:0 4px 14px rgba(0,0,0,.08);border:3px solid transparent;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .ans:hover:not(:disabled){transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+  .ans:disabled{cursor:default}
+  .ans .em{font-size:2.4rem;line-height:1}
+  .ans .lbl{font-family:'Fredoka One',cursive;font-size:1rem;color:#555}
+  .ans.correct{background:#d4f8e8;border-color:#2ecc71;animation:pop .35s ease}
+  .ans.wrong{background:#fde8e8;border-color:#e74c3c}
+  .ans.reveal{background:#d4f8e8;border-color:#2ecc71}
+  @keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+  /* feedback */
+  #feedback{font-family:'Fredoka One',cursive;font-size:1.1rem;min-height:1.5em;margin-bottom:14px;text-align:center}
+  #feedback.correct{color:#2ecc71}
+  #feedback.wrong{color:#e74c3c}
+
+  /* fun fact */
+  #funfact{background:#fff;border-radius:16px;padding:12px 18px;font-size:.82rem;color:#888;font-weight:600;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.06);margin-bottom:16px;line-height:1.6;max-width:420px;display:none}
+  #funfact span{color:#ff6fb7;font-size:.9rem}
+
+  /* confetti burst */
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.5rem;animation:cfburst .8s ease forwards;z-index:999}
+
+  /* overlay */
+  #overlay{position:fixed;inset:0;background:rgba(255,249,240,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center}
+  #overlay .ov-icon{font-size:5rem;margin-bottom:12px;animation:bounce 1.8s ease-in-out infinite}
+  #overlay h2{font-family:'Fredoka One',cursive;font-size:2rem;background:linear-gradient(135deg,#ff6fb7,#ffd93d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  #overlay p{font-size:.9rem;color:#888;font-weight:600;margin-bottom:6px;line-height:2}
+  .ov-btn{background:linear-gradient(135deg,#ff6fb7,#ffa94d);color:#fff;border:none;padding:13px 32px;font-family:'Fredoka One',cursive;font-size:1.2rem;border-radius:99px;cursor:pointer;box-shadow:0 6px 20px rgba(255,111,183,.4);margin-top:20px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+
+  /* end screen */
+  #end-screen{position:fixed;inset:0;background:rgba(255,249,240,.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center}
+  #end-screen h2{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:6px}
+  .stars-row{font-size:2.2rem;margin:8px 0}
+  .end-score{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#ff6fb7;margin:8px 0}
+  .end-msg{font-size:.9rem;color:#888;font-weight:600;margin-bottom:20px;line-height:1.8}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0 18px}
+  .badge{padding:7px 16px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#fff}
+
+  @media(max-width:420px){h1{font-size:1.7rem}#char-face{font-size:4rem}.ans .em{font-size:2rem}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+
+<main>
+<header>
+  <h1>🎭 Emotion Match</h1>
+  <p class="tagline">How does the character feel?</p>
+</header>
+
+<div id="levels">
+  <button class="lv easy active" onclick="setLevel('easy',this)">⭐ Easy</button>
+  <button class="lv med" onclick="setLevel('med',this)">⭐⭐ Medium</button>
+  <button class="lv hard" onclick="setLevel('hard',this)">⭐⭐⭐ Hard</button>
+</div>
+
+<div id="topbar">
+  <div class="tb"><div class="tb-label">Score</div><div class="tb-val" id="score">0</div></div>
+  <div class="tb"><div class="tb-label">Question</div><div class="tb-val" id="qnum">1/10</div></div>
+  <div class="tb"><div class="tb-label">🔥 Streak</div><div class="tb-val" id="streak">0</div></div>
+</div>
+
+<div id="prog-wrap"><div id="prog-bar" style="width:0%"></div></div>
+
+<div id="char-wrap">
+  <div id="char-bubble">
+    <span id="char-face">😊</span>
+    <div id="char-name">Mia the Fox</div>
+    <div id="situation">Loading...</div>
+  </div>
+</div>
+
+<div id="q-label">How is this character feeling?</div>
+<div id="feedback">&nbsp;</div>
+<div id="answers"></div>
+<div id="funfact"></div>
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">🎭</div>
+  <h2>Emotion Match!</h2>
+  <p>Read the situation carefully.<br>Pick the emotion that best fits!<br>⭐ Easy — 4 basic feelings<br>⭐⭐ Medium — 6 feelings + situations<br>⭐⭐⭐ Hard — 10 feelings, tricky situations!</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none';startGame()">Let's Play! 🎉</button>
+</div>
+
+<div id="end-screen">
+  <div id="end-icon" style="font-size:4rem;margin-bottom:10px">🌟</div>
+  <h2 id="end-title" style="color:#ff6fb7">Amazing Job!</h2>
+  <div class="stars-row" id="end-stars">⭐⭐⭐</div>
+  <div class="end-score" id="end-score">Score: 0</div>
+  <div class="badge-row" id="badges"></div>
+  <div class="end-msg" id="end-msg">You are an emotion expert!</div>
+  <button class="ov-btn" onclick="document.getElementById('end-screen').style.display='none';startGame()">Play Again! 🎉</button>
+</div>
+
+<script>
+const CHARS=[
+  {name:'Mia the Fox',face:'🦊'},{name:'Leo the Lion',face:'🦁'},{name:'Pip the Penguin',face:'🐧'},
+  {name:'Zara the Zebra',face:'🦓'},{name:'Benny the Bear',face:'🐻'},{name:'Luna the Bunny',face:'🐰'}
+];
+
+const EMOTIONS={
+  happy:  {em:'😄',label:'Happy',   color:'#ffd93d',fact:'When we feel happy, our brain releases a chemical called dopamine! 🧠'},
+  sad:    {em:'😢',label:'Sad',     color:'#74b9ff',fact:'Feeling sad is totally okay. Crying can actually make us feel better! 💧'},
+  angry:  {em:'😠',label:'Angry',   color:'#ff7675',fact:'Taking 3 deep breaths when angry helps calm your body down! 😤➡️😊'},
+  scared: {em:'😨',label:'Scared',  color:'#a29bfe',fact:'Being scared is your brain trying to keep you safe! That\'s brave! 🛡️'},
+  surprised:{em:'😲',label:'Surprised',color:'#fd79a8',fact:'Surprises activate the same brain part as curiosity! 🎉'},
+  excited:{em:'🤩',label:'Excited', color:'#ff9f43',fact:'Excitement and nervousness feel almost the same in your body! ⚡'},
+  proud:  {em:'😊',label:'Proud',   color:'#55efc4',fact:'Feeling proud helps you want to keep working hard and doing your best! 💪'},
+  worried:{em:'😟',label:'Worried', color:'#636e72',fact:'Talking to someone you trust is the best way to feel less worried! 🤗'},
+  silly:  {em:'🤪',label:'Silly',   color:'#e17055',fact:'Laughing and being silly is great for your health — it\'s like mini exercise! 😂'},
+  shy:    {em:'😶',label:'Shy',     color:'#b2bec3',fact:'Many famous performers were very shy as kids. Shyness can turn into strength! 🌸'},
+  grateful:{em:'🥰',label:'Grateful',color:'#ff6fb7',fact:'Writing 3 things you\'re grateful for each day makes you happier! 📖'},
+  confused:{em:'🤔',label:'Confused',color:'#fdcb6e',fact:'Feeling confused means your brain is trying to learn something new! 🧩'}
+};
+
+const SITUATIONS={
+  easy:[
+    {emotion:'happy',char:0,text:'Mia just got a big birthday cake with her favourite flavour!'},
+    {emotion:'sad',char:1,text:'Leo\'s best friend moved to another city today.'},
+    {emotion:'angry',char:2,text:'Pip\'s sister broke his favourite toy by accident.'},
+    {emotion:'scared',char:3,text:'Zara heard a big loud thunderstorm at night.'},
+    {emotion:'happy',char:4,text:'Benny found a surprise gift under his pillow!'},
+    {emotion:'sad',char:5,text:'Luna\'s pet goldfish stopped swimming today.'},
+    {emotion:'angry',char:0,text:'Mia waited a long time but nobody came to play.'},
+    {emotion:'scared',char:1,text:'Leo has to go to the doctor for the very first time.'},
+    {emotion:'happy',char:2,text:'Pip got a gold star from his teacher today!'},
+    {emotion:'sad',char:3,text:'Zara dropped her ice cream on the ground.'},
+  ],
+  med:[
+    {emotion:'excited',char:4,text:'Benny is going to an amusement park tomorrow!'},
+    {emotion:'proud',char:5,text:'Luna finished her art project all by herself.'},
+    {emotion:'worried',char:0,text:'Mia forgot to do her homework and school is tomorrow.'},
+    {emotion:'surprised',char:1,text:'Leo walked in and all his friends jumped out yelling "Surprise!"'},
+    {emotion:'shy',char:2,text:'Pip has to read his story in front of the whole class.'},
+    {emotion:'excited',char:3,text:'Zara just found out she is going to get a puppy!'},
+    {emotion:'proud',char:4,text:'Benny helped a smaller animal who was lost find its home.'},
+    {emotion:'worried',char:5,text:'Luna is going to her first day at a brand new school.'},
+    {emotion:'surprised',char:0,text:'Mia found a mysterious wrapped box with her name on it!'},
+    {emotion:'shy',char:1,text:'Leo wants to talk to a new friend but feels nervous.'},
+  ],
+  hard:[
+    {emotion:'grateful',char:2,text:'Pip\'s grandma stayed up late to make his favourite food just for him.'},
+    {emotion:'confused',char:3,text:'Zara got a present she really didn\'t expect at all and isn\'t sure why.'},
+    {emotion:'silly',char:4,text:'Benny kept making funny faces to cheer up his sad friend.'},
+    {emotion:'proud',char:5,text:'Luna tried really hard at swimming and finally crossed the whole pool!'},
+    {emotion:'worried',char:0,text:'Mia can hear her parents talking in a serious voice and she doesn\'t know why.'},
+    {emotion:'grateful',char:1,text:'Leo\'s friend shared his lunch when Leo forgot his own.'},
+    {emotion:'confused',char:2,text:'Pip\'s teacher said "great work" but also said "try harder" — which one is right?'},
+    {emotion:'silly',char:3,text:'Zara accidentally wore her shirt backwards all day and only noticed at lunch.'},
+    {emotion:'proud',char:4,text:'Benny stood up and told the truth even though it was hard.'},
+    {emotion:'grateful',char:5,text:'Luna\'s whole family cheered when she scored her first goal!'},
+  ]
+};
+
+const POOL_BY_LEVEL={easy:['happy','sad','angry','scared'],med:['happy','sad','excited','surprised','proud','worried','shy'],hard:Object.keys(EMOTIONS)};
+const TOTAL=10;
+let level='easy',qIdx=0,score=0,streak=0,correct=0,busy=false,char=null;
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r;}
+
+function setLevel(l,btn){
+  level=l;
+  document.querySelectorAll('.lv').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  startGame();
+}
+
+function startGame(){
+  qIdx=0;score=0;streak=0;correct=0;busy=false;
+  document.getElementById('end-screen').style.display='none';
+  updateTopbar();nextQ();
+}
+
+function nextQ(){
+  if(qIdx>=TOTAL){endGame();return;}
+  busy=false;
+  document.getElementById('feedback').innerHTML='&nbsp;';
+  document.getElementById('feedback').className='';
+  document.getElementById('funfact').style.display='none';
+
+  const situ=SITUATIONS[level][qIdx];
+  char=CHARS[situ.char];
+  document.getElementById('char-face').textContent=char.face;
+  document.getElementById('char-name').textContent=char.name;
+  document.getElementById('situation').textContent=situ.text;
+  document.getElementById('char-face').style.animation='none';
+  setTimeout(()=>document.getElementById('char-face').style.animation='',50);
+
+  const correct_emo=situ.emotion;
+  const pool=POOL_BY_LEVEL[level].filter(e=>e!==correct_emo);
+  const choices=shuffle(pool).slice(0,level==='easy'?3:level==='med'?3:3);
+  choices.push(correct_emo);
+  const opts=shuffle(choices);
+
+  const el=document.getElementById('answers');el.innerHTML='';
+  el.style.gridTemplateColumns=opts.length===4?'1fr 1fr':'repeat(2,1fr)';
+  opts.forEach(key=>{
+    const e=EMOTIONS[key];
+    const btn=document.createElement('button');btn.className='ans';
+    btn.innerHTML=`<span class="em">${e.em}</span><span class="lbl">${e.label}</span>`;
+    btn.style.setProperty('--c',e.color);
+    btn.addEventListener('click',()=>answer(key===correct_emo,btn,correct_emo,e));
+    el.appendChild(btn);
+  });
+  updateTopbar();
+}
+
+function answer(isCorrect,btn,correctKey,emo){
+  if(busy)return;busy=true;
+  document.querySelectorAll('.ans').forEach(b=>{b.disabled=true;});
+  const correctBtn=[...document.querySelectorAll('.ans')].find(b=>b.querySelector('.lbl').textContent===EMOTIONS[correctKey].label);
+  if(correctBtn)correctBtn.classList.add('reveal');
+
+  const ff=document.getElementById('funfact');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    streak++;correct++;
+    const bonus=streak>=3?streak*2:0;
+    score+=10+bonus;
+    document.getElementById('feedback').textContent=streak>=3?`🌟 Amazing! Streak x${streak}! +${10+bonus}`:'✅ Correct! Great job! +10';
+    document.getElementById('feedback').className='correct';
+    confetti(btn);
+    // fun fact
+    ff.innerHTML=`<span>💡 Fun Fact: </span>${EMOTIONS[correctKey].fact}`;
+    ff.style.display='block';
+  } else {
+    btn.classList.add('wrong');streak=0;
+    document.getElementById('feedback').textContent=`❌ It was "${EMOTIONS[correctKey].label}" — you'll get it next time!`;
+    document.getElementById('feedback').className='wrong';
+    ff.innerHTML=`<span>💡 Remember: </span>${EMOTIONS[correctKey].fact}`;
+    ff.style.display='block';
+  }
+  updateTopbar();qIdx++;
+  setTimeout(nextQ,2200);
+}
+
+function updateTopbar(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('streak').textContent=streak;
+  document.getElementById('qnum').textContent=`${Math.min(qIdx+1,TOTAL)}/${TOTAL}`;
+  document.getElementById('prog-bar').style.width=`${(qIdx/TOTAL)*100}%`;
+}
+
+function confetti(ref){
+  const r=ref.getBoundingClientRect();
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const emojis=['⭐','✨','💫','🌸','🎉','💖','🌟'];
+  for(let i=0;i<10;i++){
+    const el=document.createElement('div');el.className='cf';
+    el.textContent=emojis[rnd(0,emojis.length-1)];
+    el.style.left=cx+'px';el.style.top=cy+'px';
+    const angle=Math.random()*Math.PI*2;
+    const dist=80+Math.random()*80;
+    el.style.setProperty('--dx',Math.cos(angle)*dist+'px');
+    el.style.setProperty('--dy',Math.sin(angle)*dist+'px');
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),850);
+  }
+}
+
+function endGame(){
+  const pct=correct/TOTAL;
+  let stars='⭐',icon='💪',title='Keep Practicing!',msg='Every feeling matters — keep learning!';
+  if(pct===1){stars='⭐⭐⭐';icon='🏆';title='Emotion Master!';msg='Perfect score! You understand feelings SO well! You are amazing! 💖';}
+  else if(pct>=.8){stars='⭐⭐⭐';icon='🌟';title='Fantastic Job!';msg='You are great at understanding how others feel! Keep it up! 🎉';}
+  else if(pct>=.6){stars='⭐⭐';icon='😊';title='Good Job!';msg='You\'re learning so much about emotions! Practice makes perfect! 💪';}
+  document.getElementById('end-icon').textContent=icon;
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent=`Score: ${score} · ${correct}/${TOTAL} correct`;
+  document.getElementById('end-msg').textContent=msg;
+  // badges
+  const badges=document.getElementById('badges');badges.innerHTML='';
+  const earned=[];
+  if(correct===TOTAL)earned.push({label:'🏆 Perfect!',bg:'#ffd93d'});
+  if(streak>=3)earned.push({label:'🔥 On Fire!',bg:'#ff7675'});
+  if(score>=120)earned.push({label:'⭐ High Scorer',bg:'#a29bfe'});
+  earned.push({label:'💖 Empathy Hero',bg:'#ff6fb7'});
+  earned.forEach(b=>{const el=document.createElement('span');el.className='badge';el.textContent=b.label;el.style.background=b.bg;badges.appendChild(el);});
+  document.getElementById('end-screen').style.display='flex';
+}
+</script>
+</body>
+</html>

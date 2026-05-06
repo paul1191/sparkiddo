@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Kindness Quest</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f0fff4;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.18;pointer-events:none;z-index:0}
+  .b1{width:300px;height:300px;background:#55efc4;top:-80px;left:-60px}
+  .b2{width:260px;height:260px;background:#ffeaa7;top:40px;right:-60px}
+  .b3{width:240px;height:240px;background:#fd79a8;bottom:-60px;left:20px}
+  .b4{width:200px;height:200px;background:#74b9ff;bottom:30px;right:-40px}
+  main{position:relative;z-index:1;width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center}
+
+  h1{font-family:'Fredoka One',cursive;font-size:2.1rem;background:linear-gradient(135deg,#00b894,#fdcb6e,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px;text-align:center}
+  .tagline{font-size:.85rem;color:#888;font-weight:600;letter-spacing:1px;margin-bottom:16px;text-align:center}
+
+  /* chain progress */
+  #chain-wrap{width:100%;background:#fff;border-radius:20px;padding:14px 18px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:16px}
+  #chain-label{font-family:'Fredoka One',cursive;font-size:.9rem;color:#555;margin-bottom:10px;text-align:center}
+  #chain-links{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .link{width:34px;height:34px;border-radius:50%;border:3px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:.3s;background:#f9f9f9}
+  .link.done{border-color:#00b894;background:#d4f8e8;animation:linkpop .4s ease}
+  .link.current{border-color:#fdcb6e;background:#fff9e6;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes linkpop{0%{transform:scale(.6)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(253,203,110,.4)}50%{box-shadow:0 0 0 8px rgba(253,203,110,0)}}
+
+  /* topbar */
+  #topbar{display:flex;gap:12px;margin-bottom:16px;width:100%;justify-content:center;flex-wrap:wrap}
+  .tb{background:#fff;border-radius:14px;padding:8px 16px;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .tb-label{font-size:.6rem;color:#aaa;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .tb-val{font-size:1.2rem;font-family:'Fredoka One',cursive;color:#555}
+
+  /* scene card */
+  #scene-card{background:#fff;border-radius:24px;padding:20px;box-shadow:0 6px 24px rgba(0,0,0,.1);width:100%;margin-bottom:16px;text-align:center;transition:.3s}
+  #scene-icon{font-size:4.5rem;display:block;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  #scene-who{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#444;margin-bottom:6px}
+  #scene-situation{font-size:.95rem;color:#666;font-weight:600;line-height:1.6;margin-bottom:12px;padding:0 8px}
+  #scene-question{font-family:'Fredoka One',cursive;font-size:1.05rem;color:#00b894;background:#f0fff4;border-radius:12px;padding:10px 14px;display:inline-block}
+
+  /* choices */
+  #choices{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:14px}
+  .choice{background:#fff;border-radius:16px;padding:14px 18px;cursor:pointer;transition:.2s;box-shadow:0 3px 12px rgba(0,0,0,.07);border:3px solid transparent;display:flex;align-items:center;gap:12px;text-align:left}
+  .choice:hover:not(:disabled){transform:translateX(6px);border-color:#00b894;box-shadow:0 6px 18px rgba(0,184,148,.2)}
+  .choice:disabled{cursor:default}
+  .choice .c-icon{font-size:1.8rem;flex-shrink:0}
+  .choice .c-text{font-size:.9rem;color:#555;font-weight:700;line-height:1.5}
+  .choice .c-pts{font-family:'Fredoka One',cursive;font-size:.85rem;margin-left:auto;padding:4px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+  .choice.kind{border-color:#00b894;background:#f0fff4}
+  .choice.kind .c-pts{background:#00b894;color:#fff}
+  .choice.neutral{border-color:#fdcb6e;background:#fffbf0}
+  .choice.neutral .c-pts{background:#fdcb6e;color:#fff}
+  .choice.unkind{border-color:#ff7675;background:#fff5f5}
+  .choice.unkind .c-pts{background:#ff7675;color:#fff}
+  .choice.selected-kind{background:#d4f8e8;border-color:#00b894;animation:pop .35s ease}
+  .choice.selected-bad{background:#fde8e8;border-color:#e74c3c}
+  @keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+
+  /* result bubble */
+  #result-bubble{border-radius:18px;padding:14px 18px;margin-bottom:14px;font-size:.88rem;font-weight:700;line-height:1.7;display:none;width:100%}
+  #result-bubble.kind{background:#d4f8e8;color:#00695c;border-left:5px solid #00b894}
+  #result-bubble.bad{background:#fde8e8;color:#c0392b;border-left:5px solid #e74c3c}
+  #result-bubble .rb-title{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-bottom:4px}
+  #result-bubble .rb-effect{color:#666;font-size:.82rem}
+
+  /* kindness meter */
+  #meter-wrap{width:100%;background:#fff;border-radius:16px;padding:12px 18px;box-shadow:0 3px 12px rgba(0,0,0,.07);margin-bottom:16px}
+  .meter-label{font-family:'Fredoka One',cursive;font-size:.85rem;color:#555;margin-bottom:8px;display:flex;justify-content:space-between}
+  #meter-bar-wrap{background:#ffe0e0;border-radius:99px;height:16px;overflow:hidden}
+  #meter-bar{height:100%;border-radius:99px;transition:width .6s,background .6s;background:#00b894}
+
+  /* next btn */
+  #next-btn{background:linear-gradient(135deg,#00b894,#55efc4);color:#fff;border:none;padding:12px 32px;font-family:'Fredoka One',cursive;font-size:1.1rem;border-radius:99px;cursor:pointer;box-shadow:0 6px 18px rgba(0,184,148,.35);display:none;margin-bottom:10px;transition:.2s}
+  #next-btn:hover{transform:scale(1.05)}
+
+  /* overlays */
+  #overlay,#end-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center}
+  #overlay{background:rgba(240,255,244,.97)}
+  #end-screen{background:rgba(240,255,244,.97);display:none}
+  .ov-icon{font-size:4.5rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  .ov-h{font-family:'Fredoka One',cursive;font-size:2rem;background:linear-gradient(135deg,#00b894,#fdcb6e,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .ov-p{font-size:.88rem;color:#888;font-weight:600;margin-bottom:5px;line-height:2}
+  .ov-btn{background:linear-gradient(135deg,#00b894,#55efc4);color:#fff;border:none;padding:13px 32px;font-family:'Fredoka One',cursive;font-size:1.2rem;border-radius:99px;cursor:pointer;box-shadow:0 6px 20px rgba(0,184,148,.4);margin-top:18px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  .stars-big{font-size:2rem;margin:8px 0}
+  .final-score{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#00b894;margin:8px 0}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0 14px}
+  .badge{padding:7px 14px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.88rem;color:#fff}
+
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .8s ease forwards;z-index:999}
+  @media(max-width:420px){h1{font-size:1.7rem}#scene-icon{font-size:3.5rem}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<main>
+  <h1>💗 Kindness Quest</h1>
+  <p class="tagline">Choose kindness — watch it spread!</p>
+
+  <div id="chain-wrap">
+    <div id="chain-label">💚 Kindness Chain — complete all 10!</div>
+    <div id="chain-links"></div>
+  </div>
+
+  <div id="topbar">
+    <div class="tb"><div class="tb-label">Kindness pts</div><div class="tb-val" id="score">0</div></div>
+    <div class="tb"><div class="tb-label">Scene</div><div class="tb-val" id="qnum">1/10</div></div>
+    <div class="tb"><div class="tb-label">❤️ Kind streak</div><div class="tb-val" id="streak">0</div></div>
+  </div>
+
+  <div id="meter-wrap">
+    <div class="meter-label"><span>😤 Unkind</span><span id="meter-pct">50%</span><span>Kind 💚</span></div>
+    <div id="meter-bar-wrap"><div id="meter-bar" style="width:50%"></div></div>
+  </div>
+
+  <div id="scene-card">
+    <span id="scene-icon">🌸</span>
+    <div id="scene-who">Loading...</div>
+    <div id="scene-situation">...</div>
+    <div id="scene-question">What should you do?</div>
+  </div>
+
+  <div id="result-bubble"></div>
+  <div id="choices"></div>
+  <button id="next-btn" onclick="nextScene()">Next Scene ➡️</button>
+</main>
+
+<div id="overlay">
+  <div class="ov-icon">💗</div>
+  <h2 class="ov-h">Kindness Quest!</h2>
+  <p class="ov-p">Each scene shows a situation.<br>Choose the kindest action!<br>💚 Kind choices = big points<br>🟡 Neutral = some points<br>❌ Unkind = no points<br>Build your Kindness Chain! 🔗</p>
+  <button class="ov-btn" onclick="document.getElementById('overlay').style.display='none';startGame()">Start the Quest! 💗</button>
+</div>
+
+<div id="end-screen">
+  <div class="ov-icon" id="end-icon">🌟</div>
+  <h2 class="ov-h" id="end-title">Kindness Hero!</h2>
+  <div class="stars-big" id="end-stars">⭐⭐⭐</div>
+  <div class="final-score" id="end-score">0 Kindness Points</div>
+  <div class="badge-row" id="badges"></div>
+  <p class="ov-p" id="end-msg">You spread so much kindness today!</p>
+  <button class="ov-btn" onclick="document.getElementById('end-screen').style.display='none';startGame()">Play Again! 💗</button>
+</div>
+
+<script>
+const SCENES=[
+  {icon:'🍱',who:'You & your friend Benny',situation:'Benny forgot his lunch at home. He looks really hungry and sad.',question:'What do you do?',
+    choices:[
+      {icon:'🤲',text:'Share half of your lunch with Benny.',type:'kind',pts:20,effect:'Benny smiles and feels so much better. Sharing made BOTH of you happier!'},
+      {icon:'😐',text:'Tell him to ask the teacher for help.',type:'neutral',pts:8,effect:'The teacher helped — but your small act of sharing could have meant so much more!'},
+      {icon:'😤',text:'Eat your lunch and ignore him.',type:'unkind',pts:0,effect:'Benny felt lonely. Small acts of sharing can change someone\'s whole day.'}
+    ]},
+  {icon:'😢',who:'You see Maya at school',situation:'Maya is sitting alone and crying quietly at recess.',question:'What is the kindest thing to do?',
+    choices:[
+      {icon:'🫂',text:'Go over and gently ask if she\'s okay.',type:'kind',pts:20,effect:'Maya felt seen and less alone. Just asking "are you okay?" is a superpower! 💪'},
+      {icon:'🧍',text:'Watch from a distance to see if she cheers up.',type:'neutral',pts:8,effect:'Maya was okay in the end, but a kind word early on would have helped faster.'},
+      {icon:'🏃',text:'Run off to play — it\'s not your problem.',type:'unkind',pts:0,effect:'Maya felt invisible. Kindness means noticing others even when it\'s easy not to.'}
+    ]},
+  {icon:'📚',who:'Group project time!',situation:'Your classmate Leo is struggling with his part of the group project.',question:'How do you help?',
+    choices:[
+      {icon:'🤝',text:'Offer to explain and help him understand.',type:'kind',pts:20,effect:'Leo learned AND finished his part. Helping others helps the whole team shine! ⭐'},
+      {icon:'📋',text:'Just do your part and hand it in.',type:'neutral',pts:8,effect:'You did your job, but teamwork means lifting each other up too!'},
+      {icon:'😠',text:'Tell him he\'s slowing everyone down.',type:'unkind',pts:0,effect:'Leo felt ashamed and anxious. Kind words build people up — unkind ones tear them down.'}
+    ]},
+  {icon:'🌧️',who:'A rainy day at the bus stop',situation:'An old woman is standing in the rain without an umbrella.',question:'What do you do?',
+    choices:[
+      {icon:'☂️',text:'Share your umbrella and stand beside her.',type:'kind',pts:20,effect:'She was so grateful! One umbrella, two hearts warmed. That\'s kindness! ☀️'},
+      {icon:'🚶',text:'Walk ahead quickly to stay dry yourself.',type:'neutral',pts:5,effect:'You stayed dry but missed a chance to make someone\'s rainy day sunny!'},
+      {icon:'🙈',text:'Pretend you didn\'t notice.',type:'unkind',pts:0,effect:'She got soaked. Noticing others and acting is what makes a kind person.'}
+    ]},
+  {icon:'🎨',who:'Art class with Pip',situation:'Pip accidentally spills paint on your drawing. He looks terrified.',question:'What do you say?',
+    choices:[
+      {icon:'😊',text:'"It\'s okay Pip! Accidents happen. Let\'s fix it together!"',type:'kind',pts:20,effect:'Pip felt forgiven and relieved. Forgiveness is one of the greatest kindnesses! 💖'},
+      {icon:'😶',text:'Sigh quietly but say nothing.',type:'neutral',pts:8,effect:'Pip felt uncertain. A kind word would have lifted his worry right away.'},
+      {icon:'😡',text:'Yell at Pip in front of everyone.',type:'unkind',pts:0,effect:'Pip felt humiliated. Responding with anger hurts more than the spilled paint.'}
+    ]},
+  {icon:'🏃',who:'At the playground',situation:'A new kid is watching others play but nobody has invited them to join.',question:'What do you do?',
+    choices:[
+      {icon:'👋',text:'Wave and say "Hey! Want to play with us?"',type:'kind',pts:20,effect:'The new kid\'s face LIT UP! Being included is one of the best feelings in the world! 🌟'},
+      {icon:'🤷',text:'Keep playing — maybe someone else will invite them.',type:'neutral',pts:6,effect:'Someone eventually did, but YOU could have been their first friend here!'},
+      {icon:'🚫',text:'Tell others not to let the new kid play.',type:'unkind',pts:0,effect:'The new kid felt unwanted. Exclusion is one of the most hurtful things we can do.'}
+    ]},
+  {icon:'🧹',who:'Helping at home',situation:'Your parent looks really tired after a long day at work.',question:'What do you do?',
+    choices:[
+      {icon:'🧽',text:'Surprise them by tidying up the house.',type:'kind',pts:20,effect:'Your parent felt loved and supported. Small helpful acts mean EVERYTHING! 💛'},
+      {icon:'📺',text:'Watch TV quietly so you don\'t bother them.',type:'neutral',pts:7,effect:'Giving them quiet is nice, but a helping hand shows real care and love.'},
+      {icon:'📢',text:'Keep asking for things and making noise.',type:'unkind',pts:0,effect:'They felt even more tired. Noticing when others need rest is a superpower!'}
+    ]},
+  {icon:'🐕',who:'Walking to school',situation:'You see a lost dog looking frightened with no owner around.',question:'What do you do?',
+    choices:[
+      {icon:'🐾',text:'Approach calmly and find a nearby adult to help.',type:'kind',pts:20,effect:'The dog was reunited with its owner! Kindness extends to animals too! 🐶💕'},
+      {icon:'👀',text:'Keep walking — someone else will handle it.',type:'neutral',pts:5,effect:'The dog was okay eventually, but your action could have helped so much sooner!'},
+      {icon:'😱',text:'Run away and ignore it.',type:'unkind',pts:0,effect:'The dog stayed lost longer. Kindness means helping those who can\'t ask for help.'}
+    ]},
+  {icon:'🎂',who:'Luna\'s birthday',situation:'It\'s Luna\'s birthday but nobody brought her a card. You have a piece of paper.',question:'What do you do?',
+    choices:[
+      {icon:'✏️',text:'Make her a handmade card and write something sweet.',type:'kind',pts:20,effect:'Luna CRIED happy tears! Handmade gifts from the heart mean more than anything. 💌'},
+      {icon:'🙂',text:'Say "happy birthday" and leave it at that.',type:'neutral',pts:8,effect:'She appreciated the wish, but a handmade card would have made it unforgettable!'},
+      {icon:'😶',text:'Say nothing and hope someone else remembers.',type:'unkind',pts:0,effect:'Luna felt forgotten on her special day. A little effort creates big memories.'}
+    ]},
+  {icon:'🌱',who:'Lunchtime',situation:'You accidentally bump into Zara and her food falls. She already had a bad morning.',question:'What do you do?',
+    choices:[
+      {icon:'🙏',text:'Apologise sincerely and help pick everything up.',type:'kind',pts:20,effect:'Zara\'s whole day turned around. A real apology + action is pure kindness! 🌈'},
+      {icon:'😬',text:'Say sorry quickly and walk away.',type:'neutral',pts:7,effect:'She heard the apology, but staying to help would have meant so much more!'},
+      {icon:'😆',text:'Laugh and leave her to clean up alone.',type:'unkind',pts:0,effect:'Zara felt awful. Kindness means making it right, not leaving others in a mess.'}
+    ]}
+];
+
+const TOTAL=10;
+let qIdx=0,score=0,streak=0,kindMeter=50,busy=false;
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function buildChain(){
+  const el=document.getElementById('chain-links');el.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');d.className='link'+(i<qIdx?' done':i===qIdx?' current':'');
+    d.textContent=i<qIdx?'💚':'🔗';el.appendChild(d);
+  }
+}
+
+function startGame(){
+  qIdx=0;score=0;streak=0;kindMeter=50;busy=false;
+  document.getElementById('end-screen').style.display='none';
+  updateTopbar();buildChain();loadScene();
+}
+
+function loadScene(){
+  busy=false;
+  document.getElementById('result-bubble').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  const s=SCENES[qIdx];
+  document.getElementById('scene-icon').textContent=s.icon;
+  document.getElementById('scene-icon').style.animation='none';
+  setTimeout(()=>document.getElementById('scene-icon').style.animation='',50);
+  document.getElementById('scene-who').textContent=s.who;
+  document.getElementById('scene-situation').textContent=s.situation;
+  document.getElementById('scene-question').textContent=s.question;
+  updateTopbar();buildChain();
+
+  const el=document.getElementById('choices');el.innerHTML='';
+  s.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');btn.className=`choice ${c.type}`;
+    btn.innerHTML=`<span class="c-icon">${c.icon}</span><span class="c-text">${c.text}</span><span class="c-pts">+${c.pts} pts</span>`;
+    btn.addEventListener('click',()=>pick(i,btn,c,s));
+    el.appendChild(btn);
+  });
+}
+
+function pick(i,btn,choice,scene){
+  if(busy)return;busy=true;
+  document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+  btn.classList.add(choice.type==='kind'?'selected-kind':'selected-bad');
+
+  score+=choice.pts;
+  if(choice.type==='kind'){streak++;kindMeter=Math.min(100,kindMeter+15);}
+  else if(choice.type==='unkind'){streak=0;kindMeter=Math.max(0,kindMeter-10);}
+  else{kindMeter=Math.min(100,kindMeter+5);}
+
+  const rb=document.getElementById('result-bubble');
+  rb.className=`result-bubble ${choice.type==='unkind'?'bad':'kind'}`;
+  rb.innerHTML=`<div class="rb-title">${choice.type==='kind'?'💚 Kind Choice! +'+choice.pts+' pts':choice.type==='neutral'?'🟡 Okay Choice! +'+choice.pts+' pts':'❌ Unkind Choice...'}</div><div class="rb-effect">${choice.effect}</div>`;
+  rb.style.display='block';
+
+  if(choice.type==='kind')confetti(btn);
+  updateTopbar();
+  document.getElementById('next-btn').style.display='block';
+  qIdx++;buildChain();
+}
+
+function nextScene(){
+  if(qIdx>=TOTAL){endGame();return;}
+  loadScene();
+}
+
+function updateTopbar(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('streak').textContent=streak;
+  document.getElementById('qnum').textContent=`${Math.min(qIdx+1,TOTAL)}/${TOTAL}`;
+  const pct=kindMeter;
+  const bar=document.getElementById('meter-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>70?'#00b894':pct>40?'#fdcb6e':'#ff7675';
+  document.getElementById('meter-pct').textContent=pct+'%';
+}
+
+function confetti(ref){
+  const r=ref.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const em=['💚','🌸','⭐','✨','💖','🌟','💛'];
+  for(let i=0;i<10;i++){
+    const el=document.createElement('div');el.className='cf';el.textContent=em[rnd(0,em.length-1)];
+    el.style.left=cx+'px';el.style.top=cy+'px';
+    const a=Math.random()*Math.PI*2,d=80+Math.random()*80;
+    el.style.setProperty('--dx',Math.cos(a)*d+'px');el.style.setProperty('--dy',Math.sin(a)*d+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),850);
+  }
+}
+
+function endGame(){
+  const pct=score/(TOTAL*20);
+  let stars='⭐',icon='💪',title='Keep Practicing Kindness!',msg='Every kind act matters — keep going!';
+  if(pct>=.95){stars='⭐⭐⭐';icon='🏆';title='Kindness Champion!';msg='You chose kindness every single time! The world is better with YOU in it! 💖';}
+  else if(pct>=.7){stars='⭐⭐⭐';icon='🌟';title='Kindness Hero!';msg='You spread SO much kindness! Keep that warm heart shining bright! 🌈';}
+  else if(pct>=.45){stars='⭐⭐';icon='😊';title='Getting Kinder!';msg='You\'re learning what kindness looks like. Every day is a chance to grow! 🌱';}
+  document.getElementById('end-icon').textContent=icon;
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent=`${score} Kindness Points`;
+  document.getElementById('end-msg').textContent=msg;
+  const badges=document.getElementById('badges');badges.innerHTML='';
+  const earned=[];
+  if(score===TOTAL*20)earned.push({label:'💯 Pure Kindness',bg:'#00b894'});
+  if(streak>=5)earned.push({label:'🔥 Kind Streak x5',bg:'#fdcb6e'});
+  if(kindMeter>=90)earned.push({label:'💚 Kindness Meter Max!',bg:'#55efc4'});
+  earned.push({label:'💗 Kindness Quester',bg:'#fd79a8'});
+  earned.forEach(b=>{const el=document.createElement('span');el.className='badge';el.textContent=b.label;el.style.background=b.bg;badges.appendChild(el);});
+  document.getElementById('end-screen').style.display='flex';
+}
+</script>
+</body>
+</html>
