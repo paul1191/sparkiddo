@@ -77,3 +77,9 @@ supabase/.temp/
 # ── TESTING ───────────────────────────────────
 __tests__/results/
 jest.config.local.js
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
