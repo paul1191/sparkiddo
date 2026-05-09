@@ -2,335 +2,940 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sparkiddo — Play. Learn. Grow.</title>
-<meta name="description" content="Sparkiddo — 14 fun games that make kids smarter, kinder and braver. Play free online games for kids with learning, morals and fun!">
-<meta property="og:title" content="Sparkiddo — Play. Learn. Grow.">
-<meta property="og:description" content="14 free games for kids covering math, emotions, kindness, shapes and more!">
-<meta property="og:url" content="https://sparkiddo.online">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sparkiddo — Daily Growth Platform for Kids</title>
+<meta name="description" content="Sparkiddo turns screen time into daily growth. 14 free games that build maths skills, emotional intelligence and real-life values for kids aged 3–12. Ad-free. Safe. Free.">
+<meta property="og:title" content="Sparkiddo — Spark Smart Minds. Build Confident Hearts.">
+<meta property="og:description" content="14 free games that build smarter, kinder, braver kids — every single day.">
+<meta property="og:url" content="https://sparkiddo.com">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://sparkiddo.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800;900&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#f7f3ff;font-family:'Nunito',sans-serif;color:#333;overflow-x:hidden}
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap');
+:root{
+  --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+  --green:#00b894;--green-light:#55efc4;--green-pale:#e8f9f3;
+  --pink:#fd79a8;--pink-pale:#fce4f3;
+  --yellow:#fdcb6e;--yellow-pale:#fff9e6;
+  --orange:#ff9f43;--teal:#00cec9;
+  --dark:#1a1a2e;--text:#333;--muted:#777;--light:#f7f3ff;
+  --radius:16px;--radius-lg:24px;--radius-xl:32px;
+  --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:#fff;overflow-x:hidden}
 
-  .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.18;pointer-events:none;z-index:0}
-  .b1{width:500px;height:500px;background:#a29bfe;top:-160px;left:-140px}
-  .b2{width:400px;height:400px;background:#fd79a8;top:200px;right:-120px}
-  .b3{width:420px;height:420px;background:#55efc4;bottom:-120px;left:-80px}
-  .b4{width:360px;height:360px;background:#ffeaa7;bottom:100px;right:-100px}
+/* ── BLOBS ── */
+.blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.12;pointer-events:none;z-index:0}
+.blob-1{width:600px;height:600px;background:var(--purple-light);top:-200px;left:-200px}
+.blob-2{width:500px;height:500px;background:var(--pink);top:300px;right:-200px}
+.blob-3{width:400px;height:400px;background:var(--green-light);bottom:-100px;left:-100px}
 
-  .stars-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-  .star{position:absolute;width:2px;height:2px;background:#c4b5fd;border-radius:50%;animation:twinkle var(--d) ease-in-out infinite alternate}
-  @keyframes twinkle{from{opacity:.1}to{opacity:.7}}
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 24px;transition:background .3s,box-shadow .3s}
+#nav.scrolled{background:#fff;box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#7c5cbf,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;margin-right:auto}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:7px 13px;border-radius:10px;font-size:.82rem;font-weight:700;color:var(--muted);text-decoration:none;transition:.2s;white-space:nowrap}
+.nav-link:hover{background:var(--purple-pale);color:var(--purple)}
+.nav-login{padding:7px 14px;border-radius:10px;font-size:.82rem;font-weight:700;border:2px solid #e0d7ff;color:var(--purple);text-decoration:none;transition:.2s;white-space:nowrap}
+.nav-login:hover{background:var(--purple-pale)}
+.nav-cta{padding:9px 18px;border-radius:10px;font-family:'Fredoka One',cursive;font-size:.88rem;background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;text-decoration:none;box-shadow:0 4px 14px rgba(0,184,148,.35);transition:.2s;white-space:nowrap;flex-shrink:0}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,184,148,.45)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:22px;height:2.5px;background:var(--purple);border-radius:99px;transition:.3s;display:block}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:16px 24px;flex-direction:column;gap:4px;z-index:999}
+.mobile-menu.open{display:flex}
+.mobile-menu .nav-link{font-size:.9rem;padding:10px 14px}
+.mobile-menu .nav-cta{text-align:center;margin-top:8px;font-size:.9rem}
 
-  .page{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:28px 20px 50px}
+/* ── HELPERS ── */
+.page{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 20px}
+.section{padding:80px 0}
+.section-sm{padding:60px 0}
+.section-title{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:10px;line-height:1.2}
+.section-sub{font-size:1rem;color:var(--muted);font-weight:600;line-height:1.7;max-width:600px}
+.badge-pill{display:inline-flex;align-items:center;gap:7px;background:var(--purple-pale);color:var(--purple);border:1.5px solid #d4c6ff;border-radius:99px;padding:6px 16px;font-size:.78rem;font-weight:800;letter-spacing:.5px;margin-bottom:16px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;text-decoration:none;transition:.2s;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;box-shadow:0 6px 20px rgba(0,184,148,.38)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,184,148,.48)}
+.btn-ghost{background:transparent;color:var(--purple);border:2px solid var(--purple-light)}
+.btn-ghost:hover{background:var(--purple-pale)}
+.text-center{text-align:center}
+.divider{width:60px;height:4px;border-radius:99px;margin:14px 0 24px}
 
-  /* ── HERO ── */
-  header{text-align:center;margin-bottom:50px;padding:40px 20px 34px;background:linear-gradient(135deg,#f3efff,#fce4f3,#e8f9f3);border-radius:32px;box-shadow:0 8px 32px rgba(162,155,254,.18);position:relative;overflow:hidden}
-  header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a29bfe' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
-  .hero-badge{display:inline-block;background:linear-gradient(135deg,#a29bfe,#fd79a8);color:#fff;padding:6px 20px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.82rem;letter-spacing:2px;margin-bottom:14px;box-shadow:0 4px 14px rgba(162,155,254,.4)}
-  .logo{font-family:'Fredoka One',cursive;font-size:3.4rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8,#00b894,#fdcb6e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:10px;animation:logopulse 3s ease-in-out infinite alternate}
-  @keyframes logopulse{from{filter:drop-shadow(0 0 10px rgba(108,92,231,.3))}to{filter:drop-shadow(0 0 24px rgba(253,121,168,.4))}}
-  .hero-sub{font-size:1.05rem;color:#888;font-weight:700;letter-spacing:1px;margin-bottom:6px}
-  .hero-url{font-size:.8rem;color:#a29bfe;font-weight:800;letter-spacing:2px;margin-bottom:20px}
-  .hero-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-  .pill{padding:7px 18px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.85rem;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.12)}
-  .pill.p1{background:linear-gradient(135deg,#00b894,#55efc4)}
-  .pill.p2{background:linear-gradient(135deg,#a29bfe,#6c5ce7)}
-  .pill.p3{background:linear-gradient(135deg,#fdcb6e,#ff9f43)}
-  .pill.p4{background:linear-gradient(135deg,#fd79a8,#e84393)}
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:80px;background:linear-gradient(160deg,#f7f3ff 0%,#fce4f3 40%,#e8f9f3 100%);position:relative;overflow:hidden}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:100%;padding:60px 0}
+.hero-left{}
+.hero-pre-badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #e0d7ff;border-radius:99px;padding:6px 16px;font-size:.75rem;font-weight:800;color:var(--muted);margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.hero-pre-badge span{color:var(--green);font-weight:900}
+.hero-headline{font-family:'Fredoka One',cursive;font-size:3rem;line-height:1.15;margin-bottom:12px;color:#1a1a2e}
+.hero-headline .hl-purple{background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-tagline{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--purple);margin-bottom:14px;opacity:.85}
+.hero-sub{font-size:1rem;color:var(--muted);font-weight:600;line-height:1.8;margin-bottom:28px;max-width:480px}
+.hero-cta-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.hero-social-proof{font-size:.78rem;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
+.hero-stars{color:#fdcb6e;letter-spacing:-2px}
+.hero-right{position:relative;display:flex;justify-content:center;align-items:center}
+.hero-visual{position:relative;width:100%;max-width:440px}
+.hero-phone-mock{background:linear-gradient(145deg,#2d1b69,#1a1a2e);border-radius:32px;padding:24px 20px;box-shadow:0 24px 60px rgba(45,27,105,.35),0 0 0 1px rgba(255,255,255,.1);position:relative;overflow:hidden}
+.hero-phone-mock::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple-light),var(--pink),var(--green-light))}
+.hpm-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.hpm-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--yellow),var(--orange));display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.hpm-info{}
+.hpm-name{font-family:'Fredoka One',cursive;font-size:.9rem;color:#fff}
+.hpm-belt{font-size:.7rem;color:#a78bfa;font-weight:700}
+.hpm-xp-bar{background:rgba(255,255,255,.12);border-radius:99px;height:8px;overflow:hidden;margin-bottom:4px}
+.hpm-xp-fill{height:100%;width:62%;background:linear-gradient(90deg,var(--purple-light),var(--pink));border-radius:99px}
+.hpm-xp-label{font-size:.65rem;color:#7d6fb0;font-weight:700}
+.hpm-streak{background:linear-gradient(135deg,#ff9f43,#ff6b6b);border-radius:99px;padding:3px 12px;font-family:'Fredoka One',cursive;font-size:.75rem;color:#fff;display:inline-block;margin-bottom:14px}
+.hpm-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hpm-card{border-radius:12px;padding:12px 10px;text-align:center;cursor:pointer;transition:.2s}
+.hpm-card:hover{transform:scale(1.04)}
+.hpm-card-emoji{font-size:1.6rem;display:block;margin-bottom:5px}
+.hpm-card-name{font-family:'Fredoka One',cursive;font-size:.68rem}
+.hpm-card-tag{font-size:.58rem;padding:2px 8px;border-radius:99px;margin-top:4px;display:inline-block;font-weight:700}
+.float-badge{position:absolute;background:#fff;border-radius:14px;padding:8px 12px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;color:var(--text);animation:floatbadge 3s ease-in-out infinite alternate}
+@keyframes floatbadge{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.fb-top{top:-16px;right:-10px;animation-delay:.5s}
+.fb-bottom{bottom:-16px;left:-10px;animation-delay:1s}
+.fb-emoji{font-size:1.2rem}
 
-  /* ── SECTION LABELS ── */
-  .section-header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-  .section-icon-wrap{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.12)}
-  .section-text h2{font-family:'Fredoka One',cursive;font-size:1.5rem;margin-bottom:2px}
-  .section-text p{font-size:.8rem;color:#aaa;font-weight:700;letter-spacing:.5px}
+/* ── PAIN ── */
+#pain{background:linear-gradient(135deg,#fff9e6,#fce4f3 50%,#e8f9f3);padding:80px 0}
+.pain-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.pain-left{}
+.pain-question{font-family:'Fredoka One',cursive;font-size:1.8rem;color:#1a1a2e;margin-bottom:16px;line-height:1.3}
+.pain-worries{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.pain-worry{display:flex;align-items:flex-start;gap:12px;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06);border-left:4px solid var(--pink)}
+.pw-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+.pw-text{font-size:.88rem;font-weight:700;color:#555;line-height:1.5}
+.pain-pivot{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--purple);margin-bottom:20px}
+.pain-right{}
+.pain-solution-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#1a1a2e;margin-bottom:16px}
+.solution-items{display:flex;flex-direction:column;gap:10px}
+.sol-item{display:flex;align-items:center;gap:14px;background:#fff;border-radius:14px;padding:14px 18px;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:.2s}
+.sol-item:hover{transform:translateX(6px)}
+.sol-check{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--teal));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;flex-shrink:0;font-weight:900}
+.sol-text{font-weight:800;color:#444;font-size:.9rem}
+.sol-sub{font-size:.75rem;color:var(--muted);font-weight:600;margin-top:1px}
 
-  .hero-section{margin-bottom:44px}
+/* ── STATS ── */
+#stats{background:#fff;padding:60px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.stat-card{background:var(--light);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;border:2px solid transparent;transition:.2s;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:99px 99px 0 0}
+.stat-card:nth-child(1)::before{background:linear-gradient(90deg,var(--purple-light),var(--pink))}
+.stat-card:nth-child(2)::before{background:linear-gradient(90deg,var(--green),var(--teal))}
+.stat-card:nth-child(3)::before{background:linear-gradient(90deg,var(--yellow),var(--orange))}
+.stat-card:nth-child(4)::before{background:linear-gradient(90deg,var(--pink),var(--purple-light))}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.stat-num{font-family:'Fredoka One',cursive;font-size:2.4rem;line-height:1;margin-bottom:6px}
+.stat-label{font-size:.8rem;font-weight:800;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
 
-  /* ── FUN & LEARN FEATURED ── */
-  .featured-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:10px}
-  .featured-card{border-radius:24px;padding:24px 20px;cursor:pointer;text-decoration:none;display:flex;flex-direction:column;align-items:flex-start;position:relative;overflow:hidden;transition:.25s;box-shadow:0 6px 24px rgba(0,0,0,.1)}
-  .featured-card:hover{transform:translateY(-6px);box-shadow:0 14px 36px rgba(0,0,0,.16)}
-  .featured-card .fc-glow{position:absolute;width:120px;height:120px;border-radius:50%;top:-30px;right:-30px;opacity:.25;filter:blur(20px)}
-  .fc-badge{font-size:.62rem;font-family:'Fredoka One',cursive;padding:4px 12px;border-radius:99px;color:#fff;margin-bottom:10px;display:inline-block;letter-spacing:1px}
-  .fc-icon{font-size:3rem;margin-bottom:10px}
-  .fc-title{font-family:'Fredoka One',cursive;font-size:1.15rem;margin-bottom:5px}
-  .fc-desc{font-size:.78rem;font-weight:600;line-height:1.6;opacity:.85;margin-bottom:14px}
-  .fc-btn{padding:9px 20px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.82rem;color:#fff;border:none;cursor:pointer;transition:.2s;box-shadow:0 3px 10px rgba(0,0,0,.15)}
-  .fc-btn:hover{transform:scale(1.06)}
-  .card-math{background:linear-gradient(135deg,#fff9e6,#fff3cd);color:#7a5c00}
-  .card-math .fc-glow{background:#fdcb6e}
-  .card-math .fc-badge{background:#fdcb6e}
-  .card-math .fc-title{color:#7a5c00}
-  .card-math .fc-desc{color:#9a7c30}
-  .card-math .fc-btn{background:linear-gradient(135deg,#fdcb6e,#ff9f43)}
-  .card-color{background:linear-gradient(135deg,#f3e8ff,#ede0ff);color:#5e35b1}
-  .card-color .fc-glow{background:#a29bfe}
-  .card-color .fc-badge{background:#a29bfe}
-  .card-color .fc-title{color:#5e35b1}
-  .card-color .fc-desc{color:#7c52c8}
-  .card-color .fc-btn{background:linear-gradient(135deg,#a29bfe,#6c5ce7)}
+/* ── 3 PILLARS ── */
+#pillars{background:linear-gradient(160deg,var(--purple-pale),#fce4f3 50%,var(--green-pale));padding:80px 0}
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.pillar-card{background:#fff;border-radius:var(--radius-xl);padding:32px 28px;text-align:center;box-shadow:var(--shadow);transition:.3s;position:relative;overflow:hidden}
+.pillar-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-lg)}
+.pillar-card::before{content:'';position:absolute;inset:0;border-radius:var(--radius-xl);border:2px solid transparent;transition:.3s}
+.pillar-card:hover::before{border-color:var(--pill-color)}
+.pillar-icon-wrap{width:80px;height:80px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+.pillar-title{font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:12px}
+.pillar-desc{font-size:.88rem;color:var(--muted);font-weight:600;line-height:1.7}
+.pillar-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+.ptag{font-size:.68rem;font-weight:800;padding:4px 12px;border-radius:99px}
 
-  /* ── DOJO MORALS ── */
-  .morals-banner{background:linear-gradient(135deg,#e8f9f3,#d4f8e8);border-radius:24px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 16px rgba(0,184,148,.12)}
-  .mb-icon{font-size:2.8rem;flex-shrink:0}
-  .mb-text h3{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#00695c;margin-bottom:3px}
-  .mb-text p{font-size:.78rem;color:#4caf9a;font-weight:700;line-height:1.5}
+/* ── HOW IT WORKS ── */
+#how{background:#fff;padding:80px 0}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px;position:relative}
+.steps-grid::before{content:'';position:absolute;top:40px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,var(--purple-light),var(--pink),var(--green-light));z-index:0;border-radius:99px}
+.step-card{background:var(--light);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;position:relative;z-index:1;transition:.2s}
+.step-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+.step-num{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.3rem;color:#fff;margin:0 auto 16px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.step-icon{font-size:1.8rem;display:block;margin-bottom:10px}
+.step-title{font-family:'Fredoka One',cursive;font-size:1rem;color:#1a1a2e;margin-bottom:6px}
+.step-desc{font-size:.8rem;color:var(--muted);font-weight:600;line-height:1.6}
+.step-time{font-size:.7rem;color:var(--green);font-weight:800;margin-top:8px;display:block}
 
-  .morals-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
-  .moral-card{background:#fff;border-radius:20px;padding:16px 12px;text-align:center;cursor:pointer;text-decoration:none;border:2px solid transparent;box-shadow:0 3px 14px rgba(0,0,0,.07);transition:.22s;display:block}
-  .moral-card:hover{transform:translateY(-5px);box-shadow:0 10px 24px rgba(0,0,0,.12)}
-  .mc-icon{font-size:2.2rem;margin-bottom:8px;display:block}
-  .mc-title{font-family:'Fredoka One',cursive;font-size:.78rem;color:#444;margin-bottom:4px}
-  .mc-tag{font-size:.58rem;padding:3px 9px;border-radius:99px;color:#fff;font-family:'Fredoka One',cursive;display:inline-block}
+/* ── GAMES ── */
+#games{background:linear-gradient(160deg,#f7f3ff,#e8f9f3 60%,#fff9e6);padding:80px 0}
+.games-bridge{background:#fff;border-radius:var(--radius-lg);padding:20px 28px;margin-bottom:40px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.gb-icon{font-size:2rem}
+.gb-text p{font-size:.88rem;color:var(--muted);font-weight:600;line-height:1.6;margin-top:4px}
+.zone-label{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px}
+.zone-badge{font-size:.72rem;font-weight:800;padding:4px 14px;border-radius:99px;color:#fff;letter-spacing:.5px;text-transform:uppercase}
+.zone-divider{flex:1;height:2px;border-radius:99px;opacity:.4}
+.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.game-card{background:#fff;border-radius:var(--radius-lg);padding:18px 14px;text-align:center;cursor:pointer;text-decoration:none;display:block;box-shadow:var(--shadow);transition:.22s;border:2px solid transparent;position:relative;overflow:hidden}
+.game-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.game-emoji{font-size:2.4rem;display:block;margin-bottom:10px}
+.game-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:#1a1a2e;margin-bottom:5px}
+.game-desc{font-size:.7rem;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:8px}
+.game-tag{font-size:.6rem;font-weight:800;padding:3px 10px;border-radius:99px;color:#fff;display:inline-block}
+.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.learn-card{background:#fff;border-radius:var(--radius-xl);padding:24px 22px;display:flex;align-items:center;gap:18px;box-shadow:var(--shadow);text-decoration:none;transition:.22s;border:2px solid transparent;overflow:hidden;position:relative}
+.learn-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.lc-emoji{font-size:3rem;flex-shrink:0}
+.lc-info{}
+.lc-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#1a1a2e;margin-bottom:4px}
+.lc-desc{font-size:.8rem;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:8px}
+.lc-btn{display:inline-block;padding:7px 16px;border-radius:10px;font-family:'Fredoka One',cursive;font-size:.78rem;color:#fff;transition:.2s}
+.lc-btn:hover{transform:scale(1.06)}
+.arcade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.arcade-card{background:linear-gradient(135deg,#1a1a2e,#2d1b69);border-radius:var(--radius-lg);padding:18px 12px;text-align:center;text-decoration:none;display:block;border:2px solid #2e1b6b;transition:.22s;position:relative;overflow:hidden}
+.arcade-card:hover{border-color:var(--purple-light);transform:translateY(-4px);box-shadow:0 8px 24px rgba(124,92,191,.3)}
+.arcade-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(162,155,254,.15),transparent 60%)}
+.arcade-emoji{font-size:2rem;display:block;margin-bottom:8px}
+.arcade-title{font-family:'Fredoka One',cursive;font-size:.78rem;color:#c4b5fd;margin-bottom:5px}
+.arcade-tag{font-size:.58rem;padding:2px 8px;border-radius:99px;background:#2e1b6b;color:#a78bfa;font-weight:800}
 
-  /* ── ARCADE ── */
-  .arcade-section{background:#fff;border-radius:28px;padding:24px 22px;box-shadow:0 4px 20px rgba(0,0,0,.07);margin-bottom:20px}
-  .arcade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-  .arcade-card{background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:16px;padding:14px 10px;text-align:center;text-decoration:none;display:block;border:2px solid #2e1b6b;transition:.2s;position:relative;overflow:hidden}
-  .arcade-card:hover{transform:translateY(-4px);border-color:#7c3aed;box-shadow:0 8px 20px rgba(124,58,237,.3)}
-  .arcade-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(124,58,237,.15),transparent 60%)}
-  .ac-icon{font-size:2rem;display:block;margin-bottom:7px}
-  .ac-title{font-family:'Fredoka One',cursive;font-size:.75rem;color:#c4b5fd;margin-bottom:4px}
-  .ac-tag{font-size:.55rem;padding:2px 8px;border-radius:99px;background:#2e1b6b;color:#a78bfa;font-family:'Fredoka One',cursive}
+/* ── PARENT DASHBOARD ── */
+#parents{background:#fff;padding:80px 0}
+.parents-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.dash-mock{background:linear-gradient(145deg,#f7f3ff,#fce4f3);border-radius:var(--radius-xl);padding:24px;box-shadow:var(--shadow-lg);border:2px solid #e0d7ff}
+.dm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.dm-title{font-family:'Fredoka One',cursive;font-size:1rem;color:#1a1a2e}
+.dm-badge{background:var(--purple-pale);border-radius:99px;padding:3px 12px;font-size:.7rem;color:var(--purple);font-weight:800}
+.dm-children{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.dm-child{background:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.dc-avatar{font-size:1.8rem;flex-shrink:0}
+.dc-info{flex:1}
+.dc-name{font-family:'Fredoka One',cursive;font-size:.85rem;color:#1a1a2e;margin-bottom:2px}
+.dc-stats{font-size:.68rem;color:var(--muted);font-weight:700;margin-bottom:5px}
+.dc-bar-bg{height:6px;background:#f0e8ff;border-radius:99px;overflow:hidden}
+.dc-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple-light),var(--pink))}
+.dc-xp{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--purple)}
+.dm-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dm-ctrl{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.dm-ctrl-label{font-size:.65rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.dm-ctrl-val{font-family:'Fredoka One',cursive;font-size:.85rem;color:#1a1a2e}
+.parents-features{display:flex;flex-direction:column;gap:14px;margin-top:28px}
+.pf-item{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;background:var(--light);border-radius:14px;transition:.2s}
+.pf-item:hover{background:var(--purple-pale)}
+.pf-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px}
+.pf-title{font-family:'Fredoka One',cursive;font-size:.9rem;color:#1a1a2e;margin-bottom:3px}
+.pf-desc{font-size:.78rem;color:var(--muted);font-weight:600;line-height:1.5}
 
-  /* ── APP COMING SOON BANNER ── */
-  .app-banner{background:linear-gradient(135deg,#1a1a2e,#2d1b69);border-radius:24px;padding:22px 26px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 6px 24px rgba(108,92,231,.25);flex-wrap:wrap}
-  .ab-left{display:flex;align-items:center;gap:14px}
-  .ab-icon{font-size:2.8rem;flex-shrink:0}
-  .ab-text h3{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#c4b5fd;margin-bottom:3px}
-  .ab-text p{font-size:.78rem;color:#7c6fb0;font-weight:700;line-height:1.5}
-  .ab-btn{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;border:none;padding:10px 22px;font-family:'Fredoka One',cursive;font-size:.85rem;border-radius:99px;cursor:pointer;box-shadow:0 4px 14px rgba(108,92,231,.4);white-space:nowrap;transition:.2s}
-  .ab-btn:hover{transform:scale(1.05)}
+/* ── TESTIMONIALS ── */
+#testimonials{background:linear-gradient(135deg,#f7f3ff,#fce4f3 50%,#e8f9f3);padding:80px 0}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.testi-card{background:#fff;border-radius:var(--radius-xl);padding:28px 24px;box-shadow:var(--shadow);transition:.22s;position:relative;overflow:hidden}
+.testi-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.testi-card::before{content:'"';position:absolute;top:-10px;left:16px;font-size:6rem;font-family:'Fredoka One',cursive;line-height:1;opacity:.08;pointer-events:none}
+.testi-stars{color:#fdcb6e;font-size:1rem;letter-spacing:1px;margin-bottom:12px}
+.testi-quote{font-size:.9rem;color:#444;font-weight:600;line-height:1.7;margin-bottom:18px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:#fff;flex-shrink:0}
+.testi-name{font-family:'Fredoka One',cursive;font-size:.88rem;color:#1a1a2e}
+.testi-role{font-size:.72rem;color:var(--muted);font-weight:700}
 
-  /* ── TRUST ── */
-  .trust-section{background:#fff;border-radius:24px;padding:24px 22px;margin-bottom:20px;box-shadow:0 4px 16px rgba(0,0,0,.07);text-align:center}
-  .trust-section h3{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#444;margin-bottom:16px}
-  .trust-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
-  .trust-pill{padding:8px 18px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.82rem;border:2px solid;display:flex;align-items:center;gap:6px}
-  .tp1{border-color:#00b894;color:#00695c;background:#f0fff8}
-  .tp2{border-color:#a29bfe;color:#5e35b1;background:#f3efff}
-  .tp3{border-color:#fd79a8;color:#ad1457;background:#fce4f3}
-  .tp4{border-color:#fdcb6e;color:#7a5c00;background:#fff9e6}
-  .trust-quote{font-size:.88rem;color:#888;font-weight:600;font-style:italic;max-width:480px;margin:0 auto;line-height:1.7}
-  .trust-quote span{color:#a29bfe;font-style:normal;font-weight:800}
+/* ── PRICING ── */
+#pricing{background:#fff;padding:80px 0}
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:780px;margin:40px auto 0}
+.price-card{border-radius:var(--radius-xl);padding:32px 28px;border:2px solid #e0d7ff;transition:.2s;position:relative;overflow:hidden}
+.price-card:hover{transform:translateY(-4px)}
+.price-card.featured{border-color:var(--purple);box-shadow:0 8px 32px rgba(124,92,191,.2)}
+.pc-popular{position:absolute;top:20px;right:20px;background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;font-family:'Fredoka One',cursive;font-size:.72rem;padding:4px 14px;border-radius:99px}
+.pc-plan{font-size:.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.pc-price{font-family:'Fredoka One',cursive;font-size:2.4rem;color:#1a1a2e;line-height:1;margin-bottom:4px}
+.pc-price span{font-size:1rem;color:var(--muted)}
+.pc-period{font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:20px}
+.pc-features{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.pc-feat{display:flex;align-items:center;gap:10px;font-size:.85rem;font-weight:700;color:#444}
+.pc-feat-check{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;flex-shrink:0;font-weight:900}
+.pc-btn{display:block;padding:13px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:.95rem;text-align:center;text-decoration:none;transition:.2s;cursor:pointer;border:none;width:100%}
+.pc-btn-free{background:var(--light);color:var(--purple)}
+.pc-btn-free:hover{background:var(--purple-pale)}
+.pc-btn-plus{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;box-shadow:0 4px 14px rgba(124,92,191,.35)}
+.pc-btn-plus:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,92,191,.45)}
+.pc-guarantee{text-align:center;font-size:.78rem;color:var(--muted);font-weight:700;margin-top:20px}
+.school-note{text-align:center;margin-top:16px;font-size:.82rem;color:var(--muted);font-weight:700}
+.school-note a{color:var(--purple);text-decoration:none;font-weight:800}
 
-  /* ── FOOTER ── */
-  footer{text-align:center;padding:24px 0 0;font-size:.75rem;color:#bbb;font-weight:700}
-  footer span{color:#a29bfe}
-  .footer-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-  .fp{padding:4px 14px;border-radius:99px;font-size:.68rem;font-family:'Fredoka One',cursive;color:#fff}
+/* ── TRUST STRIP ── */
+#trust-strip{background:var(--light);padding:40px 0}
+.trust-grid{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:center}
+.trust-badge{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:10px 18px;box-shadow:var(--shadow);font-size:.82rem;font-weight:800;color:#555;transition:.2s}
+.trust-badge:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.trust-badge-icon{font-size:1.2rem}
 
-  @media(max-width:640px){
-    .logo{font-size:2.4rem}
-    .featured-grid{grid-template-columns:1fr}
-    .morals-grid{grid-template-columns:repeat(2,1fr)}
-    .arcade-grid{grid-template-columns:repeat(2,1fr)}
-    .section-text h2{font-size:1.2rem}
-    .app-banner{flex-direction:column;text-align:center}
-    .ab-left{flex-direction:column;text-align:center}
-  }
+/* ── FOOTER ── */
+footer{background:#1a1a2e;color:#c4b5fd;padding:60px 0 30px}
+.footer-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px}
+.footer-brand{}
+.footer-logo{font-family:'Fredoka One',cursive;font-size:1.6rem;background:linear-gradient(135deg,var(--purple-light),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.footer-tagline{font-size:.82rem;color:#7d6fb0;font-weight:700;margin-bottom:14px;line-height:1.6}
+.footer-email{display:flex;align-items:center;gap:8px;font-size:.8rem;color:#a78bfa;font-weight:700;text-decoration:none}
+.footer-email:hover{color:var(--pink)}
+.footer-social{display:flex;gap:10px;margin-top:16px}
+.social-btn{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:1rem;text-decoration:none;transition:.2s;color:#c4b5fd}
+.social-btn:hover{background:rgba(255,255,255,.18)}
+.footer-col-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#e0d7ff;margin-bottom:16px}
+.footer-link{display:block;font-size:.8rem;color:#7d6fb0;font-weight:700;text-decoration:none;padding:4px 0;transition:.2s}
+.footer-link:hover{color:var(--pink)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.footer-copy{font-size:.75rem;color:#4a3f6b;font-weight:700}
+.footer-legal-links{display:flex;gap:16px;flex-wrap:wrap}
+.footer-legal-links a{font-size:.75rem;color:#4a3f6b;font-weight:700;text-decoration:none;transition:.2s}
+.footer-legal-links a:hover{color:#c4b5fd}
+
+/* ── ANIMATIONS ── */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.float{animation:float 3s ease-in-out infinite}
+@keyframes countup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;text-align:center}
+  .hero-right{display:none}
+  .hero-headline{font-size:2.2rem}
+  .hero-cta-row{justify-content:center}
+  .hero-sub{margin:0 auto 28px}
+  .pain-inner,.parents-inner{grid-template-columns:1fr}
+  .pillars-grid,.stats-grid,.steps-grid{grid-template-columns:1fr 1fr}
+  .steps-grid::before{display:none}
+  .games-grid,.arcade-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .section-title{font-size:1.6rem}
+}
+@media(max-width:560px){
+  .pillars-grid,.stats-grid,.learn-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+  .hero-headline{font-size:1.9rem}
+  .hero-pre-badge{font-size:.68rem}
+}
 </style>
 </head>
 <body>
-<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
-<div class="stars-bg" id="stars"></div>
 
-<div class="page">
+<!-- BLOBS -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
-  <!-- ── HERO ── -->
-  <header>
-    <div class="hero-badge">✨ SPARKIDDO — SPARK CURIOSITY. WATCH IT GROW.</div>
-    <div class="logo">🌟 Sparkiddo</div>
-    <div class="hero-sub">Where every game makes you smarter, kinder &amp; braver</div>
-    <div class="hero-url">sparkiddo.online</div>
-    <div class="hero-pills">
-      <span class="pill p1">💚 14 Free Games</span>
-      <span class="pill p2">🧠 Learn &amp; Grow</span>
-      <span class="pill p3">🌟 Earn Belts</span>
-      <span class="pill p4">💗 Build Good Values</span>
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">🌟 Sparkiddo</a>
+    <div class="nav-links">
+      <a href="/about.html" class="nav-link">About</a>
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="/for-parents.html" class="nav-link">For Parents</a>
+      <a href="/blog.html" class="nav-link">Blog</a>
     </div>
-  </header>
-
-  <!-- ── APP COMING SOON ── -->
-  <div class="app-banner">
-    <div class="ab-left">
-      <div class="ab-icon">📱</div>
-      <div class="ab-text">
-        <h3>Sparkiddo App — Coming Soon!</h3>
-        <p>iOS + Android · Offline play · Push reminders · Parental controls · Progress tracking</p>
-      </div>
-    </div>
-    <button class="ab-btn" onclick="alert('Thank you! We\'ll notify you when Sparkiddo app launches 🚀')">Notify me 🚀</button>
+    <a href="/auth/login.html" class="nav-login">🔐 Parent Login</a>
+    <a href="/auth/register.html" class="nav-cta">▶ Play Free</a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-
-  <!-- ══ MAIN ATTRACTION 1 — FUN & LEARN ══ -->
-  <div class="hero-section">
-    <div class="section-header">
-      <div class="section-icon-wrap" style="background:linear-gradient(135deg,#fdcb6e,#ff9f43)">📚</div>
-      <div class="section-text">
-        <h2 style="color:#c67c00">Fun &amp; Learn Zone</h2>
-        <p>MATH · COLORS · SHAPES · ALL AGES · 3 DIFFICULTY LEVELS</p>
-      </div>
-    </div>
-    <div style="width:100%;height:3px;background:linear-gradient(90deg,#fdcb6e,#ff9f43,transparent);border-radius:99px;margin-bottom:22px"></div>
-
-    <div class="featured-grid">
-      <a class="featured-card card-math" href="mathdojo.html">
-        <div class="fc-glow"></div>
-        <span class="fc-badge">⭐ AGES 5+</span>
-        <div class="fc-icon">➕</div>
-        <div class="fc-title">Math Dojo</div>
-        <div class="fc-desc">Addition, subtraction, multiplication &amp; division across 3 difficulty levels. Earn streaks and bonus points!</div>
-        <button class="fc-btn">▶ Start Training</button>
-      </a>
-      <a class="featured-card card-color" href="colorshapequest.html">
-        <div class="fc-glow"></div>
-        <span class="fc-badge">⭐ AGES 3+</span>
-        <div class="fc-icon">🎨</div>
-        <div class="fc-title">Color &amp; Shape Quest</div>
-        <div class="fc-desc">Identify colors, match shapes and drag &amp; drop in 3 fun modes. Visual learning at its best!</div>
-        <button class="fc-btn">▶ Start Questing</button>
-      </a>
-    </div>
-  </div>
-
-  <!-- ══ MAIN ATTRACTION 2 — DOJO MORALS ══ -->
-  <div class="hero-section">
-    <div class="section-header">
-      <div class="section-icon-wrap" style="background:linear-gradient(135deg,#00b894,#55efc4)">🏅</div>
-      <div class="section-text">
-        <h2 style="color:#00695c">Sparkiddo Morals</h2>
-        <p>KINDNESS · HONESTY · EMPATHY · RESPONSIBILITY · BRAVERY</p>
-      </div>
-    </div>
-    <div style="width:100%;height:3px;background:linear-gradient(90deg,#00b894,#55efc4,transparent);border-radius:99px;margin-bottom:22px"></div>
-
-    <div class="morals-banner">
-      <div class="mb-icon">🌱</div>
-      <div class="mb-text">
-        <h3>Games that grow great humans!</h3>
-        <p>8 carefully designed games teaching kindness, honesty, empathy, responsibility and courage — through stories, choices and real-life challenges.</p>
-      </div>
-    </div>
-
-    <div class="morals-grid">
-      <a class="moral-card" href="emotionmatch.html" style="border-color:#fd79a820">
-        <span class="mc-icon">🎭</span>
-        <div class="mc-title">Emotion Match</div>
-        <span class="mc-tag" style="background:#fd79a8">Empathy</span>
-      </a>
-      <a class="moral-card" href="kindnessquest.html" style="border-color:#00b89420">
-        <span class="mc-icon">💗</span>
-        <div class="mc-title">Kindness Quest</div>
-        <span class="mc-tag" style="background:#00b894">Kindness</span>
-      </a>
-      <a class="moral-card" href="storychoices.html" style="border-color:#a29bfe20">
-        <span class="mc-icon">📖</span>
-        <div class="mc-title">Story Choices</div>
-        <span class="mc-tag" style="background:#a29bfe">Wisdom</span>
-      </a>
-      <a class="moral-card" href="shareorkeep.html" style="border-color:#fdcb6e20">
-        <span class="mc-icon">🤲</span>
-        <div class="mc-title">Share or Keep?</div>
-        <span class="mc-tag" style="background:#fdcb6e;color:#7a5c00">Sharing</span>
-      </a>
-      <a class="moral-card" href="truthorfib.html" style="border-color:#74b9ff20">
-        <span class="mc-icon">🔍</span>
-        <div class="mc-title">Truth or Fib?</div>
-        <span class="mc-tag" style="background:#74b9ff">Honesty</span>
-      </a>
-      <a class="moral-card" href="cooldowncorner.html" style="border-color:#55efc420">
-        <span class="mc-icon">☮️</span>
-        <div class="mc-title">Cool Down Corner</div>
-        <span class="mc-tag" style="background:#55efc4;color:#007a5e">Calm</span>
-      </a>
-      <a class="moral-card" href="mydailydojo.html" style="border-color:#ff9f4320">
-        <span class="mc-icon">🥋</span>
-        <div class="mc-title">My Daily Dojo</div>
-        <span class="mc-tag" style="background:#ff9f43">Habits</span>
-      </a>
-      <a class="moral-card" href="petdojo.html" style="border-color:#55efc420">
-        <span class="mc-icon">🐾</span>
-        <div class="mc-title">Pet Dojo</div>
-        <span class="mc-tag" style="background:#00b894">Care</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- ══ ARCADE ZONE ══ -->
-  <div class="arcade-section">
-    <div class="section-header" style="margin-bottom:16px">
-      <div class="section-icon-wrap" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">🎮</div>
-      <div class="section-text">
-        <h2 style="color:#6d28d9">Arcade Zone</h2>
-        <p>CLASSIC GAMES · HIGH SCORES · CHALLENGE YOUR BRAIN</p>
-      </div>
-    </div>
-    <div class="arcade-grid">
-      <a class="arcade-card" href="snake.html">
-        <span class="ac-icon">🐍</span>
-        <div class="ac-title">Snake</div>
-        <span class="ac-tag">Classic</span>
-      </a>
-      <a class="arcade-card" href="tictactoe.html">
-        <span class="ac-icon">⭕</span>
-        <div class="ac-title">Tic Tac Toe</div>
-        <span class="ac-tag">VS CPU</span>
-      </a>
-      <a class="arcade-card" href="memorymatch.html">
-        <span class="ac-icon">🃏</span>
-        <div class="ac-title">Memory Match</div>
-        <span class="ac-tag">3 Levels</span>
-      </a>
-      <a class="arcade-card" href="rockpaperscissors.html">
-        <span class="ac-icon">✂️</span>
-        <div class="ac-title">Rock Paper Scissors</div>
-        <span class="ac-tag">Best of 5</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- ══ TRUST SECTION ══ -->
-  <div class="trust-section">
-    <h3>Why Parents Love Sparkiddo 💚</h3>
-    <div class="trust-pills">
-      <span class="trust-pill tp1">🌱 Safe for Kids</span>
-      <span class="trust-pill tp2">🚫 100% Ad-Free</span>
-      <span class="trust-pill tp3">💗 Values-Based</span>
-      <span class="trust-pill tp4">🎓 Educational</span>
-    </div>
-    <div class="trust-quote">
-      "Sparkiddo makes screen time something I actually feel good about — my kids are learning kindness AND having a blast!"<br>
-      <span>— Happy Sparkiddo Parent</span>
-    </div>
-  </div>
-
-  <!-- ── FOOTER ── -->
-  <footer>
-    <p>Made with ❤️ by <span>Sparkiddo</span> · <span>sparkiddo.online</span> · Hosted on GitHub Pages</p>
-    <p style="margin-top:6px">Built with love for kids everywhere 💚</p>
-    <div class="footer-pills">
-      <span class="fp" style="background:#00b894">🌱 Safe for Kids</span>
-      <span class="fp" style="background:#a29bfe">🚫 Ad Free</span>
-      <span class="fp" style="background:#fd79a8">💗 Values Based</span>
-      <span class="fp" style="background:#fdcb6e;color:#7a5c00">🎓 Educational</span>
-    </div>
-  </footer>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/about.html" class="nav-link">About</a>
+  <a href="#how" class="nav-link" onclick="toggleMenu()">How it works</a>
+  <a href="/for-parents.html" class="nav-link">For Parents</a>
+  <a href="/blog.html" class="nav-link">Blog</a>
+  <a href="/auth/login.html" class="nav-link">🔐 Parent Login</a>
+  <a href="/auth/register.html" class="nav-cta">▶ Play Free — It's Free!</a>
 </div>
 
+<!-- ══ 1. HERO ══ -->
+<section id="hero">
+  <div class="page hero-inner">
+    <div class="hero-left">
+      <div class="hero-pre-badge">
+        🌱 Daily Growth Platform &nbsp;·&nbsp; <span>Free</span> &nbsp;·&nbsp; Ad-Free &nbsp;·&nbsp; Ages 3–12
+      </div>
+      <h1 class="hero-headline">
+        Turn screen time into your child's<br>
+        <span class="hl-purple">best growth habit.</span>
+      </h1>
+      <div class="hero-tagline">✨ Spark Smart Minds. Build Confident Hearts.</div>
+      <p class="hero-sub">14 free games that build maths skills, emotional intelligence and real-life values — every single day. No ads. No guilt.</p>
+      <div class="hero-cta-row">
+        <a href="/auth/register.html" class="btn btn-primary">▶ Start Growing Free</a>
+        <a href="/for-parents.html" class="btn btn-ghost">For Parents →</a>
+      </div>
+      <div class="hero-social-proof">
+        <span class="hero-stars">★★★★★</span>
+        Trusted by 100+ kids &nbsp;·&nbsp; No credit card needed
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-visual">
+        <div class="float-badge fb-top">
+          <span class="fb-emoji">🔥</span>
+          <span><strong>12 day</strong> streak!</span>
+        </div>
+        <div class="hero-phone-mock">
+          <div class="hpm-header">
+            <div class="hpm-avatar">🦊</div>
+            <div class="hpm-info">
+              <div class="hpm-name">Arjun's Dashboard</div>
+              <div class="hpm-belt">🟩 Green Belt</div>
+            </div>
+          </div>
+          <div class="hpm-xp-bar"><div class="hpm-xp-fill"></div></div>
+          <div class="hpm-xp-label" style="margin-bottom:10px">450 XP · 250 to Blue Belt</div>
+          <div class="hpm-streak">🔥 12 Day Streak</div>
+          <div class="hpm-cards">
+            <div class="hpm-card" style="background:linear-gradient(135deg,#fce4f3,#f3efff)">
+              <span class="hpm-card-emoji">🎭</span>
+              <div class="hpm-card-name" style="color:#7c5cbf">Emotion Match</div>
+              <span class="hpm-card-tag" style="background:#fd79a8">Empathy</span>
+            </div>
+            <div class="hpm-card" style="background:linear-gradient(135deg,#e8f9f3,#fff9e6)">
+              <span class="hpm-card-emoji">🥋</span>
+              <div class="hpm-card-name" style="color:#00695c">Daily Dojo</div>
+              <span class="hpm-card-tag" style="background:#00b894">Habits</span>
+            </div>
+            <div class="hpm-card" style="background:linear-gradient(135deg,#fff9e6,#fce4f3)">
+              <span class="hpm-card-emoji">➕</span>
+              <div class="hpm-card-name" style="color:#c67c00">Math Dojo</div>
+              <span class="hpm-card-tag" style="background:#fdcb6e;color:#7a5c00">Learn</span>
+            </div>
+            <div class="hpm-card" style="background:linear-gradient(135deg,#f3efff,#e8f9f3)">
+              <span class="hpm-card-emoji">💗</span>
+              <div class="hpm-card-name" style="color:#005f44">Kindness</div>
+              <span class="hpm-card-tag" style="background:#00b894">Kind</span>
+            </div>
+          </div>
+        </div>
+        <div class="float-badge fb-bottom">
+          <span class="fb-emoji">⭐</span>
+          <span>New belt unlocked! <strong>Green</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 2. PARENT PAIN ══ -->
+<section id="pain">
+  <div class="page">
+    <div class="pain-inner">
+      <div class="pain-left fade-in">
+        <div class="badge-pill">💭 Sound familiar?</div>
+        <h2 class="pain-question">Is your child spending too much time on screens?</h2>
+        <div class="pain-worries">
+          <div class="pain-worry">
+            <span class="pw-icon">😔</span>
+            <div class="pw-text">"They're glued to the screen — but what are they actually learning?"</div>
+          </div>
+          <div class="pain-worry">
+            <span class="pw-icon">😰</span>
+            <div class="pw-text">"I want them to have fun, but I feel guilty about screen time."</div>
+          </div>
+          <div class="pain-worry">
+            <span class="pw-icon">😤</span>
+            <div class="pw-text">"I can't find games that teach real values — just dopamine loops."</div>
+          </div>
+        </div>
+        <div class="pain-pivot">Where screen time becomes grow time. 🌱</div>
+        <p style="font-size:.88rem;color:var(--muted);font-weight:600;line-height:1.7">Sparkiddo was built for exactly this — a daily growth platform disguised as something kids actually want to play.</p>
+      </div>
+      <div class="pain-right fade-in">
+        <div class="pain-solution-title">Sparkiddo turns screen time into:</div>
+        <div class="solution-items">
+          <div class="sol-item">
+            <div class="sol-check">✔</div>
+            <div>
+              <div class="sol-text">Real learning</div>
+              <div class="sol-sub">Maths, colours, shapes — built into every game</div>
+            </div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-check" style="background:linear-gradient(135deg,var(--pink),#e84393)">✔</div>
+            <div>
+              <div class="sol-text">Confidence & emotional intelligence</div>
+              <div class="sol-sub">Empathy, honesty, kindness — through play</div>
+            </div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-check" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">✔</div>
+            <div>
+              <div class="sol-text">Daily habits that stick</div>
+              <div class="sol-sub">XP, belts and streaks build real discipline</div>
+            </div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-check" style="background:linear-gradient(135deg,var(--purple-light),var(--purple))">✔</div>
+            <div>
+              <div class="sol-text">Your peace of mind</div>
+              <div class="sol-sub">No ads. No purchases. Full parent dashboard.</div>
+            </div>
+          </div>
+        </div>
+        <a href="/auth/register.html" class="btn btn-primary" style="margin-top:24px">▶ Start Free Today</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 3. STATS ══ -->
+<section id="stats">
+  <div class="page">
+    <div class="stats-grid">
+      <div class="stat-card fade-in">
+        <div class="stat-num" style="color:var(--purple)">100+</div>
+        <div class="stat-label">Kids growing daily</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-num" style="color:var(--green)">5,000+</div>
+        <div class="stat-label">Games played</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-num" style="color:var(--orange)">14</div>
+        <div class="stat-label">Free games</div>
+      </div>
+      <div class="stat-card fade-in">
+        <div class="stat-num" style="color:var(--pink)">100%</div>
+        <div class="stat-label">Ad-free forever</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 4. 3 PILLARS ══ -->
+<section id="pillars">
+  <div class="page text-center">
+    <div class="badge-pill" style="justify-content:center">🌟 How Sparkiddo grows your child</div>
+    <h2 class="section-title">Three ways we grow your child — every day</h2>
+    <p class="section-sub" style="margin:0 auto">Every game is purposefully designed to build one of three essential dimensions of a thriving child.</p>
+    <div class="pillars-grid">
+      <div class="pillar-card fade-in" style="--pill-color:var(--purple-light)">
+        <div class="pillar-icon-wrap" style="background:linear-gradient(135deg,#f3efff,#fce4f3)">🧠</div>
+        <h3 class="pillar-title" style="color:var(--purple)">Smart Mind</h3>
+        <p class="pillar-desc">Maths, colours, shapes and problem-solving games build real academic foundations. 3 difficulty levels that grow with your child — from toddler to tween.</p>
+        <div class="pillar-tags">
+          <span class="ptag" style="background:var(--purple-pale);color:var(--purple)">➕ Arithmetic</span>
+          <span class="ptag" style="background:var(--purple-pale);color:var(--purple)">🎨 Visual learning</span>
+          <span class="ptag" style="background:var(--purple-pale);color:var(--purple)">🧩 Problem solving</span>
+        </div>
+      </div>
+      <div class="pillar-card fade-in" style="--pill-color:var(--pink)">
+        <div class="pillar-icon-wrap" style="background:linear-gradient(135deg,#fce4f3,#fff9e6)">💗</div>
+        <h3 class="pillar-title" style="color:var(--pink)">Confident Heart</h3>
+        <p class="pillar-desc">8 story-driven games that teach kindness, honesty, empathy and bravery. Kids make real choices and see consequences — safely, with guidance at every step.</p>
+        <div class="pillar-tags">
+          <span class="ptag" style="background:var(--pink-pale);color:#ad1457">💗 Kindness</span>
+          <span class="ptag" style="background:var(--pink-pale);color:#ad1457">🤝 Empathy</span>
+          <span class="ptag" style="background:var(--pink-pale);color:#ad1457">🦁 Bravery</span>
+        </div>
+      </div>
+      <div class="pillar-card fade-in" style="--pill-color:var(--green)">
+        <div class="pillar-icon-wrap" style="background:linear-gradient(135deg,#e8f9f3,#fff9e6)">🌱</div>
+        <h3 class="pillar-title" style="color:var(--green)">Daily Habits</h3>
+        <p class="pillar-desc">XP, belt progression and daily task streaks build the discipline of showing up every day. White Belt to Black Belt — real achievement your child can be proud of.</p>
+        <div class="pillar-tags">
+          <span class="ptag" style="background:var(--green-pale);color:#00695c">🔥 Streaks</span>
+          <span class="ptag" style="background:var(--green-pale);color:#00695c">🥋 Belts</span>
+          <span class="ptag" style="background:var(--green-pale);color:#00695c">✅ Daily tasks</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 5. HOW IT WORKS ══ -->
+<section id="how">
+  <div class="page text-center">
+    <div class="badge-pill" style="justify-content:center">⚡ Super simple</div>
+    <h2 class="section-title">How Sparkiddo works</h2>
+    <p class="section-sub" style="margin:0 auto">From first click to daily growth habit — in four steps. Takes under 2 minutes to get started.</p>
+    <div class="steps-grid">
+      <div class="step-card fade-in">
+        <div class="step-num" style="background:linear-gradient(135deg,var(--purple-light),var(--purple))">1</div>
+        <span class="step-icon">👨‍👩‍👧</span>
+        <div class="step-title">Create a parent account</div>
+        <p class="step-desc">Sign up with email or Google. Set up your child's profile with a name and fun avatar.</p>
+        <span class="step-time">⏱ Takes 2 minutes · No credit card</span>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-num" style="background:linear-gradient(135deg,var(--pink),#e84393)">2</div>
+        <span class="step-icon">🎮</span>
+        <div class="step-title">Choose a zone & play</div>
+        <p class="step-desc">Pick Fun & Learn, Sparkiddo Morals or Arcade. 14 games, all free, all beautifully designed.</p>
+        <span class="step-time">🌟 All 14 games unlocked immediately</span>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-num" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">3</div>
+        <span class="step-icon">🏆</span>
+        <div class="step-title">Kids earn XP, belts & habits</div>
+        <p class="step-desc">Every game rewards real progress. Daily streaks and belt progression keep kids coming back.</p>
+        <span class="step-time">🥋 White Belt → Black Belt journey</span>
+      </div>
+      <div class="step-card fade-in">
+        <div class="step-num" style="background:linear-gradient(135deg,var(--green),var(--teal))">4</div>
+        <span class="step-icon">📊</span>
+        <div class="step-title">You track everything</div>
+        <p class="step-desc">PIN-locked parent dashboard shows growth, games played, streaks and weekly reports.</p>
+        <span class="step-time">🔐 Full parental controls included</span>
+      </div>
+    </div>
+    <a href="/auth/register.html" class="btn btn-primary" style="margin-top:36px;display:inline-flex">Create your free account — 2 mins →</a>
+  </div>
+</section>
+
+<!-- ══ 6. GAMES ══ -->
+<section id="games">
+  <div class="page">
+    <div class="text-center" style="margin-bottom:36px">
+      <div class="badge-pill" style="justify-content:center">🎮 The games</div>
+      <h2 class="section-title">How we deliver daily growth</h2>
+      <p class="section-sub" style="margin:0 auto">Every game is purposefully designed to grow one part of your child — mind, heart or habits. Play one, play all. Completely free.</p>
+    </div>
+
+    <div class="games-bridge fade-in">
+      <div class="gb-icon">🏅</div>
+      <div class="gb-text">
+        <strong style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1a1a2e">Sparkiddo Morals — our flagship zone</strong>
+        <p>8 carefully designed games teaching kindness, honesty, empathy, responsibility and courage — through stories, choices and real-life challenges. Our most unique offering and where kids grow the most.</p>
+      </div>
+    </div>
+
+    <!-- MORALS -->
+    <div class="zone-label">
+      <span class="zone-badge" style="background:linear-gradient(135deg,var(--green),var(--teal))">🏅 Sparkiddo Morals</span>
+      <div class="zone-divider" style="background:linear-gradient(90deg,var(--green),transparent)"></div>
+    </div>
+    <div class="games-grid">
+      <a class="game-card" href="/games/morals/emotionmatch.html" style="--gc:#fd79a8"><div class="game-card::before" style="background:var(--pink)"></div><span class="game-emoji">🎭</span><div class="game-title">Emotion Match</div><div class="game-desc">Match faces to feelings. Build empathy!</div><span class="game-tag" style="background:#fd79a8">Empathy</span></a>
+      <a class="game-card" href="/games/morals/kindnessquest.html"><span class="game-emoji">💗</span><div class="game-title">Kindness Quest</div><div class="game-desc">Choose kindness — watch it spread!</div><span class="game-tag" style="background:var(--green)">Kindness</span></a>
+      <a class="game-card" href="/games/morals/storychoices.html"><span class="game-emoji">📖</span><div class="game-title">Story Choices</div><div class="game-desc">Your choices shape the story!</div><span class="game-tag" style="background:var(--purple-light)">Wisdom</span></a>
+      <a class="game-card" href="/games/morals/shareorkeep.html"><span class="game-emoji">🤲</span><div class="game-title">Share or Keep?</div><div class="game-desc">Sharing dilemmas — watch happiness grow!</div><span class="game-tag" style="background:var(--orange)">Sharing</span></a>
+      <a class="game-card" href="/games/morals/truthorfib.html"><span class="game-emoji">🔍</span><div class="game-title">Truth or Fib?</div><div class="game-desc">Spot the lie before time runs out!</div><span class="game-tag" style="background:#74b9ff">Honesty</span></a>
+      <a class="game-card" href="/games/morals/cooldowncorner.html"><span class="game-emoji">☮️</span><div class="game-title">Cool Down Corner</div><div class="game-desc">Breathe, ground & affirm — feel calm!</div><span class="game-tag" style="background:var(--teal)">Calm</span></a>
+      <a class="game-card" href="/games/morals/mydailydojo.html"><span class="game-emoji">🥋</span><div class="game-title">My Daily Dojo</div><div class="game-desc">Daily tasks. XP. Earn your Black Belt!</div><span class="game-tag" style="background:#ff6b6b">Habits</span></a>
+      <a class="game-card" href="/games/morals/petdojo.html"><span class="game-emoji">🐾</span><div class="game-title">Pet Dojo</div><div class="game-desc">Your pet thrives when you're responsible!</div><span class="game-tag" style="background:var(--green)">Care</span></a>
+    </div>
+
+    <!-- FUN & LEARN -->
+    <div class="zone-label" style="margin-top:36px">
+      <span class="zone-badge" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">📚 Fun & Learn Zone</span>
+      <div class="zone-divider" style="background:linear-gradient(90deg,var(--yellow),transparent)"></div>
+    </div>
+    <div class="learn-grid">
+      <a class="learn-card" href="/games/learn/mathdojo.html" style="background:linear-gradient(135deg,#fff9e6,#fff3cd)">
+        <div class="lc-emoji">➕</div>
+        <div class="lc-info">
+          <div class="lc-title" style="color:#7a5c00">Math Dojo</div>
+          <div class="lc-desc">Number puzzles & arithmetic across 3 difficulty levels. Earn streaks and bonus points. Ages 5+.</div>
+          <span class="lc-btn" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">▶ Start Training</span>
+        </div>
+      </a>
+      <a class="learn-card" href="/games/learn/colorshapequest.html" style="background:linear-gradient(135deg,#f3e8ff,#ede0ff)">
+        <div class="lc-emoji">🎨</div>
+        <div class="lc-info">
+          <div class="lc-title" style="color:#5e35b1">Color & Shape Quest</div>
+          <div class="lc-desc">Identify colours, match shapes & drag and drop in 3 fun modes. Perfect for ages 3+.</div>
+          <span class="lc-btn" style="background:linear-gradient(135deg,var(--purple-light),var(--purple))">▶ Start Questing</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- ARCADE -->
+    <div class="zone-label" style="margin-top:36px">
+      <span class="zone-badge" style="background:linear-gradient(135deg,#7c3aed,#4c1d95)">🎮 Arcade Zone</span>
+      <div class="zone-divider" style="background:linear-gradient(90deg,#7c3aed,transparent)"></div>
+    </div>
+    <div class="arcade-grid">
+      <a class="arcade-card" href="/games/arcade/snake.html"><span class="arcade-emoji">🐍</span><div class="arcade-title">Snake</div><span class="arcade-tag">Classic</span></a>
+      <a class="arcade-card" href="/games/arcade/tictactoe.html"><span class="arcade-emoji">⭕</span><div class="arcade-title">Tic Tac Toe</div><span class="arcade-tag">VS CPU</span></a>
+      <a class="arcade-card" href="/games/arcade/memorymatch.html"><span class="arcade-emoji">🃏</span><div class="arcade-title">Memory Match</div><span class="arcade-tag">3 Levels</span></a>
+      <a class="arcade-card" href="/games/arcade/rockpaperscissors.html"><span class="arcade-emoji">✂️</span><div class="arcade-title">Rock Paper Scissors</div><span class="arcade-tag">Best of 5</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 7. PARENT DASHBOARD ══ -->
+<section id="parents">
+  <div class="page">
+    <div class="parents-inner">
+      <div class="fade-in">
+        <div class="badge-pill">🔐 For parents</div>
+        <h2 class="section-title">You're always in control of your child's growth.</h2>
+        <div class="divider" style="background:linear-gradient(90deg,var(--purple-light),var(--pink))"></div>
+        <p class="section-sub">The PIN-locked parent dashboard gives you full visibility and control — from any device, anytime.</p>
+        <div class="parents-features">
+          <div class="pf-item">
+            <span class="pf-icon">📊</span>
+            <div><div class="pf-title">Weekly progress reports</div><div class="pf-desc">See exactly what your child learned, which games they played and how many XP they earned.</div></div>
+          </div>
+          <div class="pf-item">
+            <span class="pf-icon">⏰</span>
+            <div><div class="pf-title">Screen time controls</div><div class="pf-desc">Set daily limits (15–120 mins), quiet hours and zone access toggles.</div></div>
+          </div>
+          <div class="pf-item">
+            <span class="pf-icon">👧</span>
+            <div><div class="pf-title">Multi-child profiles</div><div class="pf-desc">Each child has their own XP, belt progress, pet and daily tasks. All in one account.</div></div>
+          </div>
+          <div class="pf-item">
+            <span class="pf-icon">🛡️</span>
+            <div><div class="pf-title">Safety built-in</div><div class="pf-desc">No ads, no in-app purchases, no social features. COPPA and India DPDP compliant.</div></div>
+          </div>
+        </div>
+        <a href="/for-parents.html" class="btn btn-ghost" style="margin-top:24px">Learn more about parent features →</a>
+      </div>
+      <div class="fade-in">
+        <div class="dash-mock">
+          <div class="dm-header">
+            <div class="dm-title">🔐 Parent Dashboard</div>
+            <span class="dm-badge">2 children</span>
+          </div>
+          <div class="dm-children">
+            <div class="dm-child">
+              <div class="dc-avatar">🦊</div>
+              <div class="dc-info">
+                <div class="dc-name">Arjun, 8</div>
+                <div class="dc-stats">🟩 Green Belt · 🔥 12 day streak · 🎮 9/14 games</div>
+                <div class="dc-bar-bg"><div class="dc-bar-fill" style="width:72%"></div></div>
+              </div>
+              <div class="dc-xp">450 XP</div>
+            </div>
+            <div class="dm-child">
+              <div class="dc-avatar">🐰</div>
+              <div class="dc-info">
+                <div class="dc-name">Priya, 5</div>
+                <div class="dc-stats">🟨 Yellow Belt · 🔥 4 day streak · 🎮 4/14 games</div>
+                <div class="dc-bar-bg"><div class="dc-bar-fill" style="width:38%;background:linear-gradient(90deg,var(--yellow),var(--orange))"></div></div>
+              </div>
+              <div class="dc-xp" style="color:var(--orange)">120 XP</div>
+            </div>
+          </div>
+          <div class="dm-controls">
+            <div class="dm-ctrl"><div class="dm-ctrl-label">Screen time today</div><div class="dm-ctrl-val">34 / 60 min</div></div>
+            <div class="dm-ctrl"><div class="dm-ctrl-label">Age filter</div><div class="dm-ctrl-val">5–8 years</div></div>
+            <div class="dm-ctrl"><div class="dm-ctrl-label">Zones active</div><div class="dm-ctrl-val">Learn + Morals</div></div>
+            <div class="dm-ctrl"><div class="dm-ctrl-label">Weekly sessions</div><div class="dm-ctrl-val">18 this week</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 8. TESTIMONIALS ══ -->
+<section id="testimonials">
+  <div class="page text-center">
+    <div class="badge-pill" style="justify-content:center">💬 What parents say</div>
+    <h2 class="section-title">Real results from real families</h2>
+    <div class="testi-grid">
+      <div class="testi-card fade-in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"My daughter's teacher mentioned she's been kinder to classmates. I traced it back to the Kindness Quest game. I genuinely didn't expect a game to do that."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,var(--pink),#e84393)">P</div>
+          <div>
+            <div class="testi-name">Priya M.</div>
+            <div class="testi-role">Parent of a 7-year-old · Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"My son earns his daily XP before asking for any other screen time. He built that habit himself. The belt system is genius — he's determined to reach Black Belt."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,var(--purple-light),var(--purple))">R</div>
+          <div>
+            <div class="testi-name">Rahul K.</div>
+            <div class="testi-role">Parent of a 9-year-old · Bangalore</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Finally — screen time I don't feel guilty about. The parent dashboard shows me exactly what he's learning each week. The ad-free promise is a massive trust factor."</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,var(--green),var(--teal))">A</div>
+          <div>
+            <div class="testi-name">Anjali S.</div>
+            <div class="testi-role">Parent of a 6-year-old · Delhi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 9. PRICING ══ -->
+<section id="pricing">
+  <div class="page text-center">
+    <div class="badge-pill" style="justify-content:center">⭐ Sparkiddo Plus</div>
+    <h2 class="section-title">Take your child's daily growth further</h2>
+    <p class="section-sub" style="margin:0 auto">Start free — upgrade when you're ready. No pressure, no hidden fees.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="pc-plan">Free forever</div>
+        <div class="pc-price">₹0 <span>/month</span></div>
+        <div class="pc-period">Always free · No credit card needed</div>
+        <div class="pc-features">
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--green)">✓</div>All 14 games, always</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--green)">✓</div>1 child profile</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--green)">✓</div>XP, belts & streaks</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--green)">✓</div>Basic parent dashboard</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:#ccc">✓</div>Web play only</div>
+        </div>
+        <a href="/auth/register.html" class="pc-btn pc-btn-free">Start Free →</a>
+      </div>
+      <div class="price-card featured">
+        <div class="pc-popular">Most Popular</div>
+        <div class="pc-plan">Sparkiddo Plus</div>
+        <div class="pc-price">₹799 <span>/year</span></div>
+        <div class="pc-period">= ₹66/month · Save 33% vs monthly</div>
+        <div class="pc-features">
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--purple)">✓</div>Everything in Free</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--purple)">✓</div>Up to 4 child profiles</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--purple)">✓</div>Detailed weekly reports</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--purple)">✓</div>Offline play (app)</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--purple)">✓</div>Push reminders & alerts</div>
+          <div class="pc-feat"><div class="pc-feat-check" style="background:var(--purple)">✓</div>Priority support</div>
+        </div>
+        <a href="/upcoming.html" class="pc-btn pc-btn-plus">Join Waitlist →</a>
+      </div>
+    </div>
+    <p class="pc-guarantee">🔒 Cancel anytime · No contracts · 7-day money-back guarantee</p>
+    <p class="school-note">Using Sparkiddo in a classroom? <a href="/contact.html">Contact us for school licensing →</a></p>
+  </div>
+</section>
+
+<!-- ══ TRUST STRIP ══ -->
+<section id="trust-strip">
+  <div class="page">
+    <div class="trust-grid">
+      <div class="trust-badge"><span class="trust-badge-icon">🌱</span>Safe for Kids</div>
+      <div class="trust-badge"><span class="trust-badge-icon">🚫</span>100% Ad-Free</div>
+      <div class="trust-badge"><span class="trust-badge-icon">🔒</span>COPPA Compliant</div>
+      <div class="trust-badge"><span class="trust-badge-icon">💗</span>Values-Based</div>
+      <div class="trust-badge"><span class="trust-badge-icon">🎓</span>Educational</div>
+      <div class="trust-badge"><span class="trust-badge-icon">🇮🇳</span>DPDP Compliant</div>
+      <div class="trust-badge"><span class="trust-badge-icon">💳</span>No Kid Purchases</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="page">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">🌟 Sparkiddo</div>
+        <p class="footer-tagline">Spark Smart Minds. Build Confident Hearts.<br>Daily growth platform for kids aged 3–12.<br>Free. Ad-free. Safe.</p>
+        <a href="mailto:hello@sparkiddo.com" class="footer-email">📧 hello@sparkiddo.com</a>
+        <div class="footer-social">
+          <a href="#" class="social-btn" title="Instagram">📸</a>
+          <a href="#" class="social-btn" title="YouTube">▶️</a>
+          <a href="#" class="social-btn" title="X/Twitter">🐦</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <a href="/" class="footer-link">Home</a>
+        <a href="#pillars" class="footer-link">How it grows kids</a>
+        <a href="#how" class="footer-link">How it works</a>
+        <a href="#games" class="footer-link">All 14 games</a>
+        <a href="/upcoming.html" class="footer-link">What's coming 🚀</a>
+        <a href="/blog.html" class="footer-link">Blog</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Parents</div>
+        <a href="/for-parents.html" class="footer-link">For Parents</a>
+        <a href="/auth/register.html" class="footer-link">Create account</a>
+        <a href="/auth/login.html" class="footer-link">Parent Login</a>
+        <a href="#pricing" class="footer-link">Sparkiddo Plus ⭐</a>
+        <a href="/contact.html" class="footer-link">For Schools</a>
+        <a href="/faq.html" class="footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <a href="/about.html" class="footer-link">About Sparkiddo</a>
+        <a href="/contact.html" class="footer-link">Contact Us</a>
+        <a href="/privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="/terms.html" class="footer-link">Terms of Service</a>
+        <a href="/cookies.html" class="footer-link">Cookie Policy</a>
+        <a href="/coppa.html" class="footer-link">COPPA Notice</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 Sparkiddo. All rights reserved. Made with ❤️ for kids everywhere.</div>
+      <div class="footer-legal-links">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/cookies.html">Cookies</a>
+        <a href="/coppa.html">COPPA</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <script>
-const sb=document.getElementById('stars');
-for(let i=0;i<60;i++){
-  const s=document.createElement('div');s.className='star';
-  s.style.left=Math.random()*100+'vw';
-  s.style.top=Math.random()*100+'vh';
-  s.style.setProperty('--d',(1.5+Math.random()*3).toFixed(1)+'s');
-  s.style.opacity=Math.random()*.5;
-  s.style.width=s.style.height=(1+Math.random()*2)+'px';
-  sb.appendChild(s);
+// ── NAV scroll effect ──
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>60);
+});
+
+// ── Mobile menu ──
+function toggleMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
 }
+document.querySelectorAll('.mobile-menu .nav-link').forEach(l=>{
+  l.addEventListener('click',()=>document.getElementById('mobile-menu').classList.remove('open'));
+});
+
+// ── Fade in on scroll ──
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.12});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// ── Game card top borders ──
+const moralColor='#00b894';
+const learnColor='#fdcb6e';
+document.querySelectorAll('#games .game-card').forEach((c,i)=>{
+  const tags=c.querySelectorAll('.game-tag');
+  if(tags.length){
+    const col=tags[0].style.background||moralColor;
+    c.style.setProperty('--gc',col);
+    c.querySelector('.game-card::before');
+    // Apply top border via pseudo — done via direct style
+    c.style.boxShadow=`inset 0 3px 0 0 ${col}, 0 4px 20px rgba(0,0,0,.08)`;
+  }
+});
+
+// ── Stat counter animation ──
+const statNums=document.querySelectorAll('.stat-num');
+const statObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!e.target.dataset.animated){
+      e.target.dataset.animated='1';
+      e.target.style.animation='countup .6s ease forwards';
+    }
+  });
+},{threshold:0.5});
+statNums.forEach(n=>statObs.observe(n));
+
+// ── Smooth anchor scroll ──
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
 </script>
 </body>
 </html>

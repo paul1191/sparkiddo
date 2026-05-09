@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Sparkiddo — Daily Growth Platform for Kids</title>
+<meta name="description" content="Learn about Sparkiddo — who built it, why it exists, and our mission to turn screen time into daily growth for kids aged 3–12.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap');
+:root{
+  --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+  --green:#00b894;--green-light:#55efc4;--green-pale:#e8f9f3;
+  --pink:#fd79a8;--pink-pale:#fce4f3;
+  --yellow:#fdcb6e;--orange:#ff9f43;--teal:#00cec9;
+  --dark:#1a1a2e;--text:#333;--muted:#777;--light:#f7f3ff;
+  --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+  --radius:16px;--radius-lg:24px;--radius-xl:32px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:#fff;overflow-x:hidden}
+.blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.1;pointer-events:none;z-index:0}
+.blob-1{width:500px;height:500px;background:var(--purple-light);top:-150px;left:-150px}
+.blob-2{width:400px;height:400px;background:var(--pink);bottom:-100px;right:-100px}
+
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 24px;transition:background .3s,box-shadow .3s}
+#nav.scrolled{background:#fff;box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#7c5cbf,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;margin-right:auto}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:7px 13px;border-radius:10px;font-size:.82rem;font-weight:700;color:var(--muted);text-decoration:none;transition:.2s}
+.nav-link:hover,.nav-link.active{background:var(--purple-pale);color:var(--purple)}
+.nav-login{padding:7px 14px;border-radius:10px;font-size:.82rem;font-weight:700;border:2px solid #e0d7ff;color:var(--purple);text-decoration:none;transition:.2s}
+.nav-login:hover{background:var(--purple-pale)}
+.nav-cta{padding:9px 18px;border-radius:10px;font-family:'Fredoka One',cursive;font-size:.88rem;background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;text-decoration:none;box-shadow:0 4px 14px rgba(0,184,148,.35);transition:.2s}
+.nav-cta:hover{transform:translateY(-2px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:22px;height:2.5px;background:var(--purple);border-radius:99px;display:block}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:16px 24px;flex-direction:column;gap:4px;z-index:999}
+.mobile-menu.open{display:flex}
+.mobile-menu .nav-link{font-size:.9rem;padding:10px 14px}
+.mobile-menu .nav-cta{text-align:center;margin-top:8px}
+
+/* LAYOUT */
+.page{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 20px}
+.section{padding:80px 0}
+.badge-pill{display:inline-flex;align-items:center;gap:7px;background:var(--purple-pale);color:var(--purple);border:1.5px solid #d4c6ff;border-radius:99px;padding:6px 16px;font-size:.78rem;font-weight:800;letter-spacing:.5px;margin-bottom:16px}
+.section-title{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:10px;line-height:1.2;color:var(--dark)}
+.section-sub{font-size:1rem;color:var(--muted);font-weight:600;line-height:1.7}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;text-decoration:none;transition:.2s;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;box-shadow:0 6px 20px rgba(0,184,148,.35)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--purple);border:2px solid var(--purple-light)}
+.btn-ghost:hover{background:var(--purple-pale)}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* PAGE HERO */
+.page-hero{padding:140px 0 80px;background:linear-gradient(160deg,var(--light),var(--pink-pale) 50%,var(--green-pale));text-align:center;position:relative;overflow:hidden}
+.ph-badge{display:inline-block;margin-bottom:16px}
+.ph-title{font-family:'Fredoka One',cursive;font-size:2.8rem;color:var(--dark);margin-bottom:14px;line-height:1.2}
+.ph-title .hl{background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph-sub{font-size:1.05rem;color:var(--muted);font-weight:600;max-width:600px;margin:0 auto;line-height:1.8}
+
+/* MISSION */
+.mission-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.mission-card{background:linear-gradient(145deg,var(--purple-pale),var(--pink-pale));border-radius:var(--radius-xl);padding:40px;position:relative;overflow:hidden}
+.mission-card::before{content:'✨';position:absolute;bottom:-20px;right:-10px;font-size:8rem;opacity:.1}
+.mc-quote{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--dark);line-height:1.5;margin-bottom:20px}
+.mc-attr{font-size:.85rem;font-weight:700;color:var(--purple)}
+.mission-points{display:flex;flex-direction:column;gap:14px}
+.mp-item{display:flex;align-items:flex-start;gap:14px;padding:16px;background:#fff;border-radius:14px;box-shadow:var(--shadow);transition:.2s}
+.mp-item:hover{transform:translateX(6px)}
+.mp-icon{font-size:1.6rem;flex-shrink:0}
+.mp-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--dark);margin-bottom:3px}
+.mp-desc{font-size:.8rem;color:var(--muted);font-weight:600;line-height:1.5}
+
+/* PROBLEM WE SOLVE */
+.problem-section{background:linear-gradient(135deg,var(--light),var(--green-pale));padding:80px 0}
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:36px}
+.prob-card{background:#fff;border-radius:var(--radius-lg);padding:24px 20px;box-shadow:var(--shadow);border-top:4px solid;transition:.22s}
+.prob-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.prob-emoji{font-size:2.2rem;margin-bottom:12px;display:block}
+.prob-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--dark);margin-bottom:6px}
+.prob-desc{font-size:.82rem;color:var(--muted);font-weight:600;line-height:1.6}
+
+/* ORIGIN STORY */
+.story-inner{display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:center}
+.story-visual{position:relative}
+.story-card{background:linear-gradient(145deg,var(--purple-pale),var(--green-pale));border-radius:var(--radius-xl);padding:32px;box-shadow:var(--shadow-lg)}
+.sc-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--purple);margin-bottom:14px}
+.sc-timeline{display:flex;flex-direction:column;gap:12px}
+.sc-item{display:flex;gap:14px;align-items:flex-start}
+.sc-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.sc-text{font-size:.82rem;font-weight:700;color:#444;line-height:1.5}
+.sc-year{font-size:.7rem;font-weight:800;color:var(--muted);display:block;margin-bottom:2px;letter-spacing:.5px}
+.story-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--dark);margin-bottom:16px;line-height:1.3}
+.story-para{font-size:.9rem;color:var(--muted);font-weight:600;line-height:1.8;margin-bottom:14px}
+
+/* VALUES */
+.values-section{background:linear-gradient(135deg,var(--pink-pale),var(--purple-pale));padding:80px 0;text-align:center}
+.values-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:36px}
+.val-card{background:#fff;border-radius:var(--radius-lg);padding:24px 16px;box-shadow:var(--shadow);transition:.22s}
+.val-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.val-icon{font-size:2.2rem;margin-bottom:12px;display:block}
+.val-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--dark);margin-bottom:6px}
+.val-desc{font-size:.75rem;color:var(--muted);font-weight:600;line-height:1.5}
+
+/* TEAM */
+.team-section{padding:80px 0}
+.team-card{max-width:600px;margin:36px auto 0;background:linear-gradient(145deg,var(--light),var(--pink-pale));border-radius:var(--radius-xl);padding:36px;display:flex;align-items:center;gap:28px;box-shadow:var(--shadow-lg)}
+.team-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--purple-light),var(--pink));display:flex;align-items:center;justify-content:center;font-size:3rem;flex-shrink:0;box-shadow:0 6px 20px rgba(124,92,191,.3)}
+.team-name{font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--dark);margin-bottom:4px}
+.team-role{font-size:.8rem;font-weight:800;color:var(--purple);margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase}
+.team-bio{font-size:.85rem;color:var(--muted);font-weight:600;line-height:1.7}
+
+/* CTA SECTION */
+.cta-section{background:linear-gradient(135deg,var(--purple),#9b5de5,var(--pink));padding:80px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'🌟';position:absolute;font-size:20rem;opacity:.04;top:-60px;right:-60px}
+.cta-title{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#fff;margin-bottom:12px}
+.cta-sub{font-size:1rem;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.7}
+.btn-white{background:#fff;color:var(--purple);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.btn-white:hover{transform:translateY(-2px)}
+
+/* FOOTER */
+footer{background:#1a1a2e;color:#c4b5fd;padding:50px 0 28px}
+.footer-inner{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,var(--purple-light),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.footer-tag{font-size:.78rem;color:#7d6fb0;font-weight:700;line-height:1.6;margin-bottom:10px}
+.footer-email{font-size:.78rem;color:#a78bfa;text-decoration:none}
+.footer-col-title{font-family:'Fredoka One',cursive;font-size:.92rem;color:#e0d7ff;margin-bottom:14px}
+.fl{display:block;font-size:.78rem;color:#7d6fb0;font-weight:700;text-decoration:none;padding:3px 0;transition:.2s}
+.fl:hover{color:var(--pink)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:.72rem;color:#4a3f6b;font-weight:700}
+.footer-bottom a{color:#4a3f6b;text-decoration:none;transition:.2s}
+.footer-bottom a:hover{color:#c4b5fd}
+.footer-legal{display:flex;gap:14px;flex-wrap:wrap}
+
+@media(max-width:900px){
+  .mission-inner,.story-inner{grid-template-columns:1fr}
+  .problem-grid{grid-template-columns:1fr 1fr}
+  .values-grid{grid-template-columns:repeat(3,1fr)}
+  .team-card{flex-direction:column;text-align:center}
+  .ph-title{font-size:2rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .footer-inner{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .problem-grid,.values-grid{grid-template-columns:1fr 1fr}
+  .footer-inner{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">🌟 Sparkiddo</a>
+    <div class="nav-links">
+      <a href="/about.html" class="nav-link active">About</a>
+      <a href="/#how" class="nav-link">How it works</a>
+      <a href="/for-parents.html" class="nav-link">For Parents</a>
+      <a href="/blog.html" class="nav-link">Blog</a>
+    </div>
+    <a href="/auth/login.html" class="nav-login">🔐 Parent Login</a>
+    <a href="/auth/register.html" class="nav-cta">▶ Play Free</a>
+    <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mm">
+  <a href="/about.html" class="nav-link active">About</a>
+  <a href="/#how" class="nav-link">How it works</a>
+  <a href="/for-parents.html" class="nav-link">For Parents</a>
+  <a href="/blog.html" class="nav-link">Blog</a>
+  <a href="/auth/login.html" class="nav-link">🔐 Parent Login</a>
+  <a href="/auth/register.html" class="nav-cta">▶ Play Free</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page">
+    <div class="badge-pill ph-badge">ℹ️ Our story</div>
+    <h1 class="ph-title">Built by a parent,<br><span class="hl">for every parent.</span></h1>
+    <p class="ph-sub">We believe every child deserves daily growth that feels like play — not another screen to feel guilty about.</p>
+  </div>
+</div>
+
+<!-- MISSION -->
+<section class="section">
+  <div class="page">
+    <div class="mission-inner">
+      <div class="fade-in">
+        <div class="mission-card">
+          <div class="mc-quote">"We believe every child deserves daily growth that feels like play."</div>
+          <div class="mc-attr">— Sparkiddo Mission Statement</div>
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="badge-pill">🎯 Our mission</div>
+        <h2 class="section-title">Making growth the best part of a child's day</h2>
+        <p class="section-sub" style="margin-bottom:24px">Sparkiddo exists to close the gap between screen time and meaningful growth — one game, one day, one habit at a time.</p>
+        <div class="mission-points">
+          <div class="mp-item">
+            <span class="mp-icon">🧠</span>
+            <div><div class="mp-title">Build real skills</div><div class="mp-desc">Maths, problem-solving, colours and shapes — embedded into every game.</div></div>
+          </div>
+          <div class="mp-item">
+            <span class="mp-icon">💗</span>
+            <div><div class="mp-title">Grow great values</div><div class="mp-desc">Kindness, honesty, empathy and bravery — taught through stories and choices.</div></div>
+          </div>
+          <div class="mp-item">
+            <span class="mp-icon">🌱</span>
+            <div><div class="mp-title">Create lasting habits</div><div class="mp-desc">Daily streaks, XP belts and tasks that build the discipline to show up every day.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM WE SOLVE -->
+<section class="problem-section">
+  <div class="page">
+    <div class="badge-pill">💡 The problem we solve</div>
+    <h2 class="section-title">Screen time shouldn't be a guilty pleasure.</h2>
+    <p class="section-sub">We identified three problems that no existing platform was solving together.</p>
+    <div class="problem-grid">
+      <div class="prob-card fade-in" style="border-color:var(--pink)">
+        <span class="prob-emoji">😔</span>
+        <div class="prob-title">Screen time guilt</div>
+        <div class="prob-desc">Parents feel guilty letting kids use screens — because most content is pure entertainment with no lasting value. Sparkiddo makes every minute count.</div>
+      </div>
+      <div class="prob-card fade-in" style="border-color:var(--purple-light)">
+        <span class="prob-emoji">🎮</span>
+        <div class="prob-title">No values in games</div>
+        <div class="prob-desc">Existing kids games focus on dopamine loops — not character development. No one was teaching kindness, honesty and emotional intelligence through play.</div>
+      </div>
+      <div class="prob-card fade-in" style="border-color:var(--green)">
+        <span class="prob-emoji">📵</span>
+        <div class="prob-title">No daily growth habit</div>
+        <div class="prob-desc">Without streaks, progression and daily structure, kids don't return. Sparkiddo's belt system and daily tasks create the habit loop that keeps growth consistent.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORIGIN STORY -->
+<section class="section">
+  <div class="page">
+    <div class="story-inner">
+      <div class="fade-in">
+        <div class="badge-pill">📖 The story</div>
+        <h2 class="story-title">Why Sparkiddo was built</h2>
+        <p class="story-para">It started with a simple observation: my child was spending hours on screens, but nothing was sticking. No skills, no values, no growth — just entertainment. The guilt was real.</p>
+        <p class="story-para">I searched for something that combined learning, emotional development and daily habit formation in one safe, ad-free place. It didn't exist. So we built it.</p>
+        <p class="story-para">Sparkiddo is the platform I wished existed when my child first picked up a tablet. 14 games, a full parent dashboard, zero ads — and a genuine commitment to growing smarter, kinder, braver kids.</p>
+        <a href="/auth/register.html" class="btn btn-primary" style="margin-top:8px">Start your child's journey →</a>
+      </div>
+      <div class="fade-in">
+        <div class="story-card">
+          <div class="sc-title">🗺️ Sparkiddo journey</div>
+          <div class="sc-timeline">
+            <div class="sc-item">
+              <div class="sc-dot" style="background:var(--purple-light)"></div>
+              <div class="sc-text"><span class="sc-year">THE IDEA</span>Realised no platform combined learning + values + daily habits for kids in one ad-free place.</div>
+            </div>
+            <div class="sc-item">
+              <div class="sc-dot" style="background:var(--pink)"></div>
+              <div class="sc-text"><span class="sc-year">RESEARCH</span>Studied child psychology, emotional development frameworks and habit formation science.</div>
+            </div>
+            <div class="sc-item">
+              <div class="sc-dot" style="background:var(--yellow)"></div>
+              <div class="sc-text"><span class="sc-year">BUILDING</span>Designed and built 14 games across 3 zones — Morals, Learn and Arcade.</div>
+            </div>
+            <div class="sc-item">
+              <div class="sc-dot" style="background:var(--orange)"></div>
+              <div class="sc-text"><span class="sc-year">LAUNCH</span>Sparkiddo goes live at sparkiddo.com — free for every child, everywhere.</div>
+            </div>
+            <div class="sc-item">
+              <div class="sc-dot" style="background:var(--green)"></div>
+              <div class="sc-text"><span class="sc-year">NEXT</span>iOS + Android app · Sparkiddo Plus · Classroom mode · 10 languages.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values-section">
+  <div class="page">
+    <div class="badge-pill" style="justify-content:center">🏅 What we stand for</div>
+    <h2 class="section-title" style="text-align:center">Our five core values</h2>
+    <div class="values-grid">
+      <div class="val-card fade-in">
+        <span class="val-icon">🌱</span>
+        <div class="val-title">Safe</div>
+        <div class="val-desc">No ads, no purchases for children, no data collected from kids. Safety is non-negotiable.</div>
+      </div>
+      <div class="val-card fade-in">
+        <span class="val-icon">🎁</span>
+        <div class="val-title">Free</div>
+        <div class="val-desc">All 14 games are free forever. Every child deserves access to growth — regardless of income.</div>
+      </div>
+      <div class="val-card fade-in">
+        <span class="val-icon">🎓</span>
+        <div class="val-title">Educational</div>
+        <div class="val-desc">Every game is purposefully designed to teach something real — not just entertain.</div>
+      </div>
+      <div class="val-card fade-in">
+        <span class="val-icon">💗</span>
+        <div class="val-title">Values-based</div>
+        <div class="val-desc">We believe character matters as much as academic skills. Both live in Sparkiddo.</div>
+      </div>
+      <div class="val-card fade-in">
+        <span class="val-icon">🤝</span>
+        <div class="val-title">Parent-trusted</div>
+        <div class="val-desc">Parents are our real customers. We earn trust through transparency, not dark patterns.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-section">
+  <div class="page text-align:center">
+    <div class="badge-pill" style="display:flex;justify-content:center;width:fit-content;margin:0 auto 16px">👋 The team</div>
+    <h2 class="section-title" style="text-align:center">Built with love, from India 🇮🇳</h2>
+    <div class="team-card fade-in">
+      <div class="team-avatar">👨‍💻</div>
+      <div>
+        <div class="team-name">Sparkiddo Founder</div>
+        <div class="team-role">Founder & Builder · Durgapur, West Bengal</div>
+        <p class="team-bio">Parent. Developer. Believer in the idea that every minute of a child's screen time can matter. Built Sparkiddo from scratch to give kids a daily growth platform their parents can feel good about — and kids actually want to use.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="page">
+    <h2 class="cta-title">Ready to spark your child's growth?</h2>
+    <p class="cta-sub">Join 100+ families already using Sparkiddo to turn screen time into the best part of their child's day.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="/auth/register.html" class="btn btn-white">▶ Start Free Today</a>
+      <a href="/for-parents.html" class="btn" style="background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.3)">For Parents →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="page">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">🌟 Sparkiddo</div>
+        <p class="footer-tag">Spark Smart Minds. Build Confident Hearts.<br>Daily growth platform for kids aged 3–12.</p>
+        <a href="mailto:hello@sparkiddo.com" class="footer-email">📧 hello@sparkiddo.com</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <a href="/" class="fl">Home</a>
+        <a href="/about.html" class="fl">About</a>
+        <a href="/upcoming.html" class="fl">What's Coming 🚀</a>
+        <a href="/blog.html" class="fl">Blog</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Parents</div>
+        <a href="/for-parents.html" class="fl">For Parents</a>
+        <a href="/auth/register.html" class="fl">Create Account</a>
+        <a href="/auth/login.html" class="fl">Parent Login</a>
+        <a href="/faq.html" class="fl">FAQ</a>
+        <a href="/contact.html" class="fl">Contact</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Legal</div>
+        <a href="/privacy.html" class="fl">Privacy Policy</a>
+        <a href="/terms.html" class="fl">Terms of Service</a>
+        <a href="/cookies.html" class="fl">Cookie Policy</a>
+        <a href="/coppa.html" class="fl">COPPA Notice</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Sparkiddo. All rights reserved. Made with ❤️ in India.</span>
+      <div class="footer-legal">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>60));
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')}),{threshold:.12});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
