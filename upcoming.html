@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What's Coming — Sparkiddo</title>
+<meta name="description" content="See what's next for Sparkiddo — the iOS & Android app, Sparkiddo Plus, new moral games, classroom mode and more. Join the waitlist.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap');
+:root{
+  --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+  --green:#00b894;--green-light:#55efc4;--green-pale:#e8f9f3;
+  --pink:#fd79a8;--pink-pale:#fce4f3;
+  --yellow:#fdcb6e;--orange:#ff9f43;--teal:#00cec9;
+  --dark:#1a1a2e;--text:#333;--muted:#777;--light:#f7f3ff;
+  --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+  --radius:16px;--radius-lg:24px;--radius-xl:32px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:#fff;overflow-x:hidden}
+.blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.1;pointer-events:none;z-index:0}
+.blob-1{width:500px;height:500px;background:var(--orange);top:-150px;right:-150px}
+.blob-2{width:400px;height:400px;background:var(--purple-light);bottom:-100px;left:-100px}
+
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:14px 24px;transition:.3s}
+#nav.scrolled{background:#fff;box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#7c5cbf,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;margin-right:auto}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:7px 13px;border-radius:10px;font-size:.82rem;font-weight:700;color:var(--muted);text-decoration:none;transition:.2s}
+.nav-link:hover,.nav-link.active{background:var(--purple-pale);color:var(--purple)}
+.nav-login{padding:7px 14px;border-radius:10px;font-size:.82rem;font-weight:700;border:2px solid #e0d7ff;color:var(--purple);text-decoration:none;transition:.2s}
+.nav-login:hover{background:var(--purple-pale)}
+.nav-cta{padding:9px 18px;border-radius:10px;font-family:'Fredoka One',cursive;font-size:.88rem;background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;text-decoration:none;box-shadow:0 4px 14px rgba(0,184,148,.35);transition:.2s}
+.nav-cta:hover{transform:translateY(-2px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{width:22px;height:2.5px;background:var(--purple);border-radius:99px;display:block}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:16px 24px;flex-direction:column;gap:4px;z-index:999}
+.mobile-menu.open{display:flex}
+.mobile-menu .nav-link{font-size:.9rem;padding:10px 14px}
+.mobile-menu .nav-cta{text-align:center;margin-top:8px}
+
+/* LAYOUT */
+.page{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 20px}
+.section{padding:80px 0}
+.badge-pill{display:inline-flex;align-items:center;gap:7px;border-radius:99px;padding:6px 16px;font-size:.78rem;font-weight:800;letter-spacing:.5px;margin-bottom:16px}
+.section-title{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:10px;line-height:1.2;color:var(--dark)}
+.section-sub{font-size:.95rem;color:var(--muted);font-weight:600;line-height:1.7}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;text-decoration:none;transition:.2s;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;box-shadow:0 6px 20px rgba(124,92,191,.35)}
+.btn-primary:hover{transform:translateY(-2px)}
+
+/* HERO */
+.page-hero{padding:140px 0 80px;background:linear-gradient(160deg,var(--dark),#2d1b69,#1a3a4a);position:relative;overflow:hidden;text-align:center}
+.page-hero::before{content:'🚀';position:absolute;font-size:20rem;opacity:.04;top:-60px;right:-60px}
+.hero-label{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);color:#c4b5fd;border:1.5px solid rgba(255,255,255,.15);border-radius:99px;padding:7px 18px;font-size:.78rem;font-weight:800;margin-bottom:20px;letter-spacing:.5px}
+.hero-title{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#fff;margin-bottom:14px;line-height:1.2}
+.hero-title .hl{background:linear-gradient(135deg,var(--yellow),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,.7);font-weight:600;max-width:580px;margin:0 auto 32px;line-height:1.8}
+.wl-form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:480px;margin:0 auto}
+.wl-input{flex:1;min-width:200px;padding:13px 18px;border-radius:12px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:600;outline:none;transition:.2s}
+.wl-input::placeholder{color:rgba(255,255,255,.4)}
+.wl-input:focus{border-color:var(--yellow)}
+.wl-btn{padding:13px 24px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer;transition:.2s;white-space:nowrap;box-shadow:0 4px 16px rgba(255,159,67,.4)}
+.wl-btn:hover{transform:scale(1.04)}
+.wl-note{font-size:.75rem;color:rgba(255,255,255,.4);font-weight:700;margin-top:10px}
+.wl-success{display:none;padding:14px 20px;background:rgba(0,184,148,.15);border-radius:12px;font-size:.88rem;font-weight:700;color:var(--green-light);border:1px solid rgba(0,184,148,.3);margin:0 auto;max-width:420px;text-align:center}
+
+/* ROADMAP TIMELINE */
+.roadmap-section{background:#fff;padding:80px 0}
+.timeline{position:relative;padding-left:28px;max-width:760px;margin:40px auto 0}
+.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--purple-light),var(--pink),var(--green));border-radius:99px}
+.tl-item{position:relative;margin-bottom:32px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-28px;top:6px;width:16px;height:16px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 0 2px;flex-shrink:0}
+.tl-card{background:var(--light);border-radius:var(--radius-lg);padding:20px 22px;border:1.5px solid #e0d7ff;transition:.22s}
+.tl-card:hover{border-color:var(--purple-light);box-shadow:var(--shadow)}
+.tl-status{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase}
+.tl-title{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--dark);margin-bottom:5px}
+.tl-desc{font-size:.82rem;color:var(--muted);font-weight:600;line-height:1.6}
+
+/* APP SECTION */
+.app-section{background:linear-gradient(160deg,var(--dark),#2d1b69);padding:80px 0;color:#fff}
+.app-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.app-badge-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);color:#c4b5fd;border:1.5px solid rgba(255,255,255,.15);border-radius:99px;padding:6px 16px;font-size:.78rem;font-weight:800;margin-bottom:16px}
+.app-title{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:12px;line-height:1.3}
+.app-title .hl{background:linear-gradient(135deg,var(--purple-light),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.app-sub{font-size:.9rem;color:rgba(255,255,255,.7);font-weight:600;line-height:1.8;margin-bottom:24px}
+.app-feats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.af{background:rgba(255,255,255,.06);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.08);display:flex;gap:10px;align-items:flex-start}
+.af-icon{font-size:1.3rem;flex-shrink:0}
+.af-title{font-family:'Fredoka One',cursive;font-size:.82rem;color:#c4b5fd;margin-bottom:2px}
+.af-desc{font-size:.72rem;color:rgba(255,255,255,.5);font-weight:600;line-height:1.4}
+.store-badges{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.store-badge{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.2s;text-decoration:none}
+.store-badge:hover{background:rgba(255,255,255,.14)}
+.sb-icon{font-size:1.5rem}
+.sb-text{display:flex;flex-direction:column}
+.sb-label{font-size:.62rem;color:rgba(255,255,255,.5);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.sb-store{font-family:'Fredoka One',cursive;font-size:.88rem;color:#fff}
+.app-mockup{background:rgba(255,255,255,.06);border-radius:var(--radius-xl);padding:24px;border:1.5px solid rgba(255,255,255,.1)}
+.am-header{font-family:'Fredoka One',cursive;font-size:.88rem;color:#c4b5fd;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.am-screen{background:linear-gradient(145deg,#1a1a2e,#2d1b69);border-radius:20px;padding:20px;position:relative;overflow:hidden}
+.am-screen::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple-light),var(--pink),var(--green-light))}
+.am-zone{background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.08)}
+.az-icon{font-size:1.4rem;flex-shrink:0}
+.az-title{font-family:'Fredoka One',cursive;font-size:.8rem;color:#c4b5fd;margin-bottom:2px}
+.az-sub{font-size:.68rem;color:rgba(255,255,255,.4);font-weight:600}
+.az-offline{font-size:.6rem;padding:2px 8px;border-radius:99px;background:rgba(0,184,148,.2);color:var(--green-light);font-weight:800}
+
+/* NEW GAMES */
+.games-section{background:linear-gradient(160deg,var(--light),var(--pink-pale));padding:80px 0}
+.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px}
+.game-card{background:#fff;border-radius:var(--radius-lg);padding:22px 16px;text-align:center;box-shadow:var(--shadow);border:2px solid #e0d7ff;position:relative;overflow:hidden;transition:.22s}
+.game-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.game-card.locked{opacity:.7}
+.gc-lock{position:absolute;top:12px;right:12px;font-size:1rem}
+.gc-emoji{font-size:2.4rem;display:block;margin-bottom:10px}
+.gc-title{font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--dark);margin-bottom:5px}
+.gc-desc{font-size:.74rem;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:10px}
+.gc-tag{font-size:.62rem;font-weight:800;padding:3px 10px;border-radius:99px;color:#fff;display:inline-block}
+.gc-status{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px;margin-top:8px;display:inline-block;letter-spacing:.4px}
+
+/* PLUS SECTION */
+.plus-section{background:#fff;padding:80px 0}
+.plus-inner{max-width:860px;margin:0 auto}
+.plus-card{background:linear-gradient(145deg,var(--purple-pale),var(--pink-pale));border-radius:var(--radius-xl);padding:40px;border:2px solid #d4c6ff;position:relative;overflow:hidden}
+.plus-card::before{content:'⭐';position:absolute;bottom:-20px;right:-10px;font-size:8rem;opacity:.08}
+.plus-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:14px}
+.plus-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--dark);margin-bottom:6px}
+.plus-sub{font-size:.88rem;color:var(--muted);font-weight:600;line-height:1.6}
+.plus-price{text-align:right}
+.pp-main{font-family:'Fredoka One',cursive;font-size:2rem;color:var(--purple)}
+.pp-period{font-size:.78rem;color:var(--muted);font-weight:700}
+.pp-monthly{font-size:.75rem;color:var(--green);font-weight:800;margin-top:2px}
+.plus-feats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.pf-feat{display:flex;align-items:flex-start;gap:12px;background:#fff;border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.pf-icon{font-size:1.4rem;flex-shrink:0}
+.pf-title{font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--dark);margin-bottom:2px}
+.pf-desc{font-size:.75rem;color:var(--muted);font-weight:600;line-height:1.4}
+.plus-cta-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-purple{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;box-shadow:0 6px 20px rgba(124,92,191,.35)}
+.btn-purple:hover{transform:translateY(-2px)}
+.plus-note{font-size:.78rem;color:var(--muted);font-weight:700}
+
+/* SCHOOLS */
+.schools-section{background:linear-gradient(135deg,var(--green-pale),var(--light));padding:80px 0}
+.schools-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.school-feats{display:flex;flex-direction:column;gap:12px;margin-top:24px;margin-bottom:28px}
+.sf-item{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border-radius:14px;box-shadow:var(--shadow);transition:.2s}
+.sf-item:hover{transform:translateX(5px)}
+.sf-icon{font-size:1.4rem;flex-shrink:0}
+.sf-text{font-size:.88rem;font-weight:700;color:#444}
+.school-card{background:linear-gradient(145deg,#fff,var(--green-pale));border-radius:var(--radius-xl);padding:32px;box-shadow:var(--shadow-lg);border:2px solid #9fe1cb;text-align:center}
+.school-emoji{font-size:4rem;margin-bottom:16px;display:block}
+.school-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--dark);margin-bottom:8px}
+.school-desc{font-size:.85rem;color:var(--muted);font-weight:600;line-height:1.7;margin-bottom:20px}
+.school-contact-form{display:flex;flex-direction:column;gap:10px}
+.sc-input{padding:11px 14px;border-radius:12px;border:1.5px solid #9fe1cb;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:600;outline:none;transition:.2s}
+.sc-input:focus{border-color:var(--green)}
+.sc-btn{padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;transition:.2s}
+.sc-btn:hover{transform:scale(1.03)}
+
+/* LANGUAGE MAP */
+.lang-section{background:var(--dark);padding:80px 0;color:#fff}
+.lang-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:36px}
+.lang-card{background:rgba(255,255,255,.06);border-radius:14px;padding:18px 14px;text-align:center;border:1.5px solid rgba(255,255,255,.08);transition:.22s}
+.lang-card:hover{background:rgba(255,255,255,.1);border-color:rgba(162,155,254,.4)}
+.lang-flag{font-size:2rem;display:block;margin-bottom:8px}
+.lang-name{font-family:'Fredoka One',cursive;font-size:.85rem;color:#c4b5fd;margin-bottom:4px}
+.lang-status{font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:99px;display:inline-block;letter-spacing:.4px}
+.ls-live{background:rgba(0,184,148,.2);color:var(--green-light)}
+.ls-soon{background:rgba(253,203,110,.15);color:var(--yellow)}
+.ls-planned{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+
+/* FOOTER */
+footer{background:#1a1a2e;color:#c4b5fd;padding:50px 0 28px}
+.fi{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.fl-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,var(--purple-light),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.fl-tag{font-size:.78rem;color:#7d6fb0;font-weight:700;line-height:1.6;margin-bottom:10px}
+.fl-email{font-size:.78rem;color:#a78bfa;text-decoration:none}
+.fc-title{font-family:'Fredoka One',cursive;font-size:.92rem;color:#e0d7ff;margin-bottom:14px}
+.fl{display:block;font-size:.78rem;color:#7d6fb0;font-weight:700;text-decoration:none;padding:3px 0;transition:.2s}
+.fl:hover{color:var(--pink)}
+.fb{border-top:1px solid rgba(255,255,255,.06);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:.72rem;color:#4a3f6b;font-weight:700}
+.fb a{color:#4a3f6b;text-decoration:none}.fb a:hover{color:#c4b5fd}
+.fbl{display:flex;gap:14px;flex-wrap:wrap}
+
+@media(max-width:900px){
+  .app-inner,.schools-inner{grid-template-columns:1fr}
+  .games-grid{grid-template-columns:1fr 1fr}
+  .plus-feats{grid-template-columns:1fr}
+  .lang-grid{grid-template-columns:repeat(3,1fr)}
+  .hero-title{font-size:2rem}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .fi{grid-template-columns:1fr 1fr}
+  .app-feats{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .games-grid{grid-template-columns:1fr 1fr}
+  .lang-grid{grid-template-columns:1fr 1fr}
+  .fi{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">🌟 Sparkiddo</a>
+    <div class="nav-links">
+      <a href="/about.html" class="nav-link">About</a>
+      <a href="/#how" class="nav-link">How it works</a>
+      <a href="/for-parents.html" class="nav-link">For Parents</a>
+      <a href="/blog.html" class="nav-link">Blog</a>
+    </div>
+    <a href="/auth/login.html" class="nav-login">🔐 Parent Login</a>
+    <a href="/auth/register.html" class="nav-cta">▶ Play Free</a>
+    <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mm">
+  <a href="/about.html" class="nav-link">About</a>
+  <a href="/for-parents.html" class="nav-link">For Parents</a>
+  <a href="/blog.html" class="nav-link">Blog</a>
+  <a href="/auth/login.html" class="nav-link">🔐 Parent Login</a>
+  <a href="/auth/register.html" class="nav-cta">▶ Play Free</a>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page">
+    <div class="hero-label">🚀 What's coming next</div>
+    <h1 class="hero-title">The best of Sparkiddo<br>is <span class="hl">still being built.</span></h1>
+    <p class="hero-sub">We're just getting started. Here's everything on the Sparkiddo roadmap — from the mobile app to new games, classroom mode and global languages.</p>
+    <div class="wl-form">
+      <input class="wl-input" id="hero-email" type="email" placeholder="your@email.com — get updates"/>
+      <button class="wl-btn" onclick="joinWaitlist('hero-email','hero-success')">Notify me 🚀</button>
+    </div>
+    <div class="wl-success" id="hero-success">🎉 You're on the list! We'll keep you posted on every launch.</div>
+    <p class="wl-note">No spam. Just Sparkiddo updates. Unsubscribe anytime.</p>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<section class="roadmap-section">
+  <div class="page">
+    <div class="badge-pill" style="background:var(--purple-pale);color:var(--purple);border:1.5px solid #d4c6ff">🗺️ Roadmap</div>
+    <h2 class="section-title">Where we're headed</h2>
+    <p class="section-sub">Transparent, honest and achievable — our build plan for the next 18 months.</p>
+
+    <div class="timeline">
+      <div class="tl-item fade-in">
+        <div class="tl-dot" style="background:var(--green);box-shadow-color:var(--green)"></div>
+        <div class="tl-card" style="border-color:var(--green)">
+          <span class="tl-status" style="background:var(--green-pale);color:var(--green)">✅ Live now</span>
+          <div class="tl-title">🌐 Sparkiddo Web Platform</div>
+          <div class="tl-desc">14 games across 3 zones. Parent accounts, child profiles, XP belts and streaks. Parent dashboard with controls. Available free at sparkiddo.com.</div>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot" style="background:var(--yellow)"></div>
+        <div class="tl-card">
+          <span class="tl-status" style="background:#fff9e6;color:var(--orange)">🔨 Building now</span>
+          <div class="tl-title">📱 Sparkiddo iOS & Android App</div>
+          <div class="tl-desc">Full React Native app. Offline play — all 14 games work without internet. Push notifications for streaks, belts and daily reminders. Biometric parent dashboard. ETA: Coming soon.</div>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot" style="background:var(--orange)"></div>
+        <div class="tl-card">
+          <span class="tl-status" style="background:#fff3e0;color:var(--orange)">⏳ Coming soon</span>
+          <div class="tl-title">⭐ Sparkiddo Plus</div>
+          <div class="tl-desc">Premium plan with up to 4 child profiles, detailed weekly reports, offline mode, push reminders and priority support. ₹99/month or ₹799/year. All games stay free forever.</div>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot" style="background:var(--pink)"></div>
+        <div class="tl-card">
+          <span class="tl-status" style="background:var(--pink-pale);color:#ad1457">🎮 Q3 2026</span>
+          <div class="tl-title">🎮 New Sparkiddo Morals Games</div>
+          <div class="tl-desc">4 new games launching: Good Behaviour Heroes, Conflict Resolution Corner, Team Puzzle (2-player co-op) and Brave Hero Path. All free, all values-based.</div>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot" style="background:var(--purple-light)"></div>
+        <div class="tl-card">
+          <span class="tl-status" style="background:var(--purple-pale);color:var(--purple)">🏫 Q4 2026</span>
+          <div class="tl-title">🏫 Classroom Mode</div>
+          <div class="tl-desc">Teacher dashboard with class management, student progress tracking, curriculum alignment notes and exportable reports. School licensing at ₹4,999/year per class.</div>
+        </div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot" style="background:#74b9ff"></div>
+        <div class="tl-card">
+          <span class="tl-status" style="background:#e8f4fd;color:#0984e3">🌍 2027</span>
+          <div class="tl-title">🌍 Global Localisation</div>
+          <div class="tl-desc">Hindi, Tamil, Telugu, Arabic, Spanish and French — Sparkiddo in your child's language. Starting with Hindi and Tamil for our Indian audience in 2027.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP SECTION -->
+<section class="app-section">
+  <div class="page">
+    <div class="app-inner">
+      <div class="fade-in">
+        <div class="app-badge-pill">📱 In development</div>
+        <h2 class="app-title">The <span class="hl">Sparkiddo App</span><br>is coming to iOS & Android.</h2>
+        <p class="app-sub">Everything you love about Sparkiddo on the web — plus features that only a native app can deliver.</p>
+        <div class="app-feats">
+          <div class="af">
+            <div class="af-icon">📵</div>
+            <div><div class="af-title">Full offline play</div><div class="af-desc">All 14 games work without internet. Perfect for travel, school or anywhere.</div></div>
+          </div>
+          <div class="af">
+            <div class="af-icon">🔔</div>
+            <div><div class="af-title">Smart push reminders</div><div class="af-desc">Streak alerts, belt unlocks, daily reminders — with quiet hours you set.</div></div>
+          </div>
+          <div class="af">
+            <div class="af-icon">🔐</div>
+            <div><div class="af-title">Biometric parent lock</div><div class="af-desc">Face ID and fingerprint protect the parent dashboard on device.</div></div>
+          </div>
+          <div class="af">
+            <div class="af-icon">📊</div>
+            <div><div class="af-title">Weekly email reports</div><div class="af-desc">Auto-generated Monday report sent to your inbox every week.</div></div>
+          </div>
+          <div class="af">
+            <div class="af-icon">⚡</div>
+            <div><div class="af-title">Instant sync</div><div class="af-desc">XP and progress syncs instantly between web and app — always up to date.</div></div>
+          </div>
+          <div class="af">
+            <div class="af-icon">👧</div>
+            <div><div class="af-title">4 child profiles</div><div class="af-desc">Manage all your children in one app with Sparkiddo Plus.</div></div>
+          </div>
+        </div>
+        <div class="store-badges">
+          <a class="store-badge" href="#waitlist">
+            <div class="sb-icon">🍎</div>
+            <div class="sb-text"><div class="sb-label">Coming to</div><div class="sb-store">App Store</div></div>
+          </a>
+          <a class="store-badge" href="#waitlist">
+            <div class="sb-icon">🤖</div>
+            <div class="sb-text"><div class="sb-label">Coming to</div><div class="sb-store">Google Play</div></div>
+          </a>
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="app-mockup">
+          <div class="am-header">📱 App preview — offline mode</div>
+          <div class="am-screen">
+            <div style="font-family:'Fredoka One',cursive;font-size:.82rem;color:#c4b5fd;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+              <span>🌟 Sparkiddo</span>
+              <span style="background:rgba(0,184,148,.2);color:var(--green-light);font-size:.65rem;padding:2px 8px;border-radius:99px;font-weight:800">OFFLINE</span>
+            </div>
+            <div class="am-zone">
+              <div class="az-icon">🏅</div>
+              <div style="flex:1">
+                <div class="az-title">Sparkiddo Morals</div>
+                <div class="az-sub">8 games · All available offline</div>
+              </div>
+              <span class="az-offline">✓ Offline</span>
+            </div>
+            <div class="am-zone">
+              <div class="az-icon">📚</div>
+              <div style="flex:1">
+                <div class="az-title">Fun & Learn Zone</div>
+                <div class="az-sub">2 games · All available offline</div>
+              </div>
+              <span class="az-offline">✓ Offline</span>
+            </div>
+            <div class="am-zone">
+              <div class="az-icon">🎮</div>
+              <div style="flex:1">
+                <div class="az-title">Arcade Zone</div>
+                <div class="az-sub">4 games · All available offline</div>
+              </div>
+              <span class="az-offline">✓ Offline</span>
+            </div>
+            <div style="background:rgba(0,184,148,.1);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,184,148,.2)">
+              <span style="font-size:1rem">🔔</span>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.6);font-weight:600">Progress will sync when you reconnect to internet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEW GAMES -->
+<section class="games-section">
+  <div class="page">
+    <div class="badge-pill" style="background:var(--pink-pale);color:#ad1457;border:1.5px solid #f9a8d4">🎮 New games coming</div>
+    <h2 class="section-title">4 new moral games in development</h2>
+    <p class="section-sub">Our next batch of Sparkiddo Morals games — building skills today's children need most.</p>
+    <div class="games-grid">
+      <div class="game-card locked fade-in">
+        <div class="gc-lock">🔒</div>
+        <span class="gc-emoji">🦸</span>
+        <div class="gc-title">Good Behaviour Heroes</div>
+        <div class="gc-desc">Interactive stories where kids choose how a hero behaves — and see how those choices affect their world.</div>
+        <span class="gc-tag" style="background:var(--yellow);color:#7a5c00">Behaviour</span>
+        <div><span class="gc-status" style="background:#fff9e6;color:var(--orange)">⏳ Q3 2026</span></div>
+      </div>
+      <div class="game-card locked fade-in">
+        <div class="gc-lock">🔒</div>
+        <span class="gc-emoji">🕊️</span>
+        <div class="gc-title">Conflict Resolution Corner</div>
+        <div class="gc-desc">Kids navigate disagreements and learn to find peaceful solutions — essential life skills for any age.</div>
+        <span class="gc-tag" style="background:var(--teal)">Peace</span>
+        <div><span class="gc-status" style="background:#e8f9f3;color:var(--green)">⏳ Q3 2026</span></div>
+      </div>
+      <div class="game-card locked fade-in">
+        <div class="gc-lock">🔒</div>
+        <span class="gc-emoji">🤝</span>
+        <div class="gc-title">Team Puzzle</div>
+        <div class="gc-desc">A 2-player cooperative challenge where both players must work together to solve puzzles — teaches real teamwork.</div>
+        <span class="gc-tag" style="background:var(--purple-light)">Teamwork</span>
+        <div><span class="gc-status" style="background:var(--purple-pale);color:var(--purple)">⏳ Q4 2026</span></div>
+      </div>
+      <div class="game-card locked fade-in">
+        <div class="gc-lock">🔒</div>
+        <span class="gc-emoji">🦁</span>
+        <div class="gc-title">Brave Hero Path</div>
+        <div class="gc-desc">A courage-themed adventure game where the bravest choice always leads to the better outcome — building confidence.</div>
+        <span class="gc-tag" style="background:var(--pink)">Courage</span>
+        <div><span class="gc-status" style="background:var(--pink-pale);color:#ad1457">⏳ Q4 2026</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLUS -->
+<section class="plus-section" id="plus">
+  <div class="page">
+    <div class="plus-inner">
+      <div class="badge-pill" style="background:var(--purple-pale);color:var(--purple);border:1.5px solid #d4c6ff;display:inline-flex;margin-bottom:16px">⭐ Sparkiddo Plus</div>
+      <h2 class="section-title">Everything a growing family needs</h2>
+      <p class="section-sub" style="margin-bottom:28px">Sparkiddo Plus is our optional premium tier — for parents who want to go deeper on their child's growth. The free plan never loses any features.</p>
+      <div class="plus-card fade-in">
+        <div class="plus-header">
+          <div>
+            <div class="plus-title">Sparkiddo Plus ⭐</div>
+            <div class="plus-sub">Everything in Free, plus the tools serious growth-focused parents need.</div>
+          </div>
+          <div class="plus-price">
+            <div class="pp-main">₹799<span>/year</span></div>
+            <div class="pp-period">or ₹99/month</div>
+            <div class="pp-monthly">Save 33% annually</div>
+          </div>
+        </div>
+        <div class="plus-feats">
+          <div class="pf-feat"><div class="pf-icon">👧</div><div><div class="pf-title">Up to 4 child profiles</div><div class="pf-desc">Manage all your children in one account with separate progress for each.</div></div></div>
+          <div class="pf-feat"><div class="pf-icon">📊</div><div><div class="pf-title">Detailed weekly reports</div><div class="pf-desc">Every session, XP earned, games played and skills developed — delivered weekly.</div></div></div>
+          <div class="pf-feat"><div class="pf-icon">📵</div><div><div class="pf-title">Offline play (app)</div><div class="pf-desc">All 14 games playable anywhere — no internet required on the app.</div></div></div>
+          <div class="pf-feat"><div class="pf-icon">🔔</div><div><div class="pf-title">Smart push reminders</div><div class="pf-desc">Streak alerts, belt notifications and custom daily reminder times.</div></div></div>
+          <div class="pf-feat"><div class="pf-icon">⭐</div><div><div class="pf-title">Early access to new games</div><div class="pf-desc">Be first to play every new Sparkiddo game before public launch.</div></div></div>
+          <div class="pf-feat"><div class="pf-icon">🎯</div><div><div class="pf-title">Priority support</div><div class="pf-desc">Dedicated support with 24-hour response time for Plus families.</div></div></div>
+        </div>
+        <div class="plus-cta-row">
+          <a href="/upcoming.html" class="btn btn-purple">Join the Plus Waitlist →</a>
+          <div class="plus-note">🔒 Cancel anytime · 7-day money back · No contracts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHOOLS -->
+<section class="schools-section" id="schools">
+  <div class="page">
+    <div class="schools-inner">
+      <div class="fade-in">
+        <div class="badge-pill" style="background:var(--green-pale);color:var(--green);border:1.5px solid #9fe1cb">🏫 For schools</div>
+        <h2 class="section-title">Bring Sparkiddo to your classroom</h2>
+        <p class="section-sub">We're building a dedicated classroom mode — and we want teacher input to shape it. If you're an educator interested in Sparkiddo, reach out now.</p>
+        <div class="school-feats">
+          <div class="sf-item"><span class="sf-icon">📊</span><div class="sf-text">Teacher dashboard with class-level progress tracking</div></div>
+          <div class="sf-item"><span class="sf-icon">👨‍🎓</span><div class="sf-text">Student management — up to 30 students per class</div></div>
+          <div class="sf-item"><span class="sf-icon">📋</span><div class="sf-text">Exportable progress reports for parents and admin</div></div>
+          <div class="sf-item"><span class="sf-icon">📚</span><div class="sf-text">Curriculum alignment notes per game</div></div>
+          <div class="sf-item"><span class="sf-icon">💰</span><div class="sf-text">School licensing — ₹4,999/year per class</div></div>
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="school-card">
+          <span class="school-emoji">🏫</span>
+          <div class="school-title">Interested in Sparkiddo for your school?</div>
+          <div class="school-desc">Tell us about your school and we'll be in touch with early access information and special educator pricing.</div>
+          <div class="school-contact-form">
+            <input class="sc-input" id="sc-name" type="text" placeholder="Your name & school name"/>
+            <input class="sc-input" id="sc-email" type="email" placeholder="School email address"/>
+            <input class="sc-input" id="sc-city" type="text" placeholder="City & state"/>
+            <button class="sc-btn" onclick="submitSchool()">Register Interest →</button>
+            <div id="sc-success" style="display:none;padding:12px;background:var(--green-pale);border-radius:12px;font-size:.82rem;font-weight:700;color:var(--green);text-align:center">🎉 Thank you! We'll be in touch soon.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section class="lang-section">
+  <div class="page">
+    <div style="text-align:center">
+      <div class="badge-pill" style="background:rgba(255,255,255,.1);color:#c4b5fd;border:1.5px solid rgba(255,255,255,.15);justify-content:center;display:inline-flex">🌍 Going global</div>
+      <h2 class="section-title" style="color:#fff">Sparkiddo in your language</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,.6);max-width:560px;margin:0 auto">Every child deserves growth in their mother tongue. We're building localisation for 10 languages — starting with India.</p>
+    </div>
+    <div class="lang-grid">
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇬🇧</span>
+        <div class="lang-name">English</div>
+        <span class="lang-status ls-live">✅ Live</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇮🇳</span>
+        <div class="lang-name">Hindi</div>
+        <span class="lang-status ls-soon">⏳ 2027</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇮🇳</span>
+        <div class="lang-name">Tamil</div>
+        <span class="lang-status ls-soon">⏳ 2027</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇮🇳</span>
+        <div class="lang-name">Telugu</div>
+        <span class="lang-status ls-planned">📅 Planned</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇸🇦</span>
+        <div class="lang-name">Arabic</div>
+        <span class="lang-status ls-planned">📅 Planned</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇪🇸</span>
+        <div class="lang-name">Spanish</div>
+        <span class="lang-status ls-planned">📅 Planned</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇫🇷</span>
+        <div class="lang-name">French</div>
+        <span class="lang-status ls-planned">📅 Planned</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇧🇩</span>
+        <div class="lang-name">Bengali</div>
+        <span class="lang-status ls-planned">📅 Planned</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🇵🇹</span>
+        <div class="lang-name">Portuguese</div>
+        <span class="lang-status ls-planned">📅 Planned</span>
+      </div>
+      <div class="lang-card fade-in">
+        <span class="lang-flag">🌍</span>
+        <div class="lang-name">More</div>
+        <span class="lang-status ls-planned">📅 TBD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST SECTION -->
+<section id="waitlist" style="background:linear-gradient(135deg,var(--purple),#9b5de5,var(--pink));padding:80px 0;text-align:center">
+  <div class="page">
+    <h2 style="font-family:'Fredoka One',cursive;font-size:2.2rem;color:#fff;margin-bottom:12px">Don't miss a single launch.</h2>
+    <p style="font-size:1rem;color:rgba(255,255,255,.8);font-weight:600;max-width:500px;margin:0 auto 28px;line-height:1.7">Join 100+ parents on the Sparkiddo waitlist — be first to know when the app, Plus and new games launch.</p>
+    <div class="wl-form" style="max-width:520px;margin:0 auto">
+      <input class="wl-input" id="footer-email" type="email" placeholder="your@email.com"/>
+      <button class="wl-btn" onclick="joinWaitlist('footer-email','footer-success')">Join Waitlist 🚀</button>
+    </div>
+    <div class="wl-success" id="footer-success">🎉 You're on the list! Watch your inbox for Sparkiddo updates.</div>
+    <p class="wl-note" style="margin-top:12px">No spam · Unsubscribe anytime · <a href="/privacy.html" style="color:rgba(255,255,255,.5)">Privacy Policy</a></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="page">
+    <div class="fi">
+      <div>
+        <div class="fl-logo">🌟 Sparkiddo</div>
+        <p class="fl-tag">Spark Smart Minds. Build Confident Hearts.<br>Daily growth platform for kids aged 3–12.</p>
+        <a href="mailto:hello@sparkiddo.com" class="fl-email">📧 hello@sparkiddo.com</a>
+      </div>
+      <div>
+        <div class="fc-title">Explore</div>
+        <a href="/" class="fl">Home</a>
+        <a href="/about.html" class="fl">About</a>
+        <a href="/upcoming.html" class="fl">What's Coming 🚀</a>
+        <a href="/blog.html" class="fl">Blog</a>
+      </div>
+      <div>
+        <div class="fc-title">Parents</div>
+        <a href="/for-parents.html" class="fl">For Parents</a>
+        <a href="/auth/register.html" class="fl">Create Account</a>
+        <a href="#plus" class="fl">Sparkiddo Plus ⭐</a>
+        <a href="#schools" class="fl">For Schools 🏫</a>
+        <a href="/contact.html" class="fl">Contact</a>
+      </div>
+      <div>
+        <div class="fc-title">Legal</div>
+        <a href="/privacy.html" class="fl">Privacy Policy</a>
+        <a href="/terms.html" class="fl">Terms of Service</a>
+        <a href="/cookies.html" class="fl">Cookie Policy</a>
+        <a href="/coppa.html" class="fl">COPPA Notice</a>
+      </div>
+    </div>
+    <div class="fb">
+      <span>© 2026 Sparkiddo. All rights reserved. Made with ❤️ in India.</span>
+      <div class="fbl">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>60));
+const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')}),{threshold:.12});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+function joinWaitlist(inputId,successId){
+  const email=document.getElementById(inputId).value.trim();
+  if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
+  document.getElementById(inputId).closest('.wl-form,div')?.querySelectorAll('.wl-input,.wl-btn').forEach(el=>el.style.display='none');
+  const s=document.getElementById(successId);s.style.display='block';
+}
+function submitSchool(){
+  const name=document.getElementById('sc-name').value.trim();
+  const email=document.getElementById('sc-email').value.trim();
+  if(!name||!email){alert('Please fill in your name and email.');return;}
+  document.querySelector('.school-contact-form').querySelectorAll('.sc-input,.sc-btn').forEach(el=>el.style.display='none');
+  document.getElementById('sc-success').style.display='block';
+}
+document.querySelectorAll('.store-badge').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();document.getElementById('waitlist').scrollIntoView({behavior:'smooth'});}));
+</script>
+</body>
+</html>
