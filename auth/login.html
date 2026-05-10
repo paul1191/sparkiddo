@@ -89,8 +89,8 @@
 </div>
 
 <script>
-const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
-const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_0rg1ajXxVzZpwoF_5FY2MA_uwtxgAjZ';
 const {createClient}=supabase;
 const sb=createClient(SUPABASE_URL,SUPABASE_ANON);
 
@@ -134,7 +134,7 @@ async function handleLogin(e){
 async function signInGoogle(){
   const {error}=await sb.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo:'https://sparkiddo.online/auth/callback'}
+    options:{redirectTo:'https://sparkiddo.com/auth/callback'}
   });
   if(error)showAlert(error.message);
 }

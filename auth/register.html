@@ -118,8 +118,8 @@
 </div>
 
 <script>
-const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
-const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_0rg1ajXxVzZpwoF_5FY2MA_uwtxgAjZ';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -191,7 +191,7 @@ async function handleRegister(e){
   const pw=document.getElementById('password').value;
   const {data,error}=await sb.auth.signUp({
     email,password:pw,
-    options:{data:{display_name:name},emailRedirectTo:'https://sparkiddo.online/auth/callback'}
+    options:{data:{display_name:name},emailRedirectTo:'https://sparkiddo.com/auth/callback'}
   });
   if(error){
     showAlert(error.message==='User already registered'
@@ -208,7 +208,7 @@ async function handleRegister(e){
 async function signInGoogle(){
   const {error}=await sb.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo:'https://sparkiddo.online/auth/callback'}
+    options:{redirectTo:'https://sparkiddo.com/auth/callback'}
   });
   if(error)showAlert(error.message);
 }

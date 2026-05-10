@@ -101,7 +101,6 @@
   .session-game{font-weight:800;color:#444}
   .session-meta{color:#bbb;font-size:.72rem;font-weight:700;margin-top:1px}
   .session-xp{font-family:'Fredoka One',cursive;color:#00b894;font-size:.85rem}
-  .session-platform{font-size:.6rem;padding:2px 8px;border-radius:99px;background:#f0e8ff;color:#6c5ce7;font-weight:700}
 
   /* safety */
   .safety-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid #f5f5f5}
@@ -168,11 +167,8 @@
         <div class="pin-dot"></div><div class="pin-dot"></div>
         <div class="pin-dot"></div><div class="pin-dot"></div>
       </div>
-      <div class="numpad">
-        ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map((d,i)=>
-          `<button class="numkey${d==='⌫'?' del':''}" onclick="${d==='⌫'?'delDigit()':d!==''?`addDigit('${d}')`:''}" ${d===''?'style="visibility:hidden"':''}>${d}</button>`
-        ).join('')}
-      </div>
+      <!-- FIX 1: Removed nested template literal — numpad built by buildNumpad() in JS -->
+      <div class="numpad" id="numpad"></div>
       <div class="pin-err" id="pin-err"></div>
       <div class="pin-hint">Forgotten PIN? <a href="/login" style="color:#a29bfe;font-weight:800">Sign out & reset</a></div>
     </div>
@@ -183,7 +179,8 @@
     <div class="dash-header">
       <div>
         <div class="dash-title">🔐 Parent Dashboard</div>
-        <div class="dash-sub" id="dash-sub">sparkiddo.online · Manage your children's experience</div>
+        <!-- FIX 4: sparkiddo.online → sparkiddo.com -->
+        <div class="dash-sub" id="dash-sub">sparkiddo.com · Manage your children's experience</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <span id="premium-chip"></span>
@@ -247,24 +244,39 @@
         </div>
       </div>
 
-      <!-- Zone toggles -->
+      <!-- FIX 2: Zone toggles — removed template literal from HTML, now static HTML -->
       <div class="card">
         <div class="card-title">🎮 Game Zone Access</div>
-        ${[
-          {key:'learn',emoji:'📚',label:'Fun & Learn Zone',sub:'Math, Colors & Shapes'},
-          {key:'morals',emoji:'🏅',label:'sparkiddo Morals',sub:'Kindness, Honesty & more'},
-          {key:'arcade',emoji:'🎮',label:'Arcade Zone',sub:'Classic games'},
-        ].map(z=>`
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">${z.emoji} ${z.label}</div>
-              <div class="setting-sub">${z.sub}</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="zone-${z.key}" onchange="toggleZone('${z.key}',this.checked)"/>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>`).join('')}
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">📚 Fun & Learn Zone</div>
+            <div class="setting-sub">Math, Colors &amp; Shapes</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="zone-learn" onchange="toggleZone('learn',this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">🏅 sparkiddo Morals</div>
+            <div class="setting-sub">Kindness, Honesty &amp; more</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="zone-morals" onchange="toggleZone('morals',this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">🎮 Arcade Zone</div>
+            <div class="setting-sub">Classic games</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="zone-arcade" onchange="toggleZone('arcade',this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
 
       <!-- Notifications -->
@@ -296,17 +308,15 @@
         </div>
       </div>
 
-      <!-- Safety -->
+      <!-- FIX 3: Safety rows — removed template literal from HTML, now static HTML -->
       <div class="card">
-        <div class="card-title">🛡️ Safety & Privacy</div>
-        ${[
-          ['🚫','No advertisements ever'],
-          ['💳','No in-app purchases for children'],
-          ['🔒','No personal data collected from kids'],
-          ['🌐','COPPA & GDPR compliant design'],
-          ['📵','No social features or external links'],
-          ['🗑️','Delete all data anytime below'],
-        ].map(([i,t])=>`<div class="safety-row"><span class="safety-icon">${i}</span><span class="safety-text">${t}</span></div>`).join('')}
+        <div class="card-title">🛡️ Safety &amp; Privacy</div>
+        <div class="safety-row"><span class="safety-icon">🚫</span><span class="safety-text">No advertisements ever</span></div>
+        <div class="safety-row"><span class="safety-icon">💳</span><span class="safety-text">No in-app purchases for children</span></div>
+        <div class="safety-row"><span class="safety-icon">🔒</span><span class="safety-text">No personal data collected from kids</span></div>
+        <div class="safety-row"><span class="safety-icon">🌐</span><span class="safety-text">COPPA &amp; GDPR compliant design</span></div>
+        <div class="safety-row"><span class="safety-icon">📵</span><span class="safety-text">No social features or external links</span></div>
+        <div class="safety-row"><span class="safety-icon">🗑️</span><span class="safety-text">Delete all data anytime below</span></div>
         <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn-save" style="background:linear-gradient(135deg,#ff7675,#e74c3c)" onclick="deleteAccount()">🗑️ Delete My Account</button>
           <button class="btn-save" onclick="resetPin()">🔄 Reset PIN</button>
@@ -365,7 +375,7 @@ const GAME_EMOJI={
 
 function getBelt(xp){let b=BELTS[0];for(const bb of BELTS)if(xp>=bb.xp)b=bb;return b;}
 function xpPct(xp){const b=getBelt(xp),nb=BELTS.find(bb=>xp<bb.xp);if(!nb)return 100;const prev=BELTS[BELTS.indexOf(b)-1]?.xp||0;return Math.min(100,((xp-prev)/(nb.xp-prev))*100);}
-function relTime(iso){const d=new Date(iso),now=new Date(),diff=Math.floor((now-d)/60000);if(diff<60)return`${diff}m ago`;if(diff<1440)return`${Math.floor(diff/60)}h ago`;return`${Math.floor(diff/1440)}d ago`;}
+function relTime(iso){const d=new Date(iso),now=new Date(),diff=Math.floor((now-d)/60000);if(diff<60)return diff+'m ago';if(diff<1440)return Math.floor(diff/60)+'h ago';return Math.floor(diff/1440)+'d ago';}
 
 let state={session:null,account:null,settings:null,profiles:[],sessions:[],pinInput:'',pinUnlocked:false};
 
@@ -373,26 +383,36 @@ async function init(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='/login';return;}
   state.session=session;
-  const [{data:account},{data:settings},{data:profiles}]=await Promise.all([
-    sb.from('parent_accounts').select('*').eq('id',session.user.id).single(),
-    sb.from('parent_settings').select('*').eq('parent_id',session.user.id).single(),
+
+  // FIX 6: Changed 'parent_accounts' → 'profiles' to match our schema
+  const [{data:account},{data:profiles}]=await Promise.all([
+    sb.from('profiles').select('*').eq('id',session.user.id).single(),
     sb.from('child_profiles').select('*').eq('parent_id',session.user.id).order('created_at'),
   ]);
-  state.account=account;state.settings=settings;state.profiles=profiles||[];
+
+  // parent_settings is optional — handle gracefully if not yet set up
+  const {data:settings}=await sb.from('parent_settings').select('*').eq('parent_id',session.user.id).maybeSingle();
+
+  state.account=account;
+  state.settings=settings;
+  state.profiles=profiles||[];
+
   document.getElementById('loading').style.display='none';
-  // fetch recent sessions
+
+  // Fetch recent sessions for all child profiles
   if(state.profiles.length){
     const ids=state.profiles.map(p=>p.id);
     const {data:sess}=await sb.from('game_sessions').select('*').in('child_id',ids).order('played_at',{ascending:false}).limit(20);
     state.sessions=sess||[];
   }
+
   checkPin();
 }
 
 // ── PIN LOGIC ──────────────────────────────────
 function checkPin(){
-  const stored=localStorage.getItem('sparkiddo_pin');
   document.getElementById('pin-gate').style.display='flex';
+  const stored=localStorage.getItem('sparkiddo_pin');
   if(!stored){
     document.getElementById('create-pin-mode').style.display='block';
   } else {
@@ -401,16 +421,17 @@ function checkPin(){
   }
 }
 
+// FIX 1: Clean numpad builder — no nested template literals
 function buildNumpad(){
-  const np=document.querySelector('.numpad');
+  const np=document.getElementById('numpad');
   np.innerHTML='';
-  [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(d=>{
+  [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(function(d){
     const btn=document.createElement('button');
     btn.className='numkey'+(d==='⌫'?' del':'');
-    btn.textContent=d===''?'':d;
+    btn.textContent=d===''?'':String(d);
     if(d==='')btn.style.visibility='hidden';
-    if(d==='⌫')btn.onclick=delDigit;
-    else if(d!=='')btn.onclick=()=>addDigit(String(d));
+    else if(d==='⌫')btn.onclick=delDigit;
+    else btn.onclick=function(){addDigit(String(d));};
     np.appendChild(btn);
   });
 }
@@ -423,7 +444,7 @@ function addDigit(d){
 }
 function delDigit(){state.pinInput=state.pinInput.slice(0,-1);updateDots();}
 function updateDots(){
-  document.querySelectorAll('.pin-dot').forEach((dot,i)=>{
+  document.querySelectorAll('.pin-dot').forEach(function(dot,i){
     dot.classList.toggle('filled',i<state.pinInput.length);
   });
 }
@@ -433,7 +454,7 @@ function checkPinEntry(){
   else{
     document.getElementById('pin-err').textContent='Incorrect PIN. Try again.';
     state.pinInput='';updateDots();
-    setTimeout(()=>document.getElementById('pin-err').textContent='',2000);
+    setTimeout(function(){document.getElementById('pin-err').textContent='';},2000);
   }
 }
 function createPin(){
@@ -468,11 +489,11 @@ function resetPin(){
 // ── RENDER DASHBOARD ──────────────────────────
 function renderDashboard(){
   const {account,settings,profiles,sessions}=state;
-  document.getElementById('dash-sub').textContent=`${account?.email||''} · sparkiddo Parent Dashboard`;
+  document.getElementById('dash-sub').textContent=(account?.email||'')+' · sparkiddo Parent Dashboard';
   document.getElementById('acct-email').textContent=account?.email||'';
-  document.getElementById('premium-chip').innerHTML=account?.is_premium
+  document.getElementById('premium-chip').innerHTML=account?.plan==='plus'
     ?'<span style="background:linear-gradient(135deg,#ffd93d,#ff9f43);color:#7a5c00;border-radius:99px;padding:4px 14px;font-family:Fredoka One,cursive;font-size:.78rem">⭐ sparkiddo Plus</span>':'';
-  if(!account?.is_premium)document.getElementById('upgrade-banner').style.display='flex';
+  if(account?.plan!=='plus')document.getElementById('upgrade-banner').style.display='flex';
 
   // Child reports
   const cr=document.getElementById('child-reports');
@@ -480,21 +501,23 @@ function renderDashboard(){
   if(profiles.length===0){
     cr.innerHTML='<div style="text-align:center;padding:20px;color:#ccc;font-family:Fredoka One,cursive">No child profiles yet. <a href="/play" style="color:#a29bfe">Add one in the play hub!</a></div>';
   } else {
-    profiles.forEach(p=>{
+    profiles.forEach(function(p){
       const belt=getBelt(p.xp);
       const pct=xpPct(p.xp);
-      const gPlayed=p.games_played?.length||0;
-      const row=document.createElement('div');row.className='child-report';
-      row.innerHTML=`
-        <div class="cr-avatar">${p.avatar}</div>
-        <div class="cr-info">
-          <div class="cr-name">${p.name}</div>
-          <div class="cr-stats">${belt.emoji} ${belt.name} · 🔥 ${p.streak} day streak · 🎮 ${gPlayed}/14 games</div>
-          <div class="cr-bar-bg"><div class="cr-bar-fill" style="width:${pct}%"></div></div>
-          <div class="cr-bar-label">${Math.round(pct)}% to next belt</div>
-          <button class="cr-delete" onclick="deleteChild('${p.id}','${p.name}')">🗑️ Remove profile</button>
-        </div>
-        <div class="cr-xp">${p.xp} XP</div>`;
+      // Count sessions for this child instead of games_played (field doesn't exist in schema)
+      const sessCount=sessions.filter(function(s){return s.child_id===p.id;}).length;
+      const row=document.createElement('div');
+      row.className='child-report';
+      row.innerHTML=
+        '<div class="cr-avatar">'+p.avatar+'</div>'+
+        '<div class="cr-info">'+
+          '<div class="cr-name">'+p.name+'</div>'+
+          '<div class="cr-stats">'+belt.emoji+' '+belt.name+' · 🔥 '+(p.streak||0)+' day streak · 🎮 '+sessCount+' sessions</div>'+
+          '<div class="cr-bar-bg"><div class="cr-bar-fill" style="width:'+pct+'%"></div></div>'+
+          '<div class="cr-bar-label">'+Math.round(pct)+'% to next belt</div>'+
+          '<button class="cr-delete" onclick="deleteChild(\''+p.id+'\',\''+p.name+'\')">🗑️ Remove profile</button>'+
+        '</div>'+
+        '<div class="cr-xp">'+(p.xp||0)+' XP</div>';
       cr.appendChild(row);
     });
   }
@@ -502,21 +525,24 @@ function renderDashboard(){
   // Weekly activity chart
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const dayCounts=new Array(7).fill(0);
-  sessions.forEach(s=>{
+  sessions.forEach(function(s){
     const d=new Date(s.played_at);
-    const dow=(d.getDay()+6)%7; // Mon=0
+    const dow=(d.getDay()+6)%7;
     dayCounts[dow]++;
   });
-  const maxCount=Math.max(...dayCounts,1);
+  const maxCount=Math.max.apply(null,dayCounts.concat([1]));
   const ag=document.getElementById('activity-grid');
   ag.innerHTML='';
-  days.forEach((d,i)=>{
+  days.forEach(function(d,i){
     const h=Math.max(8,Math.round((dayCounts[i]/maxCount)*76));
-    const wrap=document.createElement('div');wrap.className='activity-bar-wrap';
-    wrap.innerHTML=`<div class="activity-bar" style="height:${h}px;background:linear-gradient(180deg,#a29bfe,#6c5ce7);opacity:${dayCounts[i]>0?1:0.2}"></div><div class="activity-day">${d}</div>`;
+    const wrap=document.createElement('div');
+    wrap.className='activity-bar-wrap';
+    wrap.innerHTML=
+      '<div class="activity-bar" style="height:'+h+'px;background:linear-gradient(180deg,#a29bfe,#6c5ce7);opacity:'+(dayCounts[i]>0?1:0.2)+'"></div>'+
+      '<div class="activity-day">'+d+'</div>';
     ag.appendChild(wrap);
   });
-  document.getElementById('activity-legend').textContent=`${sessions.length} sessions this week`;
+  document.getElementById('activity-legend').textContent=sessions.length+' sessions this week';
 
   // Recent sessions
   const sl=document.getElementById('session-list');
@@ -524,16 +550,20 @@ function renderDashboard(){
   if(sessions.length===0){
     sl.innerHTML='<div style="text-align:center;padding:20px;color:#ccc;font-family:Fredoka One,cursive;font-size:.85rem">No sessions yet!</div>';
   } else {
-    sessions.slice(0,8).forEach(s=>{
-      const child=profiles.find(p=>p.id===s.child_id);
-      const row=document.createElement('div');row.className='session-row';
-      row.innerHTML=`
-        <span class="session-emoji">${GAME_EMOJI[s.game_id]||'🎮'}</span>
-        <div class="session-info">
-          <div class="session-game">${GAME_NAMES[s.game_id]||s.game_id}</div>
-          <div class="session-meta">${child?.name||'Child'} · ${relTime(s.played_at)} <span class="session-platform">${s.platform}</span></div>
-        </div>
-        <span class="session-xp">+${s.xp_earned} XP</span>`;
+    sessions.slice(0,8).forEach(function(s){
+      const child=profiles.find(function(p){return p.id===s.child_id;});
+      // FIX 7: Use game_slug instead of game_id (matches our schema)
+      const slug=s.game_slug||'';
+      const row=document.createElement('div');
+      row.className='session-row';
+      row.innerHTML=
+        '<span class="session-emoji">'+(GAME_EMOJI[slug]||'🎮')+'</span>'+
+        '<div class="session-info">'+
+          '<div class="session-game">'+(GAME_NAMES[slug]||slug)+'</div>'+
+          // FIX 8: Removed s.platform — field doesn't exist in schema
+          '<div class="session-meta">'+(child?.name||'Child')+' · '+relTime(s.played_at)+'</div>'+
+        '</div>'+
+        '<span class="session-xp">+'+(s.xp_earned||0)+' XP</span>';
       sl.appendChild(row);
     });
   }
@@ -547,51 +577,75 @@ function renderDashboard(){
     document.getElementById('quiet-start').value=qh.start;
     document.getElementById('quiet-end').value=qh.end;
     const af=settings.age_filter||'all';
-    document.querySelectorAll('#age-chips .chip').forEach(c=>{c.classList.toggle('active',c.dataset.val===af);});
+    document.querySelectorAll('#age-chips .chip').forEach(function(c){c.classList.toggle('active',c.dataset.val===af);});
     const ze=settings.zones_enabled||{learn:true,morals:true,arcade:true};
-    ['learn','morals','arcade'].forEach(z=>{
+    ['learn','morals','arcade'].forEach(function(z){
       const el=document.getElementById('zone-'+z);
       if(el)el.checked=ze[z]!==false;
+    });
+  } else {
+    // No settings yet — set sensible defaults
+    document.getElementById('time-limit').value=60;
+    document.getElementById('notif-toggle').checked=true;
+    document.getElementById('daily-reminder').value='16:00';
+    document.getElementById('quiet-start').value='21:00';
+    document.getElementById('quiet-end').value='07:00';
+    document.querySelectorAll('#age-chips .chip').forEach(function(c){c.classList.toggle('active',c.dataset.val==='all');});
+    ['learn','morals','arcade'].forEach(function(z){
+      const el=document.getElementById('zone-'+z);
+      if(el)el.checked=true;
     });
   }
 }
 
 // ── SETTINGS SAVE ─────────────────────────────
 async function saveSetting(col,val){
-  await sb.from('parent_settings').update({[col]:val}).eq('parent_id',state.session.user.id);
-  if(state.settings)state.settings[col]=val;
+  const uid=state.session.user.id;
+  // Upsert in case parent_settings row doesn't exist yet
+  await sb.from('parent_settings').upsert({parent_id:uid,[col]:val},{onConflict:'parent_id'});
+  if(!state.settings)state.settings={};
+  state.settings[col]=val;
 }
 function setAge(val,el){
-  document.querySelectorAll('#age-chips .chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('#age-chips .chip').forEach(function(c){c.classList.remove('active');});
   el.classList.add('active');
   saveSetting('age_filter',val);
 }
 async function toggleZone(key,val){
-  const ze={...(state.settings?.zones_enabled||{learn:true,morals:true,arcade:true}),[key]:val};
+  const ze=Object.assign({learn:true,morals:true,arcade:true},state.settings?.zones_enabled||{});
+  ze[key]=val;
   await saveSetting('zones_enabled',ze);
 }
 async function saveQuietHours(){
   const start=document.getElementById('quiet-start').value;
   const end=document.getElementById('quiet-end').value;
-  await saveSetting('quiet_hours',{start,end});
+  await saveSetting('quiet_hours',{start:start,end:end});
 }
 async function deleteChild(id,name){
-  if(!confirm(`Remove ${name}'s profile? All their XP, belts and progress will be deleted permanently.`))return;
+  if(!confirm('Remove '+name+'\'s profile? All their XP, belts and progress will be deleted permanently.'))return;
   await sb.from('child_profiles').delete().eq('id',id);
-  state.profiles=state.profiles.filter(p=>p.id!==id);
+  state.profiles=state.profiles.filter(function(p){return p.id!==id;});
   renderDashboard();
 }
+
+// FIX 5: Removed sb.auth.admin.deleteUser() — requires service key, not safe on client
+// Instead: sign out and redirect with a flag so user knows to contact support
 async function deleteAccount(){
   if(!confirm('Delete your sparkiddo account and all child data? This cannot be undone.'))return;
   if(!confirm('Are you absolutely sure? ALL data will be permanently deleted.'))return;
-  await sb.auth.admin.deleteUser(state.session.user.id).catch(()=>{});
+  // Delete child profiles and sessions (cascades via DB foreign key)
+  await sb.from('child_profiles').delete().eq('parent_id',state.session.user.id);
+  await sb.from('profiles').delete().eq('id',state.session.user.id);
   await sb.auth.signOut();
-  window.location.href='/';
+  window.location.href='/?deleted=1';
 }
+
 async function sendPwReset(){
-  await sb.auth.resetPasswordForEmail(state.session.user.email,{redirectTo:'https://sparkiddo.online/forgot-password'});
+  // FIX 4: sparkiddo.online → sparkiddo.com
+  await sb.auth.resetPasswordForEmail(state.session.user.email,{redirectTo:'https://sparkiddo.com/forgot-password'});
   const toast=document.getElementById('pw-toast');
-  toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000);
+  toast.classList.add('show');
+  setTimeout(function(){toast.classList.remove('show');},3000);
 }
 async function signOut(){await sb.auth.signOut();window.location.href='/login';}
 
