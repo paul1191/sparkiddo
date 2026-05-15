@@ -145,7 +145,6 @@
 
   <!-- ── GAME HUB ── -->
   <div id="game-hub">
-    <!-- Child header -->
     <div class="hub-header">
       <div class="hub-avatar" id="hub-avatar" onclick="switchProfile()" title="Switch profile">🌟</div>
       <div class="hub-info">
@@ -163,7 +162,7 @@
     <div class="zone-section">
       <div class="zone-header">
         <div class="zone-icon-wrap" style="background:#fff9e6"><span>📚</span></div>
-        <div><div class="zone-title" style="color:#c67c00">Fun & Learn Zone</div><div class="zone-desc">MATH · COLORS · SHAPES · ALL AGES</div></div>
+        <div><div class="zone-title" style="color:#c67c00">Fun &amp; Learn Zone</div><div class="zone-desc">MATH · COLORS · SHAPES · ALL AGES</div></div>
       </div>
       <div class="zone-divider" style="background:linear-gradient(90deg,#fdcb6e,#ff9f43,transparent)"></div>
       <div class="games-grid" id="learn-grid"></div>
@@ -211,19 +210,21 @@
 </div>
 
 <script>
-const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_0rg1ajXxVzZpwoF_5FY2MA_uwtxgAjZ';
+const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
+const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
 const {createClient} = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
+// FIX 1: sparkiddo.online → sparkiddo.com
 const BASE = 'https://sparkiddo.com';
+
 const BELTS = [
   {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
   {name:'Orange Belt',emoji:'🟧',xp:250},{name:'Green Belt',emoji:'🟩',xp:450},
   {name:'Blue Belt',emoji:'🟦',xp:700},{name:'Purple Belt',emoji:'🟪',xp:1000},
   {name:'Red Belt',emoji:'🟥',xp:1400},{name:'Black Belt',emoji:'⬛',xp:2000}
 ];
-const AVATARS=['🌟','🦊','🐼','🐰','🦁','🐸','🐧','🦋','🐻','🐹','🎭','🐱'];
+const AVATARS = ['🌟','🦊','🐼','🐰','🦁','🐸','🐧','🦋','🐻','🐹','🎭','🐱'];
 
 const GAMES = {
   learn:[
@@ -248,28 +249,44 @@ const GAMES = {
   ]
 };
 
-let state={session:null,parentAccount:null,profiles:[],selectedProfileId:null,selAvatar:'🌟'};
+let state = {
+  session: null,
+  parentAccount: null,
+  profiles: [],
+  selectedProfileId: null,
+  selAvatar: '🌟'
+};
 
 function getBelt(xp){let b=BELTS[0];for(const bb of BELTS)if(xp>=bb.xp)b=bb;return b;}
 function getNextBelt(xp){return BELTS.find(b=>xp<b.xp)||null;}
-function xpPct(xp){const b=getBelt(xp),nb=getNextBelt(xp);if(!nb)return 100;const prev=BELTS[BELTS.indexOf(b)-1]?.xp||0;return Math.min(100,((xp-prev)/(nb.xp-prev))*100);}
+function xpPct(xp){
+  const b=getBelt(xp), nb=getNextBelt(xp);
+  if(!nb)return 100;
+  const prev=BELTS[BELTS.indexOf(b)-1]?.xp||0;
+  return Math.min(100,((xp-prev)/(nb.xp-prev))*100);
+}
 
 async function init(){
-  const {data:{session}}=await sb.auth.getSession();
+  const {data:{session}} = await sb.auth.getSession();
   if(!session){
-    const isGuest=sessionStorage.getItem('sparkiddo_guest');
+    const isGuest = sessionStorage.getItem('sparkiddo_guest');
     if(isGuest){showGuestHub();return;}
     window.location.href='/login';return;
   }
-  state.session=session;
-  document.getElementById('nav-user').textContent=session.user.email;
-  const {data:profiles}=await sb.from('child_profiles').select('*').eq('parent_id',session.user.id).order('created_at');
-  const {data:account}=await sb.from('parent_accounts').select('*').eq('id',session.user.id).single();
-  state.profiles=profiles||[];
-  state.parentAccount=account;
+  state.session = session;
+  document.getElementById('nav-user').textContent = session.user.email;
+
+  // FIX 2: parent_accounts → profiles (matches our schema)
+  const [{data:profiles},{data:account}] = await Promise.all([
+    sb.from('child_profiles').select('*').eq('parent_id',session.user.id).order('created_at'),
+    sb.from('profiles').select('*').eq('id',session.user.id).single(),
+  ]);
+
+  state.profiles = profiles || [];
+  state.parentAccount = account;
+
   document.getElementById('loading').style.display='none';
-  if(state.profiles.length===0){showProfilePicker();}
-  else{showProfilePicker();}
+  showProfilePicker();
 }
 
 function showProfilePicker(){
@@ -278,41 +295,56 @@ function showProfilePicker(){
 }
 
 function renderProfiles(){
-  const grid=document.getElementById('profiles-grid');
-  grid.innerHTML='';
-  state.profiles.forEach(p=>{
-    const b=getBelt(p.xp);const nb=getNextBelt(p.xp);
-    const pct=xpPct(p.xp);
-    const card=document.createElement('div');
-    card.className='profile-card'+(state.selectedProfileId===p.id?' selected':'');
-    card.innerHTML=`
-      <span class="profile-avatar">${p.avatar}</span>
-      <div class="profile-name">${p.name}</div>
-      <div class="profile-belt">${b.emoji} ${b.name}</div>
-      <div class="profile-xp-bar"><div class="profile-xp-fill" style="width:${pct}%"></div></div>
-      <div class="profile-xp-label">${p.xp} XP · 🔥 ${p.streak} streak</div>`;
-    card.addEventListener('click',()=>{state.selectedProfileId=p.id;renderProfiles();document.getElementById('play-btn').classList.add('show');});
+  const grid = document.getElementById('profiles-grid');
+  grid.innerHTML = '';
+
+  state.profiles.forEach(function(p){
+    const b = getBelt(p.xp||0);
+    const pct = xpPct(p.xp||0);
+    const card = document.createElement('div');
+    card.className = 'profile-card' + (state.selectedProfileId===p.id?' selected':'');
+    card.innerHTML =
+      '<span class="profile-avatar">'+(p.avatar||'🌟')+'</span>'+
+      '<div class="profile-name">'+p.name+'</div>'+
+      '<div class="profile-belt">'+b.emoji+' '+b.name+'</div>'+
+      '<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="profile-xp-label">'+(p.xp||0)+' XP · 🔥 '+(p.streak||0)+' streak</div>';
+    card.addEventListener('click',function(){
+      state.selectedProfileId = p.id;
+      renderProfiles();
+      document.getElementById('play-btn').classList.add('show');
+    });
     grid.appendChild(card);
   });
-  // Add profile card
-  const isPremium=state.parentAccount?.is_premium;
-  const canAdd=isPremium?state.profiles.length<4:state.profiles.length<1;
-  const addCard=document.createElement('div');
-  addCard.className='add-profile-card';
+
+  // FIX 3: Use plan === 'plus' instead of is_premium
+  // FIX 4: Free plan allows 3 profiles (matches DB trigger), not 1
+  const isPlus = state.parentAccount?.plan === 'plus';
+  const maxProfiles = isPlus ? 4 : 3;
+  const canAdd = state.profiles.length < maxProfiles;
+
+  const addCard = document.createElement('div');
+  addCard.className = 'add-profile-card';
   if(canAdd){
-    addCard.innerHTML=`<div class="add-icon">+</div><div class="add-label">Add Child</div><div class="add-sub">${isPremium?'Up to 4 profiles':'1 free profile'}</div>`;
-    addCard.onclick=()=>openModal();
+    addCard.innerHTML =
+      '<div class="add-icon">+</div>'+
+      '<div class="add-label">Add Child</div>'+
+      '<div class="add-sub">'+(isPlus?'Up to 4 profiles':'Up to 3 free')+'</div>';
+    addCard.onclick = function(){openModal();};
   } else {
-    addCard.innerHTML=`<div class="add-icon">⭐</div><div class="add-label">sparkiddo Plus</div><div class="add-sub">Add up to 4 kids</div>`;
-    addCard.style.cursor='pointer';
-    addCard.onclick=()=>window.location.href='/upgrade';
+    addCard.innerHTML =
+      '<div class="add-icon">⭐</div>'+
+      '<div class="add-label">sparkiddo Plus</div>'+
+      '<div class="add-sub">Add up to 4 kids</div>';
+    addCard.style.cursor = 'pointer';
+    addCard.onclick = function(){window.location.href='/upgrade';};
   }
   grid.appendChild(addCard);
 }
 
 function startPlaying(){
   if(!state.selectedProfileId)return;
-  const profile=state.profiles.find(p=>p.id===state.selectedProfileId);
+  const profile = state.profiles.find(function(p){return p.id===state.selectedProfileId;});
   if(!profile)return;
   document.getElementById('profile-picker').style.display='none';
   renderHub(profile);
@@ -320,79 +352,147 @@ function startPlaying(){
 }
 
 function renderHub(p){
-  const b=getBelt(p.xp);const nb=getNextBelt(p.xp);const pct=xpPct(p.xp);
-  document.getElementById('hub-avatar').textContent=p.avatar;
-  document.getElementById('hub-name').textContent=p.name;
-  document.getElementById('hub-belt').textContent=`${b.emoji} ${b.name}${nb?` · ${nb.xp-p.xp} XP to ${nb.name}`:'· MAX BELT! 🏆'}`;
-  document.getElementById('hub-xp-fill').style.width=pct+'%';
-  document.getElementById('hub-xp-label').textContent=`${p.xp} XP`;
-  document.getElementById('hub-streak').textContent=`🔥 ${p.streak}`;
-  renderGames('learn-grid',GAMES.learn,p);
-  renderGames('morals-grid',GAMES.morals,p);
-  renderArcade('arcade-grid',GAMES.arcade,p);
+  const b = getBelt(p.xp||0);
+  const nb = getNextBelt(p.xp||0);
+  const pct = xpPct(p.xp||0);
+  document.getElementById('hub-avatar').textContent = p.avatar||'🌟';
+  document.getElementById('hub-name').textContent = p.name;
+  document.getElementById('hub-belt').textContent = nb
+    ? b.emoji+' '+b.name+' · '+(nb.xp-(p.xp||0))+' XP to '+nb.name
+    : b.emoji+' '+b.name+' · MAX BELT! 🏆';
+  document.getElementById('hub-xp-fill').style.width = pct+'%';
+  document.getElementById('hub-xp-label').textContent = (p.xp||0)+' XP';
+  document.getElementById('hub-streak').textContent = '🔥 '+(p.streak||0);
+  renderGames('learn-grid', GAMES.learn, p);
+  renderGames('morals-grid', GAMES.morals, p);
+  renderArcade('arcade-grid', GAMES.arcade, p);
 }
 
-function renderGames(gridId,games,profile){
-  const grid=document.getElementById(gridId);
-  grid.innerHTML='';
-  games.forEach(g=>{
-    const played=profile.games_played?.includes(g.id);
-    const card=document.createElement('a');
-    card.className='game-card';
-    card.href=`${BASE}/${g.id}.html`;
-    card.target='_blank';
-    card.innerHTML=`
-      <span class="game-emoji">${g.emoji}${played?'<span style="font-size:.8rem;margin-left:4px" title="Played before">✅</span>':''}</span>
-      <div class="game-title">${g.title}</div>
-      <div class="game-desc">${g.desc}</div>
-      <span class="game-tag" style="background:${g.tagColor};color:${g.tagText}">${g.tag}</span>
-      <span class="game-xp">+${g.xp} XP</span>`;
-    card.addEventListener('click',()=>logSession(profile.id,g.id,g.xp));
+function renderGames(gridId, games, profile){
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  games.forEach(function(g){
+    const card = document.createElement('a');
+    card.className = 'game-card';
+    card.href = BASE+'/games/'+g.id+'.html';
+    card.target = '_blank';
+    card.innerHTML =
+      '<span class="game-emoji">'+g.emoji+'</span>'+
+      '<div class="game-title">'+g.title+'</div>'+
+      '<div class="game-desc">'+g.desc+'</div>'+
+      '<span class="game-tag" style="background:'+g.tagColor+';color:'+g.tagText+'">'+g.tag+'</span>'+
+      '<span class="game-xp">+'+g.xp+' XP</span>';
+    card.addEventListener('click', function(){logSession(profile.id, g.id, g.xp);});
     grid.appendChild(card);
   });
 }
 
-function renderArcade(gridId,games,profile){
-  const grid=document.getElementById(gridId);grid.innerHTML='';
-  games.forEach(g=>{
-    const card=document.createElement('a');
-    card.className='arcade-card';card.href=`${BASE}/${g.id}.html`;card.target='_blank';
-    card.innerHTML=`<span class="arcade-emoji">${g.emoji}</span><div class="arcade-title">${g.title}</div><span class="arcade-tag">ARCADE</span>`;
-    card.addEventListener('click',()=>logSession(profile.id,g.id,g.xp));
+function renderArcade(gridId, games, profile){
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  games.forEach(function(g){
+    const card = document.createElement('a');
+    card.className = 'arcade-card';
+    card.href = BASE+'/games/'+g.id+'.html';
+    card.target = '_blank';
+    card.innerHTML =
+      '<span class="arcade-emoji">'+g.emoji+'</span>'+
+      '<div class="arcade-title">'+g.title+'</div>'+
+      '<span class="arcade-tag">ARCADE</span>';
+    card.addEventListener('click', function(){logSession(profile.id, g.id, g.xp);});
     grid.appendChild(card);
   });
 }
 
-async function logSession(childId,gameId,xp){
-  await sb.from('game_sessions').insert({child_id:childId,game_id:gameId,xp_earned:xp,platform:'web'});
-  await sb.rpc('safe_add_xp',{p_child_id:childId,p_amount:xp});
-  // Update local
-  const p=state.profiles.find(p=>p.id===childId);
-  if(p&&!p.games_played?.includes(gameId)){
-    p.games_played=[...(p.games_played||[]),gameId];
-    p.xp+=xp;
-  }
+// FIX 5: game_id → game_slug, removed platform field
+// FIX 6: Replaced safe_add_xp RPC + games_played with direct DB update
+async function logSession(childId, gameSlug, xp){
+  if(childId === 'guest') return; // Don't log for guest mode
+
+  // Insert game session
+  await sb.from('game_sessions').insert({
+    child_id: childId,
+    game_slug: gameSlug,
+    game_category: getCategory(gameSlug),
+    xp_earned: xp
+  });
+
+  // Directly update XP and streak on child_profiles
+  const profile = state.profiles.find(function(p){return p.id===childId;});
+  if(!profile) return;
+
+  const today = new Date().toISOString().split('T')[0];
+  const lastPlayed = profile.last_played;
+  const yesterday = new Date(Date.now()-86400000).toISOString().split('T')[0];
+  const newStreak = lastPlayed===today
+    ? profile.streak                          // already played today, no change
+    : lastPlayed===yesterday
+      ? (profile.streak||0)+1                 // played yesterday, extend streak
+      : 1;                                    // gap in streak, reset to 1
+
+  const newXp = (profile.xp||0) + xp;
+
+  await sb.from('child_profiles').update({
+    xp: newXp,
+    streak: newStreak,
+    last_played: today
+  }).eq('id', childId);
+
+  // Update local state
+  profile.xp = newXp;
+  profile.streak = newStreak;
+  profile.last_played = today;
 }
 
-function switchProfile(){document.getElementById('game-hub').style.display='none';showProfilePicker();}
+// Helper: determine game category from slug
+function getCategory(slug){
+  if(GAMES.learn.find(function(g){return g.id===slug;})) return 'learn';
+  if(GAMES.morals.find(function(g){return g.id===slug;})) return 'morals';
+  if(GAMES.arcade.find(function(g){return g.id===slug;})) return 'arcade';
+  return 'unknown';
+}
+
+function switchProfile(){
+  document.getElementById('game-hub').style.display='none';
+  showProfilePicker();
+}
 
 // Modal
 function openModal(){
   document.getElementById('child-name').value='';
   state.selAvatar='🌟';
-  const grid=document.getElementById('avatar-grid');
-  grid.innerHTML=AVATARS.map(a=>`<div class="avatar-opt${a===state.selAvatar?' sel':''}" onclick="selAvatar('${a}',this)">${a}</div>`).join('');
+  const grid = document.getElementById('avatar-grid');
+  grid.innerHTML='';
+  AVATARS.forEach(function(a){
+    const div = document.createElement('div');
+    div.className = 'avatar-opt'+(a===state.selAvatar?' sel':'');
+    div.textContent = a;
+    div.onclick = function(){selAvatar(a, div);};
+    grid.appendChild(div);
+  });
   document.getElementById('add-modal').classList.add('show');
 }
 function closeModal(){document.getElementById('add-modal').classList.remove('show');}
-function selAvatar(a,el){state.selAvatar=a;document.querySelectorAll('.avatar-opt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
+function selAvatar(a, el){
+  state.selAvatar = a;
+  document.querySelectorAll('.avatar-opt').forEach(function(e){e.classList.remove('sel');});
+  el.classList.add('sel');
+}
 async function saveChild(){
-  const name=document.getElementById('child-name').value.trim();
+  const name = document.getElementById('child-name').value.trim();
   if(!name)return;
-  const {data,error}=await sb.from('child_profiles').insert({parent_id:state.session.user.id,name,avatar:state.selAvatar}).select().single();
-  if(error){alert(error.message);return;}
+  const {data,error} = await sb.from('child_profiles')
+    .insert({parent_id:state.session.user.id, name:name, avatar:state.selAvatar})
+    .select().single();
+  if(error){
+    alert(error.message==='new row violates row-level security policy'
+      ? 'Profile limit reached for your plan.'
+      : error.message);
+    return;
+  }
   state.profiles.push(data);
-  closeModal();renderProfiles();
+  closeModal();
+  renderProfiles();
 }
 
 async function handleSignOut(){
@@ -403,8 +503,9 @@ async function handleSignOut(){
 function showGuestHub(){
   document.getElementById('loading').style.display='none';
   document.getElementById('nav-user').textContent='Guest mode';
-  const fakeProfile={id:'guest',name:'Guest Player',avatar:'⭐',xp:0,streak:0,games_played:[]};
-  state.profiles=[fakeProfile];state.selectedProfileId='guest';
+  const fakeProfile={id:'guest',name:'Guest Player',avatar:'⭐',xp:0,streak:0,last_played:null};
+  state.profiles=[fakeProfile];
+  state.selectedProfileId='guest';
   document.getElementById('profile-picker').style.display='none';
   renderHub(fakeProfile);
   document.getElementById('game-hub').style.display='block';
