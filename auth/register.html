@@ -114,12 +114,12 @@
     <button type="submit" class="btn btn-primary" id="reg-btn">Create Account 🌟</button>
   </form>
 
-  <div class="login-link">Already have an account? <a href="/login">Sign in here</a></div>
+  <div class="login-link">Already have an account? <a href="/auth/login">Sign in here</a></div>
 </div>
 
 <script>
 const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_0rg1ajXxVzZpwoF_5FY2MA_uwtxgAjZ';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -191,24 +191,24 @@ async function handleRegister(e){
   const pw=document.getElementById('password').value;
   const {data,error}=await sb.auth.signUp({
     email,password:pw,
-    options:{data:{display_name:name},emailRedirectTo:'https://sparkiddo.com/auth/callback'}
+    options:{data:{display_name:name},emailRedirectTo:'https://sparkiddo.com/auth/callback.html'}
   });
   if(error){
     showAlert(error.message==='User already registered'
-      ?'An account with this email already exists. <a href="/login">Sign in instead</a>.'
+      ?'An account with this email already exists. <a href="/auth/login">Sign in instead</a>.'
       :error.message);
     btn.disabled=false;btn.innerHTML='Create Account 🌟';
     return;
   }
   showAlert('🎉 Account created! Please check your email to confirm your address, then sign in.','success');
   btn.innerHTML='✅ Check your email!';
-  setTimeout(()=>window.location.href='/login',4000);
+  setTimeout(()=>window.location.href='/auth/login',4000);
 }
 
 async function signInGoogle(){
   const {error}=await sb.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo:'https://sparkiddo.com/auth/callback'}
+    options:{redirectTo:'https://sparkiddo.com/auth/callback.html'}
   });
   if(error)showAlert(error.message);
 }
