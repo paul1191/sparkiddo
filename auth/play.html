@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>sparkiddo — Choose Your Player</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -124,7 +124,7 @@
   <a href="/" class="nav-logo">🌟 sparkiddo</a>
   <div class="nav-right">
     <span class="nav-user" id="nav-user"></span>
-    <a href="/parent-dashboard" class="parent-btn">🔐 Parent Zone</a>
+    <a href="/auth/parent-dashboard" class="parent-btn">🔐 Parent Zone</a>
     <button class="sign-out-btn" onclick="handleSignOut()">Sign out</button>
   </div>
 </nav>
@@ -212,8 +212,11 @@
 <script>
 const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
-const {createClient} = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+const sb = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON
+);
+console.log('Supabase loaded:', sb);
 
 // FIX 1: sparkiddo.online → sparkiddo.com
 const BASE = 'https://sparkiddo.com';
@@ -271,7 +274,7 @@ async function init(){
   if(!session){
     const isGuest = sessionStorage.getItem('sparkiddo_guest');
     if(isGuest){showGuestHub();return;}
-    window.location.href='/login';return;
+    window.location.href='/auth/login';return;
   }
   state.session = session;
   document.getElementById('nav-user').textContent = session.user.email;
@@ -497,7 +500,7 @@ async function saveChild(){
 
 async function handleSignOut(){
   await sb.auth.signOut();
-  window.location.href='/login';
+  window.location.href='/auth/login';
 }
 
 function showGuestHub(){

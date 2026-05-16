@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>sparkiddo — Parent Dashboard</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -134,7 +134,7 @@
 <nav>
   <a href="/" class="nav-logo">🌟 sparkiddo</a>
   <div class="nav-right">
-    <a href="/play" class="nav-btn btn-play">▶ Play</a>
+    <a href="/auth/play" class="nav-btn btn-play">▶ Play</a>
     <button class="nav-btn btn-out" onclick="signOut()">Sign out</button>
   </div>
 </nav>
@@ -170,7 +170,7 @@
       <!-- FIX 1: Removed nested template literal — numpad built by buildNumpad() in JS -->
       <div class="numpad" id="numpad"></div>
       <div class="pin-err" id="pin-err"></div>
-      <div class="pin-hint">Forgotten PIN? <a href="/login" style="color:#a29bfe;font-weight:800">Sign out & reset</a></div>
+      <div class="pin-hint">Forgotten PIN? <a href="/auth/login" style="color:#a29bfe;font-weight:800">Sign out & reset</a></div>
     </div>
   </div>
 
@@ -189,7 +189,7 @@
     </div>
 
     <!-- Upgrade banner (free users) -->
-    <div class="premium-banner" id="upgrade-banner" style="display:none" onclick="window.location.href='/upgrade'">
+    <div class="premium-banner" id="upgrade-banner" style="display:none" onclick="window.location.href='upgrade'">
       <div class="pb-icon">⭐</div>
       <div class="pb-text">
         <h3>Upgrade to sparkiddo Plus</h3>
@@ -348,8 +348,11 @@
 <script>
 const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
-const {createClient} = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+const sb = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON
+);
+console.log('Supabase loaded:', sb);
 
 const BELTS=[
   {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
@@ -381,7 +384,7 @@ let state={session:null,account:null,settings:null,profiles:[],sessions:[],pinIn
 
 async function init(){
   const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='/login';return;}
+  if(!session){window.location.href='/auth/login';return;}
   state.session=session;
 
   // FIX 6: Changed 'parent_accounts' → 'profiles' to match our schema
@@ -499,7 +502,7 @@ function renderDashboard(){
   const cr=document.getElementById('child-reports');
   cr.innerHTML='';
   if(profiles.length===0){
-    cr.innerHTML='<div style="text-align:center;padding:20px;color:#ccc;font-family:Fredoka One,cursive">No child profiles yet. <a href="/play" style="color:#a29bfe">Add one in the play hub!</a></div>';
+    cr.innerHTML='<div style="text-align:center;padding:20px;color:#ccc;font-family:Fredoka One,cursive">No child profiles yet. <a href="/auth/play" style="color:#a29bfe">Add one in the play hub!</a></div>';
   } else {
     profiles.forEach(function(p){
       const belt=getBelt(p.xp);
@@ -647,7 +650,7 @@ async function sendPwReset(){
   toast.classList.add('show');
   setTimeout(function(){toast.classList.remove('show');},3000);
 }
-async function signOut(){await sb.auth.signOut();window.location.href='/login';}
+async function signOut(){await sb.auth.signOut();window.location.href='/auth/login';}
 
 init();
 </script>
