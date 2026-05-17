@@ -124,7 +124,7 @@
   <a href="/" class="nav-logo">🌟 sparkiddo</a>
   <div class="nav-right">
     <span class="nav-user" id="nav-user"></span>
-    <a href="/auth/parent-dashboard" class="parent-btn">🔐 Parent Zone</a>
+    <a href="/auth/parent_dashboard" class="parent-btn">🔐 Parent Zone</a>
     <button class="sign-out-btn" onclick="handleSignOut()">Sign out</button>
   </div>
 </nav>
@@ -232,22 +232,22 @@ const AVATARS = ['🌟','🦊','🐼','🐰','🦁','🐸','🐧','🦋','🐻',
 const GAMES = {
   learn:[
     {id:'mathdojo',path:'learn/math_dojo', title:'Math Dojo',emoji:'➕',desc:'Number puzzles & arithmetic — 3 levels!',tag:'Ages 5+',tagColor:'#fdcb6e',tagText:'#7a5c00',xp:20},
-    {id:'colorshapequest',path:'learn/colorshapequest',title:'Color & Shape Quest',emoji:'🎨',desc:'Colors, shapes & drag & drop!',tag:'Ages 3+',tagColor:'#a29bfe',tagText:'#fff',xp:20},
+    {id:'colorshapequest',path:'learn/color_shape_quest',title:'Color & Shape Quest',emoji:'🎨',desc:'Colors, shapes & drag & drop!',tag:'Ages 3+',tagColor:'#a29bfe',tagText:'#fff',xp:20},
   ],
   morals:[
     {id:'emotionmatch',path:'morals/emotion_match',title:'Emotion Match',emoji:'🎭',desc:'Match faces to feelings!',tag:'Empathy',tagColor:'#fd79a8',tagText:'#fff',xp:25},
-    {id:'kindnessquest',path:'morals/kindnessquest',title:'Kindness Quest',emoji:'💗',desc:'Choose kindness — watch it spread!',tag:'Kindness',tagColor:'#00b894',tagText:'#fff',xp:25},
-    {id:'storychoices',path:'morals/storychoices',title:'Story Choices',emoji:'📖',desc:'Your choices shape the story!',tag:'Wisdom',tagColor:'#a29bfe',tagText:'#fff',xp:30},
-    {id:'shareorkeep',path:'morals/shareorkeep',title:'Share or Keep?',emoji:'🤲',desc:'Sharing dilemmas — affect everyone!',tag:'Sharing',tagColor:'#ff9f43',tagText:'#fff',xp:25},
-    {id:'truthorfib',path:'morals/truthorfib',title:'Truth or Fib?',emoji:'🔍',desc:'Spot the lie before time runs out!',tag:'Honesty',tagColor:'#74b9ff',tagText:'#fff',xp:25},
-    {id:'cooldowncorner',path:'morals/cooldowncorner',title:'Cool Down Corner',emoji:'☮️',desc:'Breathe, ground & affirm!',tag:'Calm',tagColor:'#55efc4',tagText:'#007a5e',xp:20},
-    {id:'mydailydojo',path:'morals/mydailydojo',title:'My Daily Dojo',emoji:'🥋',desc:'Daily habits. Earn belts!',tag:'Habits',tagColor:'#ff6b6b',tagText:'#fff',xp:30},
-    {id:'petdojo',path:'morals/petdojo',title:'Pet Dojo',emoji:'🐾',desc:'Pet that grows with responsibility!',tag:'Care',tagColor:'#00b894',tagText:'#fff',xp:30},
+    {id:'kindnessquest',path:'morals/kindness_quest',title:'Kindness Quest',emoji:'💗',desc:'Choose kindness — watch it spread!',tag:'Kindness',tagColor:'#00b894',tagText:'#fff',xp:25},
+    {id:'storychoices',path:'morals/story_choices',title:'Story Choices',emoji:'📖',desc:'Your choices shape the story!',tag:'Wisdom',tagColor:'#a29bfe',tagText:'#fff',xp:30},
+    {id:'shareorkeep',path:'morals/share_or_keep',title:'Share or Keep?',emoji:'🤲',desc:'Sharing dilemmas — affect everyone!',tag:'Sharing',tagColor:'#ff9f43',tagText:'#fff',xp:25},
+    {id:'truthorfib',path:'morals/truth_or_fib',title:'Truth or Fib?',emoji:'🔍',desc:'Spot the lie before time runs out!',tag:'Honesty',tagColor:'#74b9ff',tagText:'#fff',xp:25},
+    {id:'cooldowncorner',path:'morals/cool_down_corner',title:'Cool Down Corner',emoji:'☮️',desc:'Breathe, ground & affirm!',tag:'Calm',tagColor:'#55efc4',tagText:'#007a5e',xp:20},
+    {id:'mydailydojo',path:'morals/my_daily_dojo',title:'My Daily Dojo',emoji:'🥋',desc:'Daily habits. Earn belts!',tag:'Habits',tagColor:'#ff6b6b',tagText:'#fff',xp:30},
+    {id:'petdojo',path:'morals/pet_dojo',title:'Pet Dojo',emoji:'🐾',desc:'Pet that grows with responsibility!',tag:'Care',tagColor:'#00b894',tagText:'#fff',xp:30},
   ],
   arcade:[
     {id:'snake',path:'arcade/snake',  title:'Snake',emoji:'🐍',xp:15},
     {id:'tictactoe',path:'arcade/tictactoe',title:'Tic Tac Toe',emoji:'⭕',xp:15},
-    {id:'memorymatch',path:'arcade/memorymatch',title:'Memory Match',emoji:'🃏',xp:15},
+    {id:'memorymatch',path:'arcade/memory_match',title:'Memory Match',emoji:'🃏',xp:15},
     {id:'rockpaperscissors',path:'arcade/rockpaperscissors',title:'Rock Paper Scissors',emoji:'✂️',xp:15},
   ]
 };
@@ -377,7 +377,7 @@ function renderGames(gridId, games, profile){
   games.forEach(function(g){
     const card = document.createElement('a');
     card.className = 'game-card';
-    card.href = BASE+'/games/'+g.id+'.html';
+    card.href = BASE+'/games/'+g.path+'.html';
     card.target = '_blank';
     card.innerHTML =
       '<span class="game-emoji">'+g.emoji+'</span>'+
@@ -396,7 +396,7 @@ function renderArcade(gridId, games, profile){
   games.forEach(function(g){
     const card = document.createElement('a');
     card.className = 'arcade-card';
-    card.href = BASE+'/games/'+g.id+'.html';
+    card.href = BASE+'/games/'+g.path+'.html';
     card.target = '_blank';
     card.innerHTML =
       '<span class="arcade-emoji">'+g.emoji+'</span>'+
