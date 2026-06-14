@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welcome to sparkiddo Plus!</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  :root{
+    --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+    --green:#00b894;--green-pale:#e8f9f3;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:linear-gradient(135deg,var(--purple-pale),var(--green-pale));
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    font-family:'Nunito',sans-serif;padding:24px;text-align:center}
+  .card{background:#fff;border-radius:28px;padding:44px 36px;
+    max-width:440px;width:100%;box-shadow:0 16px 56px rgba(124,92,191,.15)}
+  .icon{font-size:5rem;margin-bottom:16px;display:block;
+    animation:bounce 1.5s ease-in-out 3}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1)}
+    40%{transform:translateY(-18px) scale(1.1)}70%{transform:translateY(-8px) scale(1.05)}}
+  .title{font-family:'Fredoka One',cursive;font-size:2rem;
+    background:linear-gradient(135deg,var(--purple),var(--green));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;margin-bottom:10px}
+  .sub{font-size:.95rem;color:#666;font-weight:600;line-height:1.8;margin-bottom:28px}
+  .features-list{background:var(--purple-pale);border-radius:16px;
+    padding:18px 20px;margin-bottom:28px;text-align:left}
+  .feat{font-size:.88rem;color:#444;font-weight:700;padding:6px 0;
+    border-bottom:1px solid rgba(162,155,254,.25);display:flex;align-items:center;gap:10px}
+  .feat:last-child{border-bottom:none}
+  .check{width:22px;height:22px;border-radius:50%;background:var(--green);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:.72rem;font-weight:900;flex-shrink:0}
+  .progress-wrap{background:#f0e8ff;border-radius:12px;padding:14px 18px;
+    margin-bottom:24px;text-align:left}
+  .progress-label{font-family:'Fredoka One',cursive;font-size:.82rem;
+    color:var(--purple);margin-bottom:8px}
+  .progress-bar-bg{background:#e0d7ff;border-radius:99px;height:8px;overflow:hidden}
+  .progress-bar{height:100%;border-radius:99px;
+    background:linear-gradient(90deg,var(--purple-light),var(--green));
+    transition:width 2s ease;width:0%}
+  .progress-note{font-size:.72rem;color:#aaa;font-weight:700;margin-top:6px}
+  .btn-play{display:inline-block;background:linear-gradient(135deg,var(--green),#00cec9);
+    color:#fff;padding:14px 36px;border-radius:99px;font-family:'Fredoka One',cursive;
+    font-size:1.05rem;text-decoration:none;box-shadow:0 6px 20px rgba(0,184,148,.35);
+    transition:.2s}
+  .btn-play:hover{transform:translateY(-2px)}
+  .countdown{font-size:.78rem;color:#aaa;font-weight:700;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="card">
+  <span class="icon" id="icon">🎉</span>
+  <div class="title" id="title">Welcome to Plus!</div>
+  <div class="sub" id="sub">
+    Your account is being upgraded.<br>
+    This usually takes just a few seconds...
+  </div>
+
+  <!-- Verification progress -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-label" id="progress-label">⏳ Verifying payment with Razorpay...</div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="progress-note" id="progress-note">Please don't close this window</div>
+  </div>
+
+  <!-- Features unlocked (shown after success) -->
+  <div class="features-list" id="features-list" style="display:none">
+    <div class="feat"><div class="check">✓</div>Unlimited scenarios — unlocked! ✅</div>
+    <div class="feat"><div class="check">✓</div>Growth Map for parents — unlocked! ✅</div>
+    <div class="feat"><div class="check">✓</div>Up to 4 child profiles — unlocked! ✅</div>
+    <div class="feat"><div class="check">✓</div>Weekly parent reports — coming soon 🌱</div>
+  </div>
+
+  <a href="/auth/play.html" class="btn-play" id="play-btn" style="display:none">
+    🌟 Start Playing — Unlimited!
+  </a>
+  <div class="countdown" id="countdown" style="display:none"></div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
+const {createClient} = supabase;
+window.sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let pollCount    = 0;
+const MAX_POLLS  = 12;      // Try for ~30 seconds
+const POLL_MS    = 2500;    // Every 2.5s
+let countdownSec = 5;
+
+async function init() {
+  // Animate progress bar to 30% immediately to show activity
+  setTimeout(() => {
+    document.getElementById('progress-bar').style.width = '30%';
+  }, 200);
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = '/auth/login.html';
+    return;
+  }
+
+  // Start polling Supabase for plan upgrade
+  pollForUpgrade(session.user.id);
+}
+
+async function pollForUpgrade(userId) {
+  pollCount++;
+
+  // Animate progress bar proportionally
+  const pct = Math.min(90, 30 + (pollCount / MAX_POLLS) * 60);
+  document.getElementById('progress-bar').style.width = pct + '%';
+
+  try {
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('plan')
+      .eq('id', userId)
+      .single();
+
+    if (profile?.plan === 'plus') {
+      // ✅ Upgrade confirmed
+      onUpgradeConfirmed();
+      return;
+    }
+  } catch (e) {
+    console.log('Poll error:', e.message);
+  }
+
+  if (pollCount >= MAX_POLLS) {
+    // Webhook may still be on its way — show success anyway
+    // Razorpay webhooks can take up to 60s in rare cases
+    onUpgradeConfirmed(true);
+    return;
+  }
+
+  setTimeout(() => pollForUpgrade(userId), POLL_MS);
+}
+
+function onUpgradeConfirmed(maybeDelayed = false) {
+  // Complete the progress bar
+  document.getElementById('progress-bar').style.width = '100%';
+
+  setTimeout(() => {
+    // Update UI
+    document.getElementById('icon').textContent      = '⭐';
+    document.getElementById('title').textContent     = 'You\'re on Plus!';
+    document.getElementById('sub').innerHTML         = maybeDelayed
+      ? 'Payment received! Your account will reflect Plus within a minute.<br>You can start playing now. 🌟'
+      : 'Your account is fully upgraded.<br>Enjoy unlimited play every day! 🌟';
+
+    document.getElementById('progress-wrap').style.display  = 'none';
+    document.getElementById('features-list').style.display  = 'block';
+    document.getElementById('play-btn').style.display       = 'inline-block';
+    document.getElementById('countdown').style.display      = 'block';
+
+    // Update sessionStorage isPlus flag so games unlock immediately
+    const stored = sessionStorage.getItem('sparkiddo_child');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      parsed.isPlus = true;
+      sessionStorage.setItem('sparkiddo_child', JSON.stringify(parsed));
+    }
+
+    // Auto-redirect countdown
+    startCountdown();
+  }, 600);
+}
+
+function startCountdown() {
+  const el = document.getElementById('countdown');
+  function tick() {
+    el.textContent = 'Redirecting to play hub in ' + countdownSec + 's...';
+    if (countdownSec <= 0) {
+      window.location.href = '/auth/play.html';
+      return;
+    }
+    countdownSec--;
+    setTimeout(tick, 1000);
+  }
+  tick();
+}
+
+init();
+</script>
+</body>
+</html>

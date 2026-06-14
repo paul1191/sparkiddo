@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sparkiddo Plus — Upgrade</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  :root{
+    --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+    --green:#00b894;--teal:#00cec9;--green-pale:#e8f9f3;
+    --pink:#fd79a8;--pink-pale:#fce4f3;
+    --yellow:#fdcb6e;--orange:#ff9f43;
+    --dark:#1a1a2e;--muted:#777;--light:#f7f3ff;
+    --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:linear-gradient(135deg,#f3efff 0%,#fce4f3 100%);min-height:100vh;
+    font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding:24px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:.18;pointer-events:none;z-index:0}
+  .b1{width:400px;height:400px;background:var(--purple-light);top:-120px;left:-100px}
+  .b2{width:320px;height:320px;background:var(--pink);bottom:-80px;right:-60px}
+
+  /* CARD */
+  .card{position:relative;z-index:1;background:#fff;border-radius:28px;padding:36px 32px;
+    width:100%;max-width:500px;box-shadow:0 16px 56px rgba(124,92,191,.18)}
+
+  /* LOGO */
+  .logo{font-family:'Fredoka One',cursive;font-size:1.5rem;
+    background:linear-gradient(135deg,var(--purple),var(--pink));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;text-decoration:none;display:block;
+    text-align:center;margin-bottom:24px}
+
+  /* HERO */
+  .plan-icon{font-size:4rem;display:block;text-align:center;margin-bottom:10px;
+    animation:float 2.4s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .plan-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--purple);
+    text-align:center;margin-bottom:6px}
+  .plan-sub{font-size:.88rem;color:var(--muted);font-weight:600;text-align:center;
+    margin-bottom:22px;line-height:1.6}
+
+  /* TOGGLE */
+  .price-toggle{display:flex;background:#f0e8ff;border-radius:14px;padding:4px;margin-bottom:20px}
+  .toggle-btn{flex:1;padding:10px 8px;border-radius:11px;border:none;
+    font-family:'Fredoka One',cursive;font-size:.88rem;cursor:pointer;
+    transition:.2s;background:transparent;color:#aaa;line-height:1.3}
+  .toggle-btn.active{background:#fff;color:var(--purple);
+    box-shadow:0 2px 10px rgba(124,92,191,.15)}
+  .save-badge{font-size:.65rem;display:block;color:var(--green);font-family:'Fredoka One',cursive}
+
+  /* PRICE */
+  .price-wrap{text-align:center;margin-bottom:6px}
+  .price-amount{font-family:'Fredoka One',cursive;font-size:2.8rem;color:var(--dark)}
+  .price-amount span{font-size:1.1rem;color:var(--muted)}
+  .price-period{font-size:.78rem;color:var(--muted);font-weight:700;
+    text-align:center;margin-bottom:20px;min-height:1.4em}
+
+  /* FEATURES */
+  .features{background:var(--purple-pale);border-radius:18px;padding:18px 20px;
+    margin-bottom:24px}
+  .feat-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--purple);
+    margin-bottom:12px}
+  .feature{display:flex;align-items:flex-start;gap:10px;padding:7px 0;
+    border-bottom:1px solid rgba(162,155,254,.2);font-size:.85rem;font-weight:700;color:#444;
+    line-height:1.5}
+  .feature:last-child{border-bottom:none}
+  .check{width:22px;height:22px;border-radius:50%;background:var(--green);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+    font-size:.72rem;font-weight:900;flex-shrink:0;margin-top:1px}
+
+  /* PAYMENT METHODS */
+  .pm-row{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+  .pm-badge{background:#f5f5f5;border-radius:8px;padding:5px 12px;
+    font-size:.72rem;font-weight:800;color:#555;border:1px solid #e0e0e0}
+
+  /* ALERT */
+  .alert{padding:12px 16px;border-radius:12px;font-size:.82rem;font-weight:700;
+    margin-bottom:16px;display:none;text-align:center}
+  .alert.error{background:#fde8e8;color:#9b2335;display:block}
+  .alert.success{background:var(--green-pale);color:#00695c;display:block}
+
+  /* BUTTONS */
+  .btn-upgrade{width:100%;padding:16px;border-radius:16px;border:none;
+    background:linear-gradient(135deg,var(--purple-light),var(--purple));
+    color:#fff;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;
+    box-shadow:0 6px 22px rgba(124,92,191,.4);transition:.2s;margin-bottom:10px}
+  .btn-upgrade:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,92,191,.5)}
+  .btn-upgrade:disabled{opacity:.6;cursor:not-allowed;transform:none}
+  .spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);
+    border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+    display:inline-block;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* FOOTER */
+  .guarantee{font-size:.75rem;color:#bbb;font-weight:700;text-align:center;margin-bottom:14px}
+  .back-link{font-size:.82rem;color:var(--purple-light);text-decoration:none;
+    font-weight:700;display:block;text-align:center;transition:.2s}
+  .back-link:hover{color:var(--purple)}
+
+  /* ALREADY PLUS */
+  #already-plus{display:none;text-align:center;padding:20px 0}
+  .already-icon{font-size:3rem;margin-bottom:10px}
+  .already-title{font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--green);margin-bottom:8px}
+  .already-sub{font-size:.88rem;color:var(--muted);font-weight:600;margin-bottom:16px}
+
+  /* LOADING */
+  #page-loading{text-align:center;padding:40px 0;font-family:'Fredoka One',cursive;
+    font-size:1rem;color:var(--purple)}
+  .loading-spinner{width:36px;height:36px;border:3.5px solid #f0e8ff;
+    border-top-color:var(--purple-light);border-radius:50%;
+    animation:spin .8s linear infinite;margin:0 auto 12px}
+
+  @media(max-width:420px){
+    .card{padding:28px 20px}
+    .plan-title{font-size:1.5rem}
+    .price-amount{font-size:2.2rem}
+  }
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div>
+
+<div class="card">
+  <a href="/" class="logo">🌟 sparkiddo</a>
+
+  <!-- Page loading -->
+  <div id="page-loading">
+    <div class="loading-spinner"></div>Loading...
+  </div>
+
+  <!-- Already Plus -->
+  <div id="already-plus">
+    <div class="already-icon">⭐</div>
+    <div class="already-title">You're already on Plus!</div>
+    <div class="already-sub">Your account already has full unlimited access.<br>Enjoy every scenario, every day! 🌟</div>
+    <a href="/auth/play.html" style="display:inline-block;background:linear-gradient(135deg,var(--purple-light),var(--purple));
+      color:#fff;padding:12px 28px;border-radius:99px;font-family:'Fredoka One',cursive;
+      font-size:.95rem;text-decoration:none">Back to Play Hub →</a>
+  </div>
+
+  <!-- Upgrade flow -->
+  <div id="upgrade-content" style="display:none">
+    <span class="plan-icon">⭐</span>
+    <div class="plan-title">sparkiddo Plus</div>
+    <div class="plan-sub">Unlimited scenarios every day.<br>Watch your child grow into a kind, wise human. 💖</div>
+
+    <!-- Monthly / Yearly toggle -->
+    <div class="price-toggle">
+      <button class="toggle-btn active" id="monthly-btn" onclick="setPlan('monthly')">
+        Monthly
+      </button>
+      <button class="toggle-btn" id="yearly-btn" onclick="setPlan('yearly')">
+        Yearly <span class="save-badge">Save ₹189!</span>
+      </button>
+    </div>
+
+    <!-- Price display -->
+    <div class="price-wrap">
+      <span class="price-amount" id="price-display">₹99 <span>/ month</span></span>
+    </div>
+    <div class="price-period" id="period-display">Billed monthly · Cancel anytime</div>
+
+    <!-- Features -->
+    <div class="features">
+      <div class="feat-title">⭐ Everything in Plus:</div>
+      <div class="feature">
+        <div class="check">✓</div>
+        <span>Unlimited scenarios — all 5 moral games, every single day</span>
+      </div>
+      <div class="feature">
+        <div class="check">✓</div>
+        <span>Growth Map — beautiful radar chart showing your child's strengths</span>
+      </div>
+      <div class="feature">
+        <div class="check">✓</div>
+        <span>Up to 4 child profiles per family</span>
+      </div>
+      <div class="feature">
+        <div class="check">✓</div>
+        <span>Weekly parent email reports with highlights</span>
+      </div>
+      <div class="feature">
+        <div class="check">✓</div>
+        <span>Early access to all new games</span>
+      </div>
+      <div class="feature">
+        <div class="check">✓</div>
+        <span>Priority email support</span>
+      </div>
+    </div>
+
+    <!-- Payment methods -->
+    <div class="pm-row">
+      <div class="pm-badge">💳 Visa / Mastercard</div>
+      <div class="pm-badge">🇮🇳 UPI</div>
+      <div class="pm-badge">🏦 NetBanking</div>
+      <div class="pm-badge">📱 Paytm / GPay</div>
+    </div>
+
+    <div class="alert" id="alert"></div>
+
+    <button class="btn-upgrade" id="upgrade-btn" onclick="startCheckout()">
+      Upgrade to Plus ⭐
+    </button>
+    <div class="guarantee">🔒 Secure payment via Stripe · 7-day money-back guarantee</div>
+    <a href="/auth/play.html" class="back-link">← Continue with free account</a>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
+const {createClient} = supabase;
+window.sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── STRIPE PRICE IDs ───────────────────────────────────────────
+// Replace these after creating products in Stripe Dashboard
+const PRICES = {
+  monthly: 'price_REPLACE_MONTHLY_ID',   // ₹99/month recurring
+  yearly:  'price_REPLACE_YEARLY_ID',    // ₹999/year recurring
+};
+
+let selectedPlan = 'monthly';
+let userSession   = null;
+
+// ── INIT ───────────────────────────────────────────────────────
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+
+  if (!session) {
+    // Not logged in — redirect to login, then back here
+    sessionStorage.setItem('sparkiddo_after_login', '/upgrade.html');
+    window.location.href = '/auth/login.html';
+    return;
+  }
+
+  userSession = session;
+
+  // Check if already Plus
+  const { data: profile } = await sb
+    .from('profiles')
+    .select('plan, plan_expires_at')
+    .eq('id', session.user.id)
+    .single();
+
+  document.getElementById('page-loading').style.display = 'none';
+
+  if (profile?.plan === 'plus') {
+    document.getElementById('already-plus').style.display = 'block';
+  } else {
+    document.getElementById('upgrade-content').style.display = 'block';
+  }
+}
+
+// ── PLAN TOGGLE ────────────────────────────────────────────────
+function setPlan(plan) {
+  selectedPlan = plan;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(plan + '-btn').classList.add('active');
+
+  if (plan === 'monthly') {
+    document.getElementById('price-display').innerHTML = '₹99 <span>/ month</span>';
+    document.getElementById('period-display').textContent = 'Billed monthly · Cancel anytime';
+  } else {
+    document.getElementById('price-display').innerHTML = '₹999 <span>/ year</span>';
+    document.getElementById('period-display').textContent =
+      'Billed annually · Saves ₹189 vs monthly · Cancel anytime';
+  }
+}
+
+// ── START CHECKOUT ─────────────────────────────────────────────
+async function startCheckout() {
+  const btn   = document.getElementById('upgrade-btn');
+  const alert = document.getElementById('alert');
+  alert.className = 'alert';
+  alert.style.display = 'none';
+
+  btn.disabled    = true;
+  btn.innerHTML   = '<span class="spinner"></span>Redirecting to Stripe...';
+
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/create-checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + userSession.access_token,
+      },
+      body: JSON.stringify({
+        priceId:    PRICES[selectedPlan],
+        userId:     userSession.user.id,
+        email:      userSession.user.email,
+        successUrl: 'https://sparkiddo.com/upgrade-success.html',
+        cancelUrl:  'https://sparkiddo.com/upgrade.html',
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || 'Server error ' + res.status);
+    }
+
+    const { url, error } = await res.json();
+    if (error) throw new Error(error);
+    window.location.href = url; // → Stripe Hosted Checkout
+
+  } catch (err) {
+    alert.textContent    = '⚠️ ' + (err.message || 'Something went wrong. Please try again.');
+    alert.className      = 'alert error';
+    btn.disabled         = false;
+    btn.innerHTML        = 'Upgrade to Plus ⭐';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

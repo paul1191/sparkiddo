@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Story Choices</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<script src="/data/scenarios.js"></script>
+<script src="/data/scenarioEngine.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  :root{
+    --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+    --green:#00b894;--teal:#00cec9;--green-pale:#e8f9f3;--green-light:#55efc4;
+    --pink:#fd79a8;--pink-pale:#fce4f3;
+    --yellow:#fdcb6e;--orange:#ff9f43;
+    --dark:#1a1a2e;--muted:#777;--light:#f7f3ff;
+    --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--light);display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.13;pointer-events:none;z-index:0}
+  .b1{width:360px;height:360px;background:var(--purple-light);top:-100px;left:-80px}
+  .b2{width:280px;height:280px;background:var(--yellow);top:60px;right:-60px}
+  .b3{width:260px;height:260px;background:var(--green-light);bottom:-60px;left:20px}
+  main{position:relative;z-index:1;width:100%;max-width:600px;display:flex;flex-direction:column;align-items:center}
+
+  /* NAV */
+  .game-nav{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .nav-logo{font-family:'Fredoka One',cursive;font-size:1.3rem;background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+  .nav-back{background:#fff;border:2px solid #e0d7ff;border-radius:99px;padding:6px 16px;font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--purple);text-decoration:none;transition:.2s}
+  .nav-back:hover{background:var(--purple-pale)}
+
+  /* CHILD HEADER */
+  #child-header{width:100%;background:#fff;border-radius:20px;padding:12px 18px;box-shadow:var(--shadow);margin-bottom:14px;display:none;align-items:center;gap:12px}
+  .ch-avatar{font-size:2.2rem;flex-shrink:0}
+  .ch-info{flex:1}
+  .ch-name{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--dark)}
+  .ch-belt{font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:5px}
+  .ch-xp-bar{height:7px;background:#f0e8ff;border-radius:99px;overflow:hidden}
+  .ch-xp-fill{height:100%;background:linear-gradient(90deg,var(--purple-light),var(--pink));border-radius:99px;transition:width .6s}
+  .ch-xp-label{font-size:.65rem;color:#bbb;font-weight:700;margin-top:3px}
+  .ch-session-xp{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--purple);flex-shrink:0}
+
+  /* PROGRESS + SCORE TRACK */
+  #prog-section{width:100%;margin-bottom:14px;display:none}
+  .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .prog-label{font-size:.75rem;color:#bbb;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .prog-count{font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--purple)}
+  #prog-bar-bg{background:#f0f0f0;border-radius:99px;height:10px;overflow:hidden;margin-bottom:10px}
+  #prog-bar{height:100%;background:linear-gradient(90deg,var(--purple-light),var(--pink));border-radius:99px;transition:width .5s}
+  #score-track{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .stp{width:28px;height:28px;border-radius:50%;border:2px solid #e0d7ff;display:flex;align-items:center;justify-content:center;font-size:.82rem;background:#fafaff;transition:.3s}
+  .stp.good{background:var(--green-pale);border-color:var(--green)}
+  .stp.ok{background:#fffbf0;border-color:var(--yellow)}
+  .stp.poor{background:var(--pink-pale);border-color:var(--pink)}
+
+  /* STORY BOOK CARD */
+  #story-card{background:#fff;border-radius:24px;padding:24px 22px 20px;box-shadow:var(--shadow-lg);width:100%;margin-bottom:16px;position:relative;overflow:hidden;display:none}
+  #story-card::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--purple-light),var(--pink),var(--yellow))}
+  .story-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .story-setting{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--purple-pale);color:var(--purple);letter-spacing:.5px;text-transform:uppercase}
+  .story-theme{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--pink-pale);color:#ad1457;text-transform:capitalize}
+  .story-difficulty{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px}
+  .story-diff-1{background:var(--green-pale);color:#00695c}
+  .story-diff-2{background:#fff9e6;color:#7a5c00}
+  .story-diff-3{background:var(--pink-pale);color:#ad1457}
+
+  /* STORY ICON */
+  .story-icon{font-size:4rem;display:block;margin:0 auto 12px;text-align:center;animation:float 2.2s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+  /* STORY TEXT */
+  .story-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--dark);margin-bottom:10px;text-align:center}
+  .story-characters{font-size:.75rem;color:#aaa;font-weight:700;margin-bottom:10px;text-align:center}
+  .story-body{font-size:.95rem;color:#444;font-weight:600;line-height:1.9;border-left:4px solid var(--purple-light);padding-left:14px;margin-bottom:16px}
+  .story-question{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--purple);background:var(--purple-pale);border-radius:12px;padding:11px 16px;text-align:center}
+
+  /* CHOICES */
+  #choices{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:14px}
+  .choice-btn{background:#fff;border-radius:18px;padding:14px 18px;cursor:pointer;border:3px solid #e0d7ff;box-shadow:var(--shadow);transition:.2s;text-align:left;width:100%;display:flex;align-items:flex-start;gap:12px}
+  .choice-btn:hover:not(:disabled){transform:translateX(6px);border-color:var(--purple-light);box-shadow:0 6px 18px rgba(162,155,254,.25)}
+  .choice-btn:disabled{cursor:default}
+  .ch-icon{font-size:1.6rem;flex-shrink:0}
+  .ch-text{font-size:.9rem;color:#555;font-weight:700;line-height:1.5;flex:1}
+  /* picked states */
+  .choice-btn.picked-good{background:var(--green-pale);border-color:var(--green)}
+  .choice-btn.picked-ok{background:#fffbf0;border-color:var(--yellow)}
+  .choice-btn.picked-poor{background:var(--pink-pale);border-color:var(--pink)}
+
+  /* OUTCOME CARD */
+  #outcome-card{border-radius:18px;padding:18px 20px;margin-bottom:14px;display:none;width:100%;animation:slidein .35s ease}
+  @keyframes slidein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .oc-header{font-family:'Fredoka One',cursive;font-size:1.05rem;margin-bottom:8px}
+  .oc-outcome{font-size:.9rem;font-weight:600;line-height:1.7;margin-bottom:10px}
+  .oc-hook{font-size:.82rem;font-weight:700;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.7);border-left:3px solid;margin-bottom:8px}
+  .oc-hook-label{font-family:'Fredoka One',cursive;font-size:.72rem;display:block;margin-bottom:3px;opacity:.7}
+  .oc-tip{font-size:.8rem;font-weight:700;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.55)}
+  .oc-tip-label{font-family:'Fredoka One',cursive;font-size:.72rem;display:block;margin-bottom:3px;opacity:.7}
+
+  /* REFLECTION */
+  #reflection-card{background:linear-gradient(135deg,var(--purple-pale),var(--pink-pale));border-radius:18px;padding:14px 18px;margin-bottom:12px;display:none;width:100%;border-left:5px solid var(--purple-light);animation:slidein .3s ease}
+  .reflect-label{font-family:'Fredoka One',cursive;font-size:.8rem;color:var(--purple);margin-bottom:6px;display:block}
+  .reflect-text{font-size:.88rem;color:#555;font-weight:700;line-height:1.7}
+
+  /* NEXT BTN */
+  #next-btn{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;border:none;padding:12px 32px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 16px rgba(124,92,191,.4);display:none;margin-bottom:12px;transition:.2s}
+  #next-btn:hover{transform:scale(1.05)}
+
+  /* LOADING */
+  #loading{text-align:center;padding:60px 20px;font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--purple)}
+  .loading-spinner{width:44px;height:44px;border:4px solid #f0e8ff;border-top-color:var(--purple-light);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* END SCREEN */
+  #end-screen{position:fixed;inset:0;background:rgba(247,243,255,.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;overflow-y:auto}
+  .end-icon{font-size:4rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  .end-title{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,var(--purple-light),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .stars{font-size:2rem;margin:8px 0}
+  .end-score{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--purple);margin:6px 0}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+  .badge{padding:6px 14px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.85rem;color:#fff}
+  .end-dim-card{background:#fff;border-radius:14px;padding:12px 18px;margin:6px 0;box-shadow:var(--shadow);text-align:left;width:100%;max-width:420px}
+  .end-dim-label{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--dark);margin-bottom:6px}
+  .end-dim-bar-bg{height:8px;background:#f0f0f0;border-radius:99px;overflow:hidden}
+  .end-dim-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple-light),var(--green))}
+  .end-tip{font-size:.85rem;color:var(--muted);font-weight:600;margin:8px 0 18px;line-height:1.7;max-width:440px}
+  .ov-btn{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(124,92,191,.4);margin:6px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  .ov-btn.ghost{background:#fff;color:#aaa;border:2px solid #e0e0e0;box-shadow:none}
+  .ov-btn.ghost:hover{border-color:var(--purple-light);color:var(--purple)}
+
+  /* CONFETTI */
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .85s ease forwards;z-index:999}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<main>
+  <nav class="game-nav">
+    <a href="/" class="nav-logo">🌟 Sparkiddo</a>
+    <a href="/play" class="nav-back">← Play Hub</a>
+  </nav>
+
+  <div id="loading"><div class="loading-spinner"></div>Loading your story...</div>
+
+  <div id="child-header">
+    <div class="ch-avatar" id="ch-avatar">🦊</div>
+    <div class="ch-info">
+      <div class="ch-name" id="ch-name">Player</div>
+      <div class="ch-belt" id="ch-belt">White Belt ⬜</div>
+      <div class="ch-xp-bar"><div class="ch-xp-fill" id="ch-xp-fill" style="width:0%"></div></div>
+      <div class="ch-xp-label" id="ch-xp-label">0 XP</div>
+    </div>
+    <div class="ch-session-xp">+<span id="session-xp">0</span> XP</div>
+  </div>
+
+  <div id="prog-section">
+    <div class="prog-top">
+      <span class="prog-label">📖 STORY CHOICES</span>
+      <span class="prog-count" id="prog-count">0 / 25 stories</span>
+    </div>
+    <div id="prog-bar-bg"><div id="prog-bar" style="width:0%"></div></div>
+    <div id="score-track"></div>
+  </div>
+
+  <div id="story-card">
+    <div class="story-meta">
+      <span class="story-setting" id="story-setting">School</span>
+      <span class="story-theme" id="story-theme">kindness</span>
+      <span class="story-difficulty story-diff-1" id="story-difficulty">⭐ Easy</span>
+    </div>
+    <span class="story-icon" id="story-icon">📖</span>
+    <div class="story-title" id="story-title"></div>
+    <div class="story-characters" id="story-characters"></div>
+    <div class="story-body" id="story-body"></div>
+    <div class="story-question" id="story-question">What do you do?</div>
+  </div>
+
+  <div id="outcome-card"></div>
+  <div id="reflection-card">
+    <span class="reflect-label">💭 Moment to Think</span>
+    <div class="reflect-text" id="reflect-text"></div>
+  </div>
+
+  <div id="choices"></div>
+  <button id="next-btn" onclick="loadNext()">Continue the Story ➡️</button>
+
+  <!-- PAYWALL CARD — shown when free daily limit reached -->
+  <div id="paywall-card" style="display:none;width:100%;background:#fff;border-radius:24px;
+    padding:28px 24px;box-shadow:0 8px 36px rgba(0,0,0,.12);text-align:center;
+    border-top:5px solid #a29bfe;position:relative;z-index:1;margin-top:8px">
+    <div style="font-size:3.5rem;margin-bottom:12px;animation:float 2s ease-in-out infinite">⭐</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;
+      background:linear-gradient(135deg,#a29bfe,#fd79a8);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;margin-bottom:8px">You've played today's free scenarios!</div>
+    <p style="font-size:.88rem;color:#888;font-weight:600;line-height:1.8;margin-bottom:20px">
+      Free players get <strong>3 scenarios per game per day</strong>.<br>
+      Come back tomorrow — or upgrade to play unlimited! 🌟
+    </p>
+    <div style="background:#f3efff;border-radius:16px;padding:16px;margin-bottom:20px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;font-size:.9rem;color:#5e35b1;margin-bottom:10px">⭐ Plus includes:</div>
+      <div style="font-size:.82rem;color:#555;font-weight:700;line-height:2.2">
+        ✅ Unlimited scenarios every day<br>
+        ✅ Growth Map — see your child's strengths<br>
+        ✅ Up to 4 child profiles<br>
+        ✅ Weekly parent reports
+      </div>
+    </div>
+    <button onclick="goToUpgrade()"
+      style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;border:none;
+      padding:14px 36px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;
+      cursor:pointer;box-shadow:0 5px 18px rgba(108,92,231,.4);margin-bottom:10px;
+      width:100%;transition:.2s">Upgrade to Plus ⭐</button>
+    <button onclick="window.location.href='/auth/play.html'"
+      style="background:#fff;color:#aaa;border:2px solid #e0e0e0;padding:10px 24px;
+      font-family:'Fredoka One',cursive;font-size:.88rem;border-radius:99px;
+      cursor:pointer;width:100%">← Back to Play Hub</button>
+    <p style="font-size:.72rem;color:#bbb;font-weight:700;margin-top:12px">
+      3 free scenarios resets at midnight 🌙
+    </p>
+  </div>
+
+</main>
+
+<div id="end-screen">
+  <div class="end-icon">📖</div>
+  <div class="end-title" id="end-title">Story Complete!</div>
+  <div class="stars" id="end-stars">⭐⭐⭐</div>
+  <div class="end-score" id="end-score">0 XP</div>
+  <div class="badge-row" id="end-badges"></div>
+  <div id="end-dims" style="width:100%;max-width:440px"></div>
+  <p class="end-tip" id="end-tip"></p>
+  <button class="ov-btn" onclick="restartGame()">Read More Stories 📖</button>
+  <a href="/play" class="ov-btn ghost">Back to Play Hub</a>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
+window.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const GAME_KEY    = 'storyChoices';
+const GAME_TOTAL  = 25;
+const SESSION_MAX = 8;
+const BELTS = [
+  {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
+  {name:'Orange Belt',emoji:'🟧',xp:250},{name:'Green Belt',emoji:'🟩',xp:450},
+  {name:'Blue Belt',emoji:'🟦',xp:700},{name:'Purple Belt',emoji:'🟪',xp:1000},
+  {name:'Red Belt',emoji:'🟥',xp:1400},{name:'Black Belt',emoji:'⬛',xp:2000}
+];
+
+// Outcome quality classification
+const GOOD_OUTCOMES = [
+  'inclusive','honest','brave honest','brave','forgiving','generous','wise',
+  'responsible','protective','persistent kind','proactive honest','honest + wise',
+  'brave + kind','committed','upstander','equitable','leader','ambitious kind',
+  'grateful kind','personal','group gift','creative','togetherness','inclusive',
+  'honest selfish','self-regulate','regulate + space','proactive','honest',
+  'brave responsible','inspired kind'
+];
+const POOR_OUTCOMES = [
+  'self','dishonest','deeper lie','hiding','bystander','passive','peer pressure',
+  'reactive','minimum','controlling','performative','private','dangerous'
+];
+
+const SETTING_ICONS = {
+  home:'🏠',school:'🏫',park:'🌳',festival:'🪔',sports:'🏅',
+  online:'💻',shop:'🛍️',temple:'🛕'
+};
+const THEME_COLORS = {
+  kindness:'#fd79a8',honesty:'#a29bfe',fairness:'#fdcb6e',
+  empathy:'#74b9ff',courage:'#ff9f43',responsibility:'#00b894',
+  'self-regulation':'#55efc4',gratitude:'#fdcb6e',respect:'#a29bfe'
+};
+
+let child, engine, current, busy=false;
+let sessionXp=0, goodCount=0, okCount=0, poorCount=0;
+let scenariosPlayed=0, choiceLog=[];
+
+function init(){
+  const stored = sessionStorage.getItem('sparkiddo_child');
+  child = stored ? JSON.parse(stored) : {id:'guest',name:'Guest',avatar:'⭐',xp:0,age_group:'6-8',streak:0};
+  engine = new SparkiddoScenarioEngine(GAME_KEY, child, {culture:'IN'});
+  document.getElementById('loading').style.display='none';
+  document.getElementById('child-header').style.display='flex';
+  document.getElementById('prog-section').style.display='block';
+  document.getElementById('story-card').style.display='block';
+  renderChildHeader();
+  loadNext();
+}
+
+/* ── BELT HELPERS ────────────────────────────────────────────── */
+function getBelt(xp){let b=BELTS[0];for(const bb of BELTS)if(xp>=bb.xp)b=bb;return b;}
+function getNextBelt(xp){return BELTS.find(b=>xp<b.xp)||null;}
+function xpPct(xp){const b=getBelt(xp),nb=getNextBelt(xp);if(!nb)return 100;const prev=BELTS[BELTS.indexOf(b)-1]?.xp||0;return Math.min(100,((xp-prev)/(nb.xp-prev))*100);}
+
+function renderChildHeader(){
+  const xp=child.xp||0,belt=getBelt(xp),nb=getNextBelt(xp);
+  document.getElementById('ch-avatar').textContent=child.avatar||'🌟';
+  document.getElementById('ch-name').textContent=child.name;
+  document.getElementById('ch-belt').textContent=belt.emoji+' '+belt.name;
+  document.getElementById('ch-xp-fill').style.width=xpPct(xp)+'%';
+  document.getElementById('ch-xp-label').textContent=xp+' XP'+(nb?' · '+(nb.xp-xp)+' to '+nb.name:' · MAX!');
+  document.getElementById('session-xp').textContent=sessionXp;
+}
+
+/* ── PROGRESS ────────────────────────────────────────────────── */
+function updateProgress(){
+  const prog=engine.getProgress();
+  const pct=Math.min(100,(prog.seen/GAME_TOTAL)*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-count').textContent=prog.seen+' / '+GAME_TOTAL+' stories';
+  buildScoreTrack();
+}
+
+function buildScoreTrack(){
+  const el=document.getElementById('score-track');
+  el.innerHTML='';
+  choiceLog.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='stp '+t;
+    d.textContent=t==='good'?'💚':t==='ok'?'🟡':'❌';
+    el.appendChild(d);
+  });
+}
+
+/* ── LOAD NEXT ───────────────────────────────────────────────── */
+function loadNext(){
+  const paywalled = await checkPaywall();
+  if (paywalled) return;
+
+  busy=false;
+  document.getElementById('outcome-card').style.display='none';
+  document.getElementById('reflection-card').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  if(scenariosPlayed>=SESSION_MAX){showEndScreen();return;}
+  current=engine.getNext();
+  renderStory(current);
+  updateProgress();
+}
+
+/* ── RENDER STORY ────────────────────────────────────────────── */
+function renderStory(s){
+  // Icon from setting or theme
+  const icon=SETTING_ICONS[s.setting]||'📖';
+  document.getElementById('story-icon').textContent=icon;
+  document.getElementById('story-icon').style.animation='none';
+  setTimeout(()=>document.getElementById('story-icon').style.animation='',50);
+
+  document.getElementById('story-title').textContent=s.title;
+  document.getElementById('story-characters').textContent='👥 '+(s.characters||[]).join(', ');
+
+  // Use storyText if exists, else situation
+  document.getElementById('story-body').textContent=s.storyText||s.situation;
+
+  // Question
+  document.getElementById('story-question').textContent=
+    'What do you do?';
+
+  // Meta tags
+  document.getElementById('story-setting').textContent=
+    s.setting.charAt(0).toUpperCase()+s.setting.slice(1);
+  document.getElementById('story-theme').textContent=s.theme||'choices';
+  document.getElementById('story-theme').style.background=(THEME_COLORS[s.theme]||'#a29bfe')+'22';
+  document.getElementById('story-theme').style.color=THEME_COLORS[s.theme]||'#a29bfe';
+
+  const diffEl=document.getElementById('story-difficulty');
+  diffEl.textContent=s.difficulty===1?'⭐ Easy':s.difficulty===2?'⭐⭐ Medium':'⭐⭐⭐ Grey Zone';
+  diffEl.className='story-difficulty story-diff-'+s.difficulty;
+
+  // Build choices
+  const el=document.getElementById('choices');
+  el.innerHTML='';
+  (s.choices||[]).forEach((c,i)=>{
+    const quality=classifyOutcome(c.outcome);
+    const icons={good:'💚',ok:'🟡',poor:'❌'};
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.innerHTML=
+      '<span class="ch-icon">'+icons[quality]+'</span>'+
+      '<span class="ch-text">'+c.text+'</span>';
+    btn.addEventListener('click',()=>handleChoice(c,btn,quality));
+    el.appendChild(btn);
+  });
+}
+
+function classifyOutcome(outcome){
+  if(GOOD_OUTCOMES.includes(outcome)) return 'good';
+  if(POOR_OUTCOMES.includes(outcome)) return 'poor';
+  return 'ok';
+}
+
+/* ── HANDLE CHOICE ───────────────────────────────────────────── */
+function handleChoice(choice,btn,quality){
+  if(busy)return;
+  busy=true;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  btn.classList.add('picked-'+quality);
+
+  // XP
+  sessionXp+=choice.xp||0;
+  child.xp=(child.xp||0)+(choice.xp||0);
+  renderChildHeader();
+
+  // Log
+  choiceLog.push(quality);
+  if(quality==='good') goodCount++;
+  else if(quality==='poor') poorCount++;
+  else okCount++;
+  scenariosPlayed++;
+
+  // Show outcome
+  showOutcome(choice,current,quality);
+
+  // Reflection
+  if(current._meta?.showReflection&&current.reflectionPrompt){
+    document.getElementById('reflect-text').textContent=current.reflectionPrompt;
+    document.getElementById('reflection-card').style.display='block';
+  }
+
+  engine.recordChoice(current.id,choice.outcome,choice.xp||0);
+  if(quality==='good') confetti(btn);
+
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=scenariosPlayed>=SESSION_MAX?'See Results 🌟':'Continue the Story ➡️';
+  updateProgress();
+}
+
+/* ── SHOW OUTCOME ────────────────────────────────────────────── */
+function showOutcome(choice,scenario,quality){
+  const oc=document.getElementById('outcome-card');
+  const schemes={
+    good:{bg:'#d4f8e8',border:'#00b894',color:'#005f44',hookBorder:'#00b894'},
+    ok:  {bg:'#fffbf0',border:'#fdcb6e',color:'#7a5c00',hookBorder:'#fdcb6e'},
+    poor:{bg:'#fde8e8',border:'#fd79a8',color:'#9b2335',hookBorder:'#fd79a8'},
+  };
+  const s=schemes[quality];
+  const emoji=quality==='good'?'💚 ':quality==='poor'?'❌ ':'🟡 ';
+  const label=quality==='good'?'Great Choice!':quality==='poor'?'Hmm...':'Okay Choice...';
+
+  oc.style.cssText=`background:${s.bg};border-left:5px solid ${s.border};color:${s.color};border-radius:18px;padding:18px 20px;margin-bottom:14px;width:100%;display:block;animation:slidein .35s ease`;
+
+  // Story outcome text
+  const outcomeText = choice.storyOutcome||choice.response||'Your story continues...';
+  // Next hook (the narrative hook from scenarios.js)
+  const hookText = choice.nextHook||null;
+
+  oc.innerHTML=
+    '<div class="oc-header">'+emoji+label+'</div>'+
+    '<div class="oc-outcome">'+outcomeText+'</div>'+
+    (hookText?
+      '<div class="oc-hook" style="border-left-color:'+s.hookBorder+'">'+
+        '<span class="oc-hook-label">📌 What happens next...</span>'+hookText+
+      '</div>':'')+
+    '<div class="oc-tip">'+
+      '<span class="oc-tip-label">🌍 Real World Tip</span>'+scenario.realWorldTip+
+    '</div>';
+}
+
+/* ── END SCREEN ──────────────────────────────────────────────── */
+function showEndScreen(){
+  const totalGood=goodCount;
+  const pct=totalGood/SESSION_MAX;
+  let stars='⭐',title='A Brave Story!',tip='Every choice teaches us something. Try again for an even better story!';
+  if(pct>=.88){stars='⭐⭐⭐';title='Perfect Story!';tip='Every choice was golden. You have a truly kind and wise heart! 💖';}
+  else if(pct>=.65){stars='⭐⭐⭐';title='Amazing Storyteller!';tip='Your choices made this a beautiful story. Big heart! 🌈';}
+  else if(pct>=.4){stars='⭐⭐';title='Good Choices!';tip='Some great decisions in there. Replay to discover even better paths! ✨';}
+
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent=
+    '+'+sessionXp+' XP · '+goodCount+'/'+SESSION_MAX+' great choices';
+  document.getElementById('end-tip').textContent=tip;
+
+  // Badges
+  const br=document.getElementById('end-badges');
+  br.innerHTML='';
+  [{label:'📖 Story Explorer',bg:'#a29bfe'}]
+    .concat(goodCount===SESSION_MAX?[{label:'💯 Perfect Reader',bg:'#00b894'}]:[])
+    .concat(goodCount>=6?[{label:'💚 Wise Heart',bg:'#fd79a8'}]:[])
+    .concat(poorCount===0?[{label:'🌟 No Wrong Turns',bg:'#fdcb6e',c:'#7a5c00'}]:[])
+    .forEach(b=>{
+      const s=document.createElement('span');s.className='badge';
+      s.textContent=b.label;s.style.background=b.bg;
+      if(b.c)s.style.color=b.c;
+      br.appendChild(s);
+    });
+
+  // Growth dimensions from engine
+  const prog=engine.getProgress();
+  const dr=document.getElementById('end-dims');
+  dr.innerHTML='';
+  if(prog.dimensionScores){
+    Object.entries(prog.dimensionScores)
+      .filter(([,v])=>v!==null)
+      .forEach(([dim,score])=>{
+        const dc=document.createElement('div');dc.className='end-dim-card';
+        dc.innerHTML=
+          '<div class="end-dim-label">'+capitalise(dim)+' — '+score+'%</div>'+
+          '<div class="end-dim-bar-bg"><div class="end-dim-bar-fill" style="width:'+score+'%"></div></div>';
+        dr.appendChild(dc);
+      });
+  }
+
+  document.getElementById('end-screen').style.display='flex';
+  confettiAll();
+}
+
+function capitalise(str){return str.charAt(0).toUpperCase()+str.slice(1);}
+
+function restartGame(){
+  scenariosPlayed=0;sessionXp=0;goodCount=0;okCount=0;poorCount=0;choiceLog=[];
+  document.getElementById('end-screen').style.display='none';
+  buildScoreTrack();
+  loadNext();
+}
+
+/* ── CONFETTI ─────────────────────────────────────────────────── */
+function confetti(ref){
+  const r=ref.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  ['⭐','✨','💫','🌸','🎉','💖','🌟','📖'].forEach(em=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em;
+    el.style.left=cx+'px';el.style.top=cy+'px';
+    const a=Math.random()*Math.PI*2,d=70+Math.random()*70;
+    el.style.setProperty('--dx',Math.cos(a)*d+'px');el.style.setProperty('--dy',Math.sin(a)*d+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  });
+}
+function confettiAll(){
+  const em=['📖','⭐','✨','💫','🌸','🎉','💖','🌟'];
+  for(let i=0;i<18;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*60+10+'vh';
+    el.style.setProperty('--dx',(Math.random()*100-50)+'px');el.style.setProperty('--dy',(Math.random()*80-100)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  },i*80);
+}
+
+init();
+
+// ── PAYWALL ───────────────────────────────────────────────────────────────────
+async function checkPaywall() {
+  if (!engine) return false;
+  const blocked = await engine.checkDailyLimit(child.isPlus || false);
+  if (blocked) { showPaywall(); return true; }
+  return false;
+}
+
+function showPaywall() {
+  // Hide all game UI elements
+  const ids = [
+    'scenario-card','choices','response-card','reflection-card',
+    'happiness-section','meter-wrap','chain-wrap','prog-section',
+    'timer-wrap','streak-banner','verdict-btns','next-btn',
+    'answers','feedback','fun-fact','trust-section',
+    'level-pills','score-track',
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Show paywall
+  const pw = document.getElementById('paywall-card');
+  if (pw) pw.style.display = 'block';
+}
+
+function goToUpgrade() {
+  window.location.href = '/upgrade.html';
+}
+
+</script>
+</body>
+</html>

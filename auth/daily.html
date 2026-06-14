@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>sparkiddo — Daily Missions</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  :root{
+    --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+    --green:#00b894;--teal:#00cec9;--green-pale:#e8f9f3;
+    --pink:#fd79a8;--pink-pale:#fce4f3;
+    --yellow:#fdcb6e;--orange:#ff9f43;
+    --dark:#1a1a2e;--muted:#777;--light:#f7f3ff;
+    --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--light);min-height:100vh;font-family:'Nunito',sans-serif}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.14;pointer-events:none;z-index:0}
+  .b1{width:400px;height:400px;background:var(--purple-light);top:-120px;left:-100px}
+  .b2{width:320px;height:320px;background:var(--pink);bottom:-80px;right:-60px}
+  .b3{width:280px;height:280px;background:#55efc4;bottom:100px;left:-60px}
+
+  /* NAV */
+  nav{position:relative;z-index:10;background:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(162,155,254,.12)}
+  .nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+  .nav-back{background:#f0e8ff;border:none;padding:7px 16px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.8rem;color:#6c5ce7;cursor:pointer;text-decoration:none}
+  .nav-back:hover{background:#e0d7ff}
+
+  main{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:28px 20px}
+
+  /* LOADING */
+  .loading{text-align:center;padding:60px 20px;font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--purple)}
+  .loading-spinner{width:48px;height:48px;border:4px solid #f0e8ff;border-top-color:var(--purple-light);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* TRIAL BANNER */
+  .trial-banner{background:linear-gradient(135deg,var(--purple-pale),var(--pink-pale));border-radius:14px;padding:10px 18px;margin-bottom:20px;text-align:center;border:2px dashed var(--purple-light);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .trial-banner-text{font-family:'Fredoka One',cursive;font-size:.85rem;color:#5e35b1}
+  .trial-banner a{color:var(--pink);text-decoration:none;white-space:nowrap}
+
+  /* CHILD HEADER */
+  .child-header{background:#fff;border-radius:24px;padding:18px 22px;margin-bottom:22px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+  .ch-avatar{font-size:2.8rem;flex-shrink:0}
+  .ch-info{flex:1;min-width:0}
+  .ch-name{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--dark);margin-bottom:2px}
+  .ch-belt{font-size:.75rem;color:#888;font-weight:700}
+  .ch-xp-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .ch-xp-bar-bg{flex:1;height:7px;background:#f0e8ff;border-radius:99px;overflow:hidden}
+  .ch-xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple-light),var(--purple));border-radius:99px}
+  .ch-xp-label{font-size:.65rem;color:#bbb;font-weight:700;white-space:nowrap}
+  .ch-plus-badge{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;border-radius:99px;padding:5px 14px;font-family:'Fredoka One',cursive;font-size:.75rem;flex-shrink:0}
+
+  /* PAGE HEADER */
+  .page-header{text-align:center;margin-bottom:22px}
+  .page-title{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+  .page-date{font-size:.82rem;color:#aaa;font-weight:700;margin-bottom:4px}
+  .page-sub{font-size:.82rem;color:#888;font-weight:600}
+
+  /* STREAK BAR */
+  .streak-bar{background:#fff;border-radius:18px;padding:14px 18px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .streak-left{display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .streak-flame{font-size:1.6rem}
+  .streak-count{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--dark);line-height:1}
+  .streak-label{font-size:.62rem;color:#aaa;font-weight:700;letter-spacing:.4px;margin-top:2px}
+  .streak-dots{display:flex;gap:5px}
+  .streak-dot{width:30px;height:30px;border-radius:50%;border:2px solid #f0e8ff;background:#fafafa;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#ccc;flex-shrink:0}
+  .streak-dot.done{background:linear-gradient(135deg,var(--orange),var(--yellow));border-color:transparent;color:#fff}
+  .streak-dot.today-done{background:linear-gradient(135deg,var(--orange),var(--yellow));border-color:transparent;color:#fff;box-shadow:0 0 10px rgba(255,159,67,.5);animation:glow .9s ease-in-out infinite alternate}
+  @keyframes glow{to{transform:scale(1.15);box-shadow:0 0 14px rgba(255,159,67,.7)}}
+
+  /* MISSION CARDS */
+  .mission-card{background:#fff;border-radius:24px;overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow);border:2.5px solid transparent;transition:.25s}
+  .mission-card.done{border-color:var(--green);opacity:.88}
+  .mission-top-bar{height:5px}
+  .zone-heart .mission-top-bar{background:linear-gradient(90deg,#fd79a8,#ff9f43)}
+  .zone-mind .mission-top-bar{background:linear-gradient(90deg,#a29bfe,#7c5cbf)}
+  .zone-strength .mission-top-bar{background:linear-gradient(90deg,#00b894,#00cec9)}
+
+  .mission-body{padding:18px 20px}
+  .mission-zone{font-size:.68rem;font-weight:800;letter-spacing:.7px;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+  .zone-heart .mission-zone{color:#c0185e}
+  .zone-mind .mission-zone{color:#5a4fcf}
+  .zone-strength .mission-zone{color:#007a5e}
+
+  .mission-row{display:flex;align-items:flex-start;gap:14px}
+  .mission-emoji{font-size:2.2rem;flex-shrink:0;padding-top:2px}
+  .mission-content{flex:1;min-width:0}
+  .mission-title{font-family:'Fredoka One',cursive;font-size:1.02rem;color:var(--dark);margin-bottom:3px}
+  .mission-desc{font-size:.75rem;color:#888;font-weight:600;line-height:1.55;margin-bottom:12px}
+  .mission-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .mission-xp-tag{font-size:.7rem;font-weight:800;color:#c4b5fd;background:var(--purple-pale);padding:4px 10px;border-radius:99px}
+  .mission-btn{padding:9px 22px;border-radius:99px;border:none;font-family:'Fredoka One',cursive;font-size:.85rem;cursor:pointer;transition:.2s;text-decoration:none;display:inline-block}
+  .btn-play{background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;box-shadow:0 4px 12px rgba(0,184,148,.28)}
+  .btn-play:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,184,148,.4)}
+  .btn-done{background:#e8f9f3;color:var(--green);cursor:default}
+  .mission-checkmark{font-size:1.7rem;flex-shrink:0;padding-top:2px}
+
+  /* BONUS CARD */
+  .bonus-card{border-radius:24px;padding:22px 20px;margin-bottom:8px;box-shadow:var(--shadow);text-align:center;transition:.4s}
+  .bonus-card.pending{background:linear-gradient(135deg,#fffbee,#fff5d6);border:2px dashed var(--yellow)}
+  .bonus-card.earned{background:linear-gradient(135deg,#e8f9f3,#d0f5e8);border:2px solid var(--green)}
+  .bonus-emoji{font-size:2.6rem;display:block;margin-bottom:8px}
+  .bonus-title{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--dark);margin-bottom:4px}
+  .bonus-sub{font-size:.78rem;color:#888;font-weight:600;margin-bottom:16px}
+  .bonus-pips{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px}
+  .bonus-pip{width:38px;height:38px;border-radius:50%;border:2px solid #ffe082;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:.3s}
+  .bonus-pip.lit{background:linear-gradient(135deg,var(--orange),var(--yellow));border-color:transparent;box-shadow:0 3px 10px rgba(255,159,67,.35)}
+  .bonus-line{width:22px;height:3px;background:#ffe082;border-radius:99px;transition:.3s}
+  .bonus-line.lit{background:linear-gradient(90deg,var(--orange),var(--yellow))}
+  .bonus-xp-badge{display:inline-block;padding:9px 28px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:1rem}
+  .bonus-xp-badge.pending{background:linear-gradient(135deg,var(--orange),var(--yellow));color:#fff}
+  .bonus-xp-badge.earned{background:linear-gradient(135deg,var(--green),var(--teal));color:#fff}
+
+  /* UPGRADE GATE */
+  .gate-wrap{text-align:center}
+  .gate-card{background:#fff;border-radius:28px;padding:36px 28px;box-shadow:var(--shadow-lg);max-width:420px;margin:0 auto}
+  .gate-emoji{font-size:3.2rem;margin-bottom:14px;display:block}
+  .gate-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--dark);margin-bottom:8px}
+  .gate-sub{font-size:.86rem;color:#888;font-weight:600;line-height:1.7;margin-bottom:20px}
+  .gate-perks{background:var(--purple-pale);border-radius:14px;padding:14px 18px;margin-bottom:22px;text-align:left}
+  .gate-perk{font-size:.82rem;font-weight:700;color:#5e35b1;padding:4px 0;display:flex;gap:8px;align-items:center}
+  .gate-btn{background:linear-gradient(135deg,var(--purple-light),var(--purple));color:#fff;border:none;padding:15px 40px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 6px 20px rgba(124,92,191,.35)}
+  .gate-btn:hover{transform:translateY(-2px)}
+  .gate-note{margin-top:14px;font-size:.75rem;color:#bbb;font-weight:700}
+
+  @media(max-width:480px){
+    .streak-dots{gap:3px}
+    .streak-dot{width:26px;height:26px;font-size:.62rem}
+    .bonus-line{width:14px}
+  }
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<nav>
+  <a href="/" class="nav-logo">🌟 sparkiddo</a>
+  <a href="/auth/play.html" class="nav-back">← Play Hub</a>
+</nav>
+
+<main>
+  <div class="loading" id="loading">
+    <div class="loading-spinner"></div>Loading your missions...
+  </div>
+  <div id="page-content" style="display:none"></div>
+</main>
+
+<script>
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
+const {createClient} = supabase;
+window.sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── MISSION POOL ───────────────────────────────────────────────
+// 3 zones × 2 options each. Rotation is deterministic per day.
+const ZONES = [
+  {
+    key:'heart', label:'❤️ Heart Zone', desc:'Empathy & Fairness',
+    options:[
+      {game:'emotionmatch',  path:'/games/morals/emotionmatch.html',  title:'Emotion Match',   emoji:'🎭', blurb:'Match feelings to faces — grow your empathy!',         xp:25},
+      {game:'shareorkeep',   path:'/games/morals/shareorkeep.html',   title:'Share or Keep?',  emoji:'🤲', blurb:'Face real sharing dilemmas — what would you do?',      xp:25},
+    ]
+  },
+  {
+    key:'mind',  label:'💜 Mind Zone',  desc:'Reasoning & Honesty',
+    options:[
+      {game:'truthorfib',   path:'/games/morals/truthorfib.html',   title:'Truth or Fib?',  emoji:'🔍', blurb:'Build your honesty muscle with timed decisions!',      xp:25},
+      {game:'storychoices', path:'/games/morals/storychoices.html', title:'Story Choices',  emoji:'📖', blurb:'Make choices that shape the story — think it through!', xp:30},
+    ]
+  },
+  {
+    key:'strength', label:'💚 Strength Zone', desc:'Self-Regulation & Responsibility',
+    options:[
+      {game:'kindnessquest',  path:'/games/morals/kindnessquest.html',  title:'Kindness Quest',    emoji:'💗', blurb:'Do acts of kindness and build your chain!',        xp:25},
+      {game:'cooldowncorner', path:'/games/morals/cooldowncorner.html', title:'Cool Down Corner',  emoji:'☮️', blurb:'Breathe, ground and calm your mind.',              xp:20},
+    ]
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────────
+let state = {child:null, account:null, missions:[], completions:new Set()};
+
+// ── HELPERS ────────────────────────────────────────────────────
+function todayStr(){return new Date().toISOString().split('T')[0];}
+
+// Days since fixed epoch — deterministic, same answer on all devices same day
+function dayIndex(){return Math.floor((Date.now() - new Date('2024-01-01').getTime()) / 86400000);}
+
+function buildMissions(){
+  const d = dayIndex();
+  return ZONES.map(function(z,i){
+    const pick = z.options[(d + i) % z.options.length];
+    return {zoneKey:z.key, zoneLabel:z.label, zoneDesc:z.desc,
+            game:pick.game, path:pick.path, title:pick.title,
+            emoji:pick.emoji, blurb:pick.blurb, xp:pick.xp};
+  });
+}
+
+function isInTrial(account){
+  if(!account?.created_at) return false;
+  return (Date.now() - new Date(account.created_at).getTime()) < 7 * 864e5;
+}
+
+function trialDaysLeft(account){
+  if(!account?.created_at) return 0;
+  return Math.max(0, 7 - Math.floor((Date.now() - new Date(account.created_at).getTime()) / 864e5));
+}
+
+function bonusKey(){return 'sddo_bonus_'+(state.child?.id||'')+'_'+todayStr();}
+function bonusAwarded(){return localStorage.getItem(bonusKey())==='true';}
+
+const BELT_THRESHOLDS = [0,100,250,450,700,1000,1400,2000];
+const BELT_NAMES      = ['White Belt','Yellow Belt','Orange Belt','Green Belt','Blue Belt','Purple Belt','Red Belt','Black Belt'];
+function getBelt(xp){
+  let b=0; for(let i=0;i<BELT_THRESHOLDS.length;i++)if(xp>=BELT_THRESHOLDS[i])b=i;
+  return BELT_NAMES[b];
+}
+function xpPct(xp){
+  let b=0; for(let i=0;i<BELT_THRESHOLDS.length;i++)if(xp>=BELT_THRESHOLDS[i])b=i;
+  const next=BELT_THRESHOLDS[b+1]; if(!next)return 100;
+  const prev=BELT_THRESHOLDS[b]||0;
+  return Math.min(100,((xp-prev)/(next-prev))*100);
+}
+
+// ── INIT ───────────────────────────────────────────────────────
+async function init(){
+  const stored = sessionStorage.getItem('sparkiddo_child');
+  if(!stored){window.location.href='/auth/login.html';return;}
+  state.child = JSON.parse(stored);
+
+  const {data:{session}} = await sb.auth.getSession();
+  if(!session){window.location.href='/auth/login.html';return;}
+
+  const {data:account} = await sb.from('profiles').select('*').eq('id',session.user.id).single();
+  state.account = account;
+
+  const isPlus   = account?.plan === 'plus';
+  const inTrial  = isInTrial(account);
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('page-content').style.display='block';
+
+  if(!isPlus && !inTrial){renderGate(); return;}
+
+  state.missions = buildMissions();
+  await refreshCompletions();
+  await maybeAwardBonus();
+  renderPage(isPlus, inTrial);
+}
+
+// Re-check when child returns from a game (tab refocus)
+window.addEventListener('focus', async function(){
+  if(!state.missions.length) return;
+  const before = state.completions.size;
+  await refreshCompletions();
+  if(state.completions.size !== before){
+    await maybeAwardBonus();
+    patchMissionsDOM();
+  }
+});
+
+async function refreshCompletions(){
+  if(!state.child?.id || state.child.id==='guest') return;
+  const gameIds = state.missions.map(m=>m.game);
+  const {data} = await sb.from('game_sessions')
+    .select('game_slug')
+    .eq('child_id', state.child.id)
+    .gte('played_at', todayStr()+'T00:00:00.000Z')
+    .in('game_slug', gameIds);
+  state.completions = new Set((data||[]).map(s=>s.game_slug));
+}
+
+async function maybeAwardBonus(){
+  const allDone = state.missions.every(m=>state.completions.has(m.game));
+  if(!allDone || bonusAwarded()) return;
+  const newXp = (state.child.xp||0) + 50;
+  await sb.from('child_profiles').update({xp:newXp}).eq('id',state.child.id);
+  state.child.xp = newXp;
+  // Update sessionStorage so hub reflects new XP
+  const s = sessionStorage.getItem('sparkiddo_child');
+  if(s){const p=JSON.parse(s); p.xp=newXp; sessionStorage.setItem('sparkiddo_child',JSON.stringify(p));}
+  localStorage.setItem(bonusKey(),'true');
+}
+
+// ── FULL RENDER ────────────────────────────────────────────────
+function formatDate(){
+  return new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function renderPage(isPlus, inTrial){
+  const c   = state.child;
+  const xp  = c.xp||0;
+  const pct = xpPct(xp);
+  const streak = c.streak||0;
+  const dLeft  = trialDaysLeft(state.account);
+
+  // Streak dots — show last 7 days
+  const DOW_LABELS = ['S','M','T','W','T','F','S'];
+  const today = new Date().getDay();
+  const allDone = state.missions.every(m=>state.completions.has(m.game));
+  let dotsHtml = '';
+  for(let i=0;i<7;i++){
+    const dow = (today - 6 + i + 7) % 7;
+    const isDone = i < streak;
+    const isToday = i === 6;
+    let cls = 'streak-dot';
+    if(isDone) cls += ' done';
+    if(isToday && allDone) cls = 'streak-dot today-done';
+    const inner = isDone ? '🔥' : (isToday&&allDone?'🔥':DOW_LABELS[dow]);
+    dotsHtml += '<div class="'+cls+'">'+inner+'</div>';
+  }
+
+  const el = document.getElementById('page-content');
+  el.innerHTML =
+    /* trial banner */
+    (!isPlus && inTrial
+      ? '<div class="trial-banner">'+
+          '<span class="trial-banner-text">✨ Spark Week — '+dLeft+' day'+(dLeft!==1?'s':'')+' left</span>'+
+          '<a href="/upgrade.html">Upgrade to Plus →</a>'+
+        '</div>'
+      : ''
+    )+
+    /* child header */
+    '<div class="child-header">'+
+      '<div class="ch-avatar">'+(c.avatar||'🌟')+'</div>'+
+      '<div class="ch-info">'+
+        '<div class="ch-name">'+c.name+'</div>'+
+        '<div class="ch-belt">'+getBelt(xp)+' · '+xp+' XP</div>'+
+        '<div class="ch-xp-row">'+
+          '<div class="ch-xp-bar-bg"><div class="ch-xp-bar-fill" style="width:'+pct+'%"></div></div>'+
+          '<span class="ch-xp-label">'+xp+' XP</span>'+
+        '</div>'+
+      '</div>'+
+      (isPlus?'<div class="ch-plus-badge">✨ Plus</div>':'')+
+    '</div>'+
+    /* page title */
+    '<div class="page-header">'+
+      '<div class="page-title">Daily Missions 🎯</div>'+
+      '<div class="page-date">'+formatDate()+'</div>'+
+      '<div class="page-sub">Complete all 3 missions to earn a bonus 50 XP!</div>'+
+    '</div>'+
+    /* streak bar */
+    '<div class="streak-bar">'+
+      '<div class="streak-left">'+
+        '<div class="streak-flame">🔥</div>'+
+        '<div><div class="streak-count">'+streak+' day streak</div><div class="streak-label">KEEP IT GOING!</div></div>'+
+      '</div>'+
+      '<div class="streak-dots">'+dotsHtml+'</div>'+
+    '</div>'+
+    /* mission cards injected by patchMissionsDOM */
+    '<div id="missions-list"></div>'+
+    /* bonus card */
+    '<div class="bonus-card '+(bonusAwarded()?'earned':'pending')+'" id="bonus-card"></div>';
+
+  patchMissionsDOM();
+}
+
+// ── LIVE-PATCH (called on focus refresh too) ───────────────────
+function patchMissionsDOM(){
+  const list = document.getElementById('missions-list');
+  if(!list) return;
+  list.innerHTML = '';
+
+  state.missions.forEach(function(m){
+    const done = state.completions.has(m.game);
+    const card = document.createElement('div');
+    card.className = 'mission-card zone-'+m.zoneKey+(done?' done':'');
+    card.innerHTML =
+      '<div class="mission-top-bar"></div>'+
+      '<div class="mission-body">'+
+        '<div class="mission-zone">'+m.zoneLabel+' <span style="font-weight:600;opacity:.65;text-transform:none;font-size:.78rem">'+m.zoneDesc+'</span></div>'+
+        '<div class="mission-row">'+
+          '<div class="mission-emoji">'+m.emoji+'</div>'+
+          '<div class="mission-content">'+
+            '<div class="mission-title">'+m.title+'</div>'+
+            '<div class="mission-desc">'+m.blurb+'</div>'+
+            '<div class="mission-footer">'+
+              '<span class="mission-xp-tag">+'+m.xp+' XP</span>'+
+              (done
+                ? '<span class="mission-btn btn-done">✅ Completed!</span>'
+                : '<a href="'+m.path+'" target="_self" class="mission-btn btn-play" onclick="saveBeforeNav()">Play Now →</a>'
+              )+
+            '</div>'+
+          '</div>'+
+          (done?'<div class="mission-checkmark">✅</div>':'')+
+        '</div>'+
+      '</div>';
+    list.appendChild(card);
+  });
+
+  // Bonus card
+  const bc = document.getElementById('bonus-card');
+  if(!bc) return;
+  const earned = bonusAwarded();
+  const count  = state.missions.filter(m=>state.completions.has(m.game)).length;
+  bc.className = 'bonus-card '+(earned?'earned':'pending');
+
+  let pipsHtml = '';
+  state.missions.forEach(function(m,i){
+    const lit = state.completions.has(m.game);
+    if(i>0) pipsHtml += '<div class="bonus-line'+(lit?' lit':'')+'"></div>';
+    pipsHtml += '<div class="bonus-pip'+(lit?' lit':'')+'">'+m.emoji+'</div>';
+  });
+
+  bc.innerHTML =
+    '<span class="bonus-emoji">'+(earned?'🏆':'⭐')+'</span>'+
+    '<div class="bonus-title">'+(earned?'Daily Spark Complete! 🎉':'Daily Spark Bonus')+'</div>'+
+    '<div class="bonus-sub">'+(earned
+      ? 'Amazing! +50 XP has been added to '+state.child.name+'\'s profile!'
+      : count===0 ? 'Finish all 3 missions to unlock +50 XP bonus!'
+      : count===1 ? '2 more to go — you\'ve got this! 💪'
+      : '1 more mission — almost there! 🌟'
+    )+'</div>'+
+    '<div class="bonus-pips">'+pipsHtml+'</div>'+
+    '<div class="bonus-xp-badge '+(earned?'earned':'pending')+'">'+
+      (earned?'✅ +50 XP Awarded!':'+50 XP Bonus')+
+    '</div>';
+}
+
+function saveBeforeNav(){
+  sessionStorage.setItem('sparkiddo_child', JSON.stringify(state.child));
+}
+
+// ── GATE (free users after trial) ─────────────────────────────
+function renderGate(){
+  document.getElementById('page-content').innerHTML =
+    '<div class="gate-wrap">'+
+      '<div class="gate-card">'+
+        '<span class="gate-emoji">🎯</span>'+
+        '<div class="gate-title">Daily Missions</div>'+
+        '<div class="gate-sub">Your 7-day Spark Week has ended.<br>Upgrade to Sparkiddo Plus to keep the momentum going!</div>'+
+        '<div class="gate-perks">'+
+          '<div class="gate-perk">✅ Daily Missions every day</div>'+
+          '<div class="gate-perk">✅ Unlimited scenarios per game</div>'+
+          '<div class="gate-perk">✅ Growth Map (empathy, fairness & more)</div>'+
+          '<div class="gate-perk">✅ Weekly parent reports</div>'+
+          '<div class="gate-perk">✅ Up to 4 child profiles</div>'+
+        '</div>'+
+        '<a href="/upgrade.html" class="gate-btn">Unlock Plus — ₹99/month →</a>'+
+        '<div class="gate-note">₹999/year · Cancel anytime</div>'+
+      '</div>'+
+    '</div>';
+}
+
+init();
+</script>
+</body>
+</html>

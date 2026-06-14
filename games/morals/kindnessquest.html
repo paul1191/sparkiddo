@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkiddo — Kindness Quest</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<script src="/data/scenarios.js"></script>
+<script src="/data/scenarioEngine.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
+  :root{
+    --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+    --green:#00b894;--teal:#00cec9;--green-pale:#e8f9f3;--green-light:#55efc4;
+    --pink:#fd79a8;--pink-pale:#fce4f3;
+    --yellow:#fdcb6e;--orange:#ff9f43;
+    --dark:#1a1a2e;--muted:#777;--light:#f7f3ff;
+    --shadow:0 4px 20px rgba(0,0,0,.08);--shadow-lg:0 8px 36px rgba(0,0,0,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--green-pale);display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Nunito',sans-serif;padding:20px;overflow-x:hidden}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.15;pointer-events:none;z-index:0}
+  .b1{width:340px;height:340px;background:var(--green-light);top:-90px;left:-70px}
+  .b2{width:280px;height:280px;background:var(--yellow);top:60px;right:-60px}
+  .b3{width:260px;height:260px;background:var(--pink);bottom:-60px;left:20px}
+  main{position:relative;z-index:1;width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center}
+
+  /* NAV */
+  .game-nav{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .nav-logo{font-family:'Fredoka One',cursive;font-size:1.3rem;background:linear-gradient(135deg,var(--green),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+  .nav-back{background:#fff;border:2px solid #c8f5e5;border-radius:99px;padding:6px 16px;font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--green);text-decoration:none;transition:.2s}
+  .nav-back:hover{background:var(--green-pale)}
+
+  /* CHILD HEADER */
+  #child-header{width:100%;background:#fff;border-radius:20px;padding:12px 18px;box-shadow:var(--shadow);margin-bottom:14px;display:none;align-items:center;gap:12px}
+  .ch-avatar{font-size:2.2rem;flex-shrink:0}
+  .ch-info{flex:1}
+  .ch-name{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--dark)}
+  .ch-belt{font-size:.72rem;color:var(--muted);font-weight:700;margin-bottom:5px}
+  .ch-xp-bar{height:7px;background:var(--green-pale);border-radius:99px;overflow:hidden}
+  .ch-xp-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:99px;transition:width .6s}
+  .ch-xp-label{font-size:.65rem;color:#bbb;font-weight:700;margin-top:3px}
+  .ch-session-xp{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--green);flex-shrink:0}
+
+  /* KINDNESS CHAIN */
+  #chain-wrap{width:100%;background:#fff;border-radius:18px;padding:12px 18px;box-shadow:var(--shadow);margin-bottom:14px;display:none}
+  .chain-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--dark);margin-bottom:10px;text-align:center}
+  #chain-links{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .link{width:32px;height:32px;border-radius:50%;border:3px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:.3s;background:#f9f9f9}
+  .link.done{border-color:var(--green);background:var(--green-pale);animation:linkpop .4s ease}
+  .link.current{border-color:var(--yellow);background:#fff9e6;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes linkpop{0%{transform:scale(.6)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(253,203,110,.4)}50%{box-shadow:0 0 0 8px rgba(253,203,110,0)}}
+
+  /* KINDNESS METER */
+  #meter-wrap{width:100%;background:#fff;border-radius:16px;padding:12px 18px;box-shadow:var(--shadow);margin-bottom:14px;display:none}
+  .meter-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .meter-label{font-family:'Fredoka One',cursive;font-size:.88rem;color:var(--dark)}
+  .meter-ends{display:flex;justify-content:space-between;font-size:.72rem;font-weight:800;color:var(--muted)}
+  #meter-bar-bg{background:#ffe0e0;border-radius:99px;height:14px;overflow:hidden;margin:4px 0 2px}
+  #meter-bar{height:100%;border-radius:99px;transition:width .6s,background .4s;background:linear-gradient(90deg,var(--green),var(--teal))}
+  #meter-pct{font-family:'Fredoka One',cursive;font-size:.85rem;color:var(--green);text-align:center}
+
+  /* SCENARIO CARD */
+  #scenario-card{background:#fff;border-radius:24px;padding:22px 20px 18px;box-shadow:var(--shadow-lg);width:100%;margin-bottom:14px;position:relative;overflow:hidden;display:none}
+  #scenario-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--green),var(--teal),var(--yellow))}
+  .sc-meta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .sc-setting{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--green-pale);color:#00695c;letter-spacing:.5px;text-transform:uppercase}
+  .sc-difficulty{font-size:.65rem;font-weight:800;padding:3px 10px;border-radius:99px}
+  .sc-diff-1{background:var(--green-pale);color:#00695c}
+  .sc-diff-2{background:#fff9e6;color:#7a5c00}
+  .sc-diff-3{background:var(--pink-pale);color:#ad1457}
+  .sc-icon{font-size:3.8rem;display:block;margin:0 auto 10px;text-align:center;animation:float 2.2s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .sc-title{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--dark);margin-bottom:6px;text-align:center}
+  .sc-characters{font-size:.75rem;color:#aaa;font-weight:700;margin-bottom:10px;text-align:center}
+  .sc-situation{font-size:.9rem;color:#555;font-weight:600;line-height:1.8;border-left:4px solid var(--green);padding-left:14px;margin-bottom:14px}
+  .sc-question{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--green);background:var(--green-pale);border-radius:12px;padding:10px 14px;text-align:center}
+
+  /* CHOICES */
+  #choices{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:12px}
+  .choice-btn{background:#fff;border-radius:18px;padding:14px 16px;cursor:pointer;border:3px solid #d4f8e8;box-shadow:var(--shadow);transition:.2s;text-align:left;width:100%;display:flex;align-items:flex-start;gap:12px}
+  .choice-btn:hover:not(:disabled){transform:translateX(5px);border-color:var(--green);box-shadow:0 5px 16px rgba(0,184,148,.25)}
+  .choice-btn:disabled{cursor:default}
+  .choice-icon{font-size:1.6rem;flex-shrink:0}
+  .choice-text{font-size:.88rem;color:#555;font-weight:700;line-height:1.5;flex:1}
+  .choice-pts{font-family:'Fredoka One',cursive;font-size:.78rem;padding:3px 10px;border-radius:99px;color:#fff;white-space:nowrap;flex-shrink:0}
+  .pts-kind{background:var(--green)}
+  .pts-neutral{background:var(--yellow);color:#7a5c00!important}
+  .pts-self{background:#ff7675}
+  .pts-wise,.pts-responsible,.pts-helpful,.pts-protective,.pts-respectful,.pts-inclusive,.pts-upstander,.pts-brave{background:var(--teal)}
+  /* picked */
+  .choice-btn.picked-kind{background:var(--green-pale);border-color:var(--green)}
+  .choice-btn.picked-neutral,.choice-btn.picked-delegate,.choice-btn.picked-respectful,.choice-btn.picked-aware{background:#fffbf0;border-color:var(--yellow)}
+  .choice-btn.picked-self{background:#fff5f5;border-color:#ff7675}
+  .choice-btn.picked-wise,.choice-btn.picked-helpful,.choice-btn.picked-responsible,.choice-btn.picked-upstander,.choice-btn.picked-brave,.choice-btn.picked-inclusive,.choice-btn.picked-protective{background:#e8f9f3;border-color:var(--teal)}
+
+  /* RESPONSE */
+  #response-card{border-radius:18px;padding:16px 18px;margin-bottom:12px;display:none;width:100%;animation:slidein .3s ease}
+  @keyframes slidein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .rc-result{font-family:'Fredoka One',cursive;font-size:1.1rem;margin-bottom:6px}
+  .rc-response{font-size:.88rem;font-weight:600;line-height:1.7;margin-bottom:8px}
+  .rc-tip{font-size:.8rem;font-weight:700;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.65)}
+  .rc-tip-label{font-family:'Fredoka One',cursive;font-size:.75rem;display:block;margin-bottom:3px;opacity:.7}
+
+  /* REFLECTION */
+  #reflection-card{background:linear-gradient(135deg,var(--green-pale),#fffbf0);border-radius:18px;padding:14px 18px;margin-bottom:12px;display:none;width:100%;border-left:5px solid var(--green);animation:slidein .3s ease}
+  .reflect-label{font-family:'Fredoka One',cursive;font-size:.8rem;color:var(--green);margin-bottom:6px;display:block}
+  .reflect-text{font-size:.88rem;color:#555;font-weight:700;line-height:1.7}
+
+  /* NEXT BTN */
+  #next-btn{background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;border:none;padding:12px 32px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 16px rgba(0,184,148,.4);display:none;margin-bottom:12px;transition:.2s}
+  #next-btn:hover{transform:scale(1.05)}
+
+  /* LOADING */
+  #loading{text-align:center;padding:60px 20px;font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--green)}
+  .loading-spinner{width:44px;height:44px;border:4px solid var(--green-pale);border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* END SCREEN */
+  #end-screen{position:fixed;inset:0;background:rgba(240,255,244,.97);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:24px;text-align:center;overflow-y:auto}
+  .end-icon{font-size:4rem;margin-bottom:10px;animation:float 2s ease-in-out infinite}
+  .end-title{font-family:'Fredoka One',cursive;font-size:1.9rem;background:linear-gradient(135deg,var(--green),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+  .stars{font-size:2rem;margin:8px 0}
+  .end-score{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--green);margin:6px 0}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+  .badge{padding:6px 14px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.85rem;color:#fff}
+  .end-tip{font-size:.85rem;color:var(--muted);font-weight:600;margin:8px 0 18px;line-height:1.7;max-width:400px}
+  .ov-btn{background:linear-gradient(135deg,var(--green),var(--teal));color:#fff;border:none;padding:12px 30px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;cursor:pointer;box-shadow:0 5px 18px rgba(0,184,148,.4);margin:6px;transition:.2s}
+  .ov-btn:hover{transform:scale(1.05)}
+  .ov-btn.ghost{background:#fff;color:#aaa;border:2px solid #e0e0e0;box-shadow:none}
+  .ov-btn.ghost:hover{border-color:var(--green);color:var(--green)}
+
+  /* CONFETTI */
+  @keyframes cfburst{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(720deg);opacity:0}}
+  .cf{position:fixed;pointer-events:none;font-size:1.4rem;animation:cfburst .85s ease forwards;z-index:999}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<main>
+  <nav class="game-nav">
+    <a href="/" class="nav-logo">🌟 Sparkiddo</a>
+    <a href="/play" class="nav-back">← Play Hub</a>
+  </nav>
+
+  <div id="loading"><div class="loading-spinner"></div>Loading your quest...</div>
+
+  <div id="child-header">
+    <div class="ch-avatar" id="ch-avatar">🦊</div>
+    <div class="ch-info">
+      <div class="ch-name" id="ch-name">Player</div>
+      <div class="ch-belt" id="ch-belt">White Belt ⬜</div>
+      <div class="ch-xp-bar"><div class="ch-xp-fill" id="ch-xp-fill" style="width:0%"></div></div>
+      <div class="ch-xp-label" id="ch-xp-label">0 XP</div>
+    </div>
+    <div class="ch-session-xp">+<span id="session-xp">0</span> XP</div>
+  </div>
+
+  <div id="chain-wrap">
+    <div class="chain-title">💚 Kindness Chain — complete all 10!</div>
+    <div id="chain-links"></div>
+  </div>
+
+  <div id="meter-wrap">
+    <div class="meter-header">
+      <span class="meter-label">💗 Kindness Meter</span>
+      <span id="meter-pct">50%</span>
+    </div>
+    <div class="meter-ends"><span>😤 Unkind</span><span>Kind 💚</span></div>
+    <div id="meter-bar-bg"><div id="meter-bar" style="width:50%"></div></div>
+  </div>
+
+  <div id="scenario-card">
+    <div class="sc-meta">
+      <span class="sc-setting" id="sc-setting">School</span>
+      <span class="sc-difficulty sc-diff-1" id="sc-difficulty">⭐ Easy</span>
+    </div>
+    <span class="sc-icon" id="sc-icon">💗</span>
+    <div class="sc-title" id="sc-title"></div>
+    <div class="sc-characters" id="sc-characters"></div>
+    <div class="sc-situation" id="sc-situation"></div>
+    <div class="sc-question">What is the kindest thing to do?</div>
+  </div>
+
+  <div id="response-card"></div>
+  <div id="reflection-card">
+    <span class="reflect-label">💭 Moment to Think</span>
+    <div class="reflect-text" id="reflect-text"></div>
+  </div>
+  <div id="choices"></div>
+  <button id="next-btn" onclick="loadNext()">Next Scenario ➡️</button>
+
+  <!-- PAYWALL CARD — shown when free daily limit reached -->
+  <div id="paywall-card" style="display:none;width:100%;background:#fff;border-radius:24px;
+    padding:28px 24px;box-shadow:0 8px 36px rgba(0,0,0,.12);text-align:center;
+    border-top:5px solid #a29bfe;position:relative;z-index:1;margin-top:8px">
+    <div style="font-size:3.5rem;margin-bottom:12px;animation:float 2s ease-in-out infinite">⭐</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.4rem;
+      background:linear-gradient(135deg,#a29bfe,#fd79a8);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;margin-bottom:8px">You've played today's free scenarios!</div>
+    <p style="font-size:.88rem;color:#888;font-weight:600;line-height:1.8;margin-bottom:20px">
+      Free players get <strong>3 scenarios per game per day</strong>.<br>
+      Come back tomorrow — or upgrade to play unlimited! 🌟
+    </p>
+    <div style="background:#f3efff;border-radius:16px;padding:16px;margin-bottom:20px;text-align:left">
+      <div style="font-family:'Fredoka One',cursive;font-size:.9rem;color:#5e35b1;margin-bottom:10px">⭐ Plus includes:</div>
+      <div style="font-size:.82rem;color:#555;font-weight:700;line-height:2.2">
+        ✅ Unlimited scenarios every day<br>
+        ✅ Growth Map — see your child's strengths<br>
+        ✅ Up to 4 child profiles<br>
+        ✅ Weekly parent reports
+      </div>
+    </div>
+    <button onclick="goToUpgrade()"
+      style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;border:none;
+      padding:14px 36px;font-family:'Fredoka One',cursive;font-size:1.05rem;border-radius:99px;
+      cursor:pointer;box-shadow:0 5px 18px rgba(108,92,231,.4);margin-bottom:10px;
+      width:100%;transition:.2s">Upgrade to Plus ⭐</button>
+    <button onclick="window.location.href='/auth/play.html'"
+      style="background:#fff;color:#aaa;border:2px solid #e0e0e0;padding:10px 24px;
+      font-family:'Fredoka One',cursive;font-size:.88rem;border-radius:99px;
+      cursor:pointer;width:100%">← Back to Play Hub</button>
+    <p style="font-size:.72rem;color:#bbb;font-weight:700;margin-top:12px">
+      3 free scenarios resets at midnight 🌙
+    </p>
+  </div>
+
+</main>
+
+<div id="end-screen">
+  <div class="end-icon">💗</div>
+  <div class="end-title" id="end-title">Kindness Hero!</div>
+  <div class="stars" id="end-stars">⭐⭐⭐</div>
+  <div class="end-score" id="end-score">0 Kindness Points</div>
+  <div class="badge-row" id="end-badges"></div>
+  <p class="end-tip" id="end-tip"></p>
+  <button class="ov-btn" onclick="restartGame()">Play Again 💗</button>
+  <a href="/play" class="ov-btn ghost">Back to Play Hub</a>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
+window.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const GAME_KEY = 'kindnessQuest';
+const GAME_TOTAL = 26;
+const SESSION_MAX = 10;
+const BELTS = [
+  {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
+  {name:'Orange Belt',emoji:'🟧',xp:250},{name:'Green Belt',emoji:'🟩',xp:450},
+  {name:'Blue Belt',emoji:'🟦',xp:700},{name:'Purple Belt',emoji:'🟪',xp:1000},
+  {name:'Red Belt',emoji:'🟥',xp:1400},{name:'Black Belt',emoji:'⬛',xp:2000}
+];
+const SETTING_ICONS = {
+  home:'🏠',school:'🏫',park:'🌳',festival:'🪔',
+  online:'💻',shop:'🛍️',temple:'🛕',sports:'🏅'
+};
+const KIND_OUTCOMES = ['kind','inclusive','helpful','responsible','brave kind',
+  'thoughtful','wise','upstander','forgiving','generous','present','proactive',
+  'leader','persistent kind','sensitive kind','inspired kind','creative kind',
+  'proactive kind','brave','safe + kind','opening','grateful kind','respectful',
+  'practical','aware','subtle kind','direct kind','quiet solidarity','protective'];
+const NEUTRAL_OUTCOMES = ['neutral','hesitant','delegate','observer','safe',
+  'patient','verbal','minimal','one time','partial'];
+const SELF_OUTCOMES = ['self','passive','bystander','performative','holding grudge'];
+
+let child, engine, current, busy=false;
+let sessionXp=0, kindMeter=50, streak=0, kindCount=0, scenariosPlayed=0;
+
+function init(){
+  const stored = sessionStorage.getItem('sparkiddo_child');
+  child = stored ? JSON.parse(stored) : {id:'guest',name:'Guest',avatar:'⭐',xp:0,age_group:'6-8',streak:0};
+  engine = new SparkiddoScenarioEngine(GAME_KEY, child, {culture:'IN'});
+  document.getElementById('loading').style.display='none';
+  ['child-header','chain-wrap','meter-wrap','scenario-card'].forEach(id=>{
+    document.getElementById(id).style.display=id==='child-header'?'flex':'block';
+  });
+  renderChildHeader();
+  buildChain();
+  loadNext();
+}
+
+function getBelt(xp){let b=BELTS[0];for(const bb of BELTS)if(xp>=bb.xp)b=bb;return b;}
+function getNextBelt(xp){return BELTS.find(b=>xp<b.xp)||null;}
+function xpPct(xp){const b=getBelt(xp),nb=getNextBelt(xp);if(!nb)return 100;const prev=BELTS[BELTS.indexOf(b)-1]?.xp||0;return Math.min(100,((xp-prev)/(nb.xp-prev))*100);}
+
+function renderChildHeader(){
+  const xp=child.xp||0,belt=getBelt(xp),nb=getNextBelt(xp);
+  document.getElementById('ch-avatar').textContent=child.avatar||'🌟';
+  document.getElementById('ch-name').textContent=child.name;
+  document.getElementById('ch-belt').textContent=belt.emoji+' '+belt.name;
+  document.getElementById('ch-xp-fill').style.width=xpPct(xp)+'%';
+  document.getElementById('ch-xp-label').textContent=xp+' XP'+(nb?' · '+(nb.xp-xp)+' to '+nb.name:' · MAX!');
+  document.getElementById('session-xp').textContent=sessionXp;
+}
+
+function buildChain(){
+  const el=document.getElementById('chain-links');
+  el.innerHTML='';
+  for(let i=0;i<SESSION_MAX;i++){
+    const d=document.createElement('div');
+    d.className='link'+(i<scenariosPlayed?' done':i===scenariosPlayed?' current':'');
+    d.textContent=i<scenariosPlayed?'💚':'🔗';
+    el.appendChild(d);
+  }
+}
+
+function updateKindMeter(outcome){
+  const delta = KIND_OUTCOMES.includes(outcome)?15:NEUTRAL_OUTCOMES.includes(outcome)?5:-10;
+  kindMeter=Math.max(0,Math.min(100,kindMeter+delta));
+  const bar=document.getElementById('meter-bar');
+  bar.style.width=kindMeter+'%';
+  bar.style.background=kindMeter>70?'linear-gradient(90deg,#55efc4,#00b894)':
+    kindMeter>40?'linear-gradient(90deg,#fdcb6e,#ff9f43)':'linear-gradient(90deg,#ff7675,#fd79a8)';
+  document.getElementById('meter-pct').textContent=kindMeter+'%';
+  document.getElementById('meter-pct').style.color=kindMeter>70?'#00695c':kindMeter>40?'#7a5c00':'#9b2335';
+}
+
+function loadNext(){
+  const paywalled = await checkPaywall();
+  if (paywalled) return;
+
+  busy=false;
+  document.getElementById('response-card').style.display='none';
+  document.getElementById('reflection-card').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  if(scenariosPlayed>=SESSION_MAX){showEndScreen();return;}
+  current=engine.getNext();
+  renderScenario(current);
+  buildChain();
+}
+
+function renderScenario(s){
+  document.getElementById('sc-icon').textContent=SETTING_ICONS[s.setting]||'💗';
+  document.getElementById('sc-icon').style.animation='none';
+  setTimeout(()=>document.getElementById('sc-icon').style.animation='',50);
+  document.getElementById('sc-title').textContent=s.title;
+  document.getElementById('sc-setting').textContent=s.setting.charAt(0).toUpperCase()+s.setting.slice(1);
+  document.getElementById('sc-characters').textContent='👥 '+(s.characters||[]).join(', ');
+  document.getElementById('sc-situation').textContent=s.situation;
+  const diffEl=document.getElementById('sc-difficulty');
+  diffEl.textContent=s.difficulty===1?'⭐ Easy':s.difficulty===2?'⭐⭐ Medium':'⭐⭐⭐ Grey Zone';
+  diffEl.className='sc-difficulty sc-diff-'+s.difficulty;
+
+  const el=document.getElementById('choices');
+  el.innerHTML='';
+  (s.choices||[]).forEach(c=>{
+    const isKind=KIND_OUTCOMES.includes(c.outcome);
+    const isSelf=SELF_OUTCOMES.includes(c.outcome);
+    const ptsClass=isKind?'pts-kind':isSelf?'pts-self':'pts-neutral';
+    const outClass='picked-'+(c.outcome.replace(/\s+/g,'-'));
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.innerHTML=
+      '<span class="choice-icon">'+(isKind?'💚':isSelf?'😤':'🤔')+'</span>'+
+      '<span class="choice-text">'+c.text+'</span>'+
+      '<span class="choice-pts '+ptsClass+'">'+capitalise(c.outcome)+' +'+c.xp+' XP</span>';
+    btn.addEventListener('click',()=>handleChoice(c,btn,outClass));
+    el.appendChild(btn);
+  });
+}
+
+function capitalise(str){return str.charAt(0).toUpperCase()+str.slice(1);}
+
+function handleChoice(choice,btn,outClass){
+  if(busy)return;
+  busy=true;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  btn.classList.add(outClass);
+
+  const isKind=KIND_OUTCOMES.includes(choice.outcome);
+  const isSelf=SELF_OUTCOMES.includes(choice.outcome);
+
+  sessionXp+=choice.xp;
+  child.xp=(child.xp||0)+choice.xp;
+  if(isKind){streak++;kindCount++;}else streak=0;
+  updateKindMeter(choice.outcome);
+  renderChildHeader();
+  scenariosPlayed++;
+  buildChain();
+
+  showResponse(choice,current,isKind,isSelf);
+
+  if(current._meta?.showReflection&&current.reflectionPrompt){
+    document.getElementById('reflect-text').textContent=current.reflectionPrompt;
+    document.getElementById('reflection-card').style.display='block';
+  }
+
+  engine.recordChoice(current.id,choice.outcome,choice.xp);
+  if(isKind) confetti(btn);
+
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=scenariosPlayed>=SESSION_MAX?'See Results 🌟':'Next Scenario ➡️';
+}
+
+function showResponse(choice,scenario,isKind,isSelf){
+  const rc=document.getElementById('response-card');
+  const bg=isKind?'#d4f8e8':isSelf?'#fde8e8':'#fffbf0';
+  const border=isKind?'#00b894':isSelf?'#ff7675':'#fdcb6e';
+  const color=isKind?'#005f44':isSelf?'#9b2335':'#7a5c00';
+  const emoji=isKind?'💚':isSelf?'❌':'🟡';
+  rc.style.cssText=`background:${bg};border-left:5px solid ${border};color:${color};border-radius:18px;padding:16px 18px;margin-bottom:12px;width:100%;display:block;animation:slidein .3s ease`;
+  rc.innerHTML=
+    '<div class="rc-result">'+emoji+' '+capitalise(choice.outcome)+'! +'+choice.xp+' XP</div>'+
+    '<div class="rc-response">'+choice.response+'</div>'+
+    '<div class="rc-tip"><span class="rc-tip-label">🌍 Real World Tip</span>'+scenario.realWorldTip+'</div>';
+}
+
+function showEndScreen(){
+  const pct=sessionXp/(SESSION_MAX*30);
+  let stars='⭐',title='Keep Practising Kindness!',tip='Every kind act matters!';
+  if(pct>=.85){stars='⭐⭐⭐';title='Kindness Champion!';tip='You chose kindness every time! The world is better with you in it! 💖';}
+  else if(pct>=.6){stars='⭐⭐⭐';title='Kindness Hero!';tip='So many kind choices! Your heart is growing! 🌈';}
+  else if(pct>=.35){stars='⭐⭐';title='Getting Kinder!';tip='You\'re learning what kindness really means. Keep practising! 🌱';}
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-stars').textContent=stars;
+  document.getElementById('end-score').textContent='+'+sessionXp+' XP · Kindness Meter: '+kindMeter+'%';
+  document.getElementById('end-tip').textContent=tip;
+  const br=document.getElementById('end-badges');
+  br.innerHTML='';
+  [{label:'💗 Kindness Quester',bg:'#00b894'}]
+    .concat(kindCount===SESSION_MAX?[{label:'💯 Pure Kindness',bg:'#fdcb6e',c:'#7a5c00'}]:[])
+    .concat(kindMeter>=90?[{label:'💚 Kindness Max!',bg:'#55efc4',c:'#007a5e'}]:[])
+    .concat(streak>=5?[{label:'🔥 Kind Streak ×5',bg:'#fd79a8'}]:[])
+    .forEach(b=>{
+      const s=document.createElement('span');s.className='badge';
+      s.textContent=b.label;s.style.background=b.bg;
+      if(b.c)s.style.color=b.c;
+      br.appendChild(s);
+    });
+  document.getElementById('end-screen').style.display='flex';
+  confettiAll();
+}
+
+function restartGame(){
+  scenariosPlayed=0;sessionXp=0;kindMeter=50;streak=0;kindCount=0;
+  document.getElementById('meter-bar').style.width='50%';
+  document.getElementById('meter-pct').textContent='50%';
+  document.getElementById('end-screen').style.display='none';
+  buildChain();
+  loadNext();
+}
+
+function confetti(ref){
+  const r=ref.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  ['💚','🌸','⭐','✨','💖','🌟','💛'].forEach(em=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em;
+    el.style.left=cx+'px';el.style.top=cy+'px';
+    const a=Math.random()*Math.PI*2,d=70+Math.random()*70;
+    el.style.setProperty('--dx',Math.cos(a)*d+'px');el.style.setProperty('--dy',Math.sin(a)*d+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+  });
+}
+function confettiAll(){
+  const em=['💗','💚','⭐','✨','🌟','🎉','💖','🌈'];
+  for(let i=0;i<18;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*90+5+'vw';el.style.top=Math.random()*60+10+'vh';
+    el.style.setProperty('--dx',(Math.random()*100-50)+'px');el.style.setProperty('--dy',(Math.random()*80-100)+'px');
+    document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+  },i*80);
+}
+
+init();
+
+// ── PAYWALL ───────────────────────────────────────────────────────────────────
+async function checkPaywall() {
+  if (!engine) return false;
+  const blocked = await engine.checkDailyLimit(child.isPlus || false);
+  if (blocked) { showPaywall(); return true; }
+  return false;
+}
+
+function showPaywall() {
+  // Hide all game UI elements
+  const ids = [
+    'scenario-card','choices','response-card','reflection-card',
+    'happiness-section','meter-wrap','chain-wrap','prog-section',
+    'timer-wrap','streak-banner','verdict-btns','next-btn',
+    'answers','feedback','fun-fact','trust-section',
+    'level-pills','score-track',
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Show paywall
+  const pw = document.getElementById('paywall-card');
+  if (pw) pw.style.display = 'block';
+}
+
+function goToUpgrade() {
+  window.location.href = '/upgrade.html';
+}
+
+</script>
+</body>
+</html>

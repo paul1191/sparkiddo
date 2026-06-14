@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>sparkiddo — Parent Dashboard</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -125,6 +126,32 @@
   .btn-save:hover{transform:scale(1.04)}
   .save-toast{font-size:.75rem;color:#00b894;font-weight:800;margin-left:10px;opacity:0;transition:opacity .3s}
   .save-toast.show{opacity:1}
+  /* ── GROWTH MAP ── */
+  .growth-map-card{position:relative}
+  .growth-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .gtab{padding:7px 16px;border-radius:99px;border:2px solid #e0d7ff;background:#fafaff;font-family:'Fredoka One',cursive;font-size:.8rem;color:#888;cursor:pointer;transition:.2s}
+  .gtab:hover{border-color:var(--purple-light,#a29bfe);background:#f3efff}
+  .gtab.active{background:linear-gradient(135deg,#a29bfe,#7c5cbf);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(108,92,231,.25)}
+  .growth-chart-wrap{position:relative;max-width:380px;margin:0 auto 20px}
+  .frozen-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;background:rgba(247,243,255,.82);backdrop-filter:blur(4px);border-radius:16px}
+  .frozen-inner{text-align:center;padding:20px 24px;background:#fff;border-radius:20px;box-shadow:0 8px 28px rgba(108,92,231,.15);border:2px dashed #e0d7ff;max-width:260px}
+  .frozen-inner .f-icon{font-size:2rem;display:block;margin-bottom:8px}
+  .frozen-inner .f-title{font-family:'Fredoka One',cursive;font-size:1rem;color:#444;margin-bottom:4px}
+  .frozen-inner .f-sub{font-size:.75rem;color:#888;font-weight:600;margin-bottom:14px;line-height:1.5}
+  .frozen-inner .f-btn{background:linear-gradient(135deg,#a29bfe,#6c5ce7);color:#fff;border:none;padding:9px 22px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.82rem;cursor:pointer;text-decoration:none;display:inline-block}
+  .dim-pills{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+  .dim-pill{border-radius:14px;padding:10px 12px;text-align:center;border:2px solid transparent}
+  .dim-pill .dp-score{font-family:'Fredoka One',cursive;font-size:1.35rem;line-height:1;margin-bottom:3px}
+  .dim-pill .dp-label{font-size:.65rem;font-weight:800;letter-spacing:.4px;text-transform:uppercase;opacity:.75}
+  .dim-pill .dp-bar-bg{height:4px;border-radius:99px;background:rgba(0,0,0,.08);margin-top:6px;overflow:hidden}
+  .dim-pill .dp-bar-fill{height:100%;border-radius:99px;transition:width .8s}
+  .growth-empty{text-align:center;padding:40px 20px;font-family:'Fredoka One',cursive;font-size:.9rem;color:#ccc}
+
+  @media(max-width:640px){
+    .dim-pills{grid-template-columns:repeat(2,1fr)}
+    .growth-chart-wrap{max-width:100%}
+  }
+
   @media(max-width:640px){.grid-2{grid-template-columns:1fr}.dash-header{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
@@ -203,6 +230,27 @@
       <div class="card" style="grid-column:1/-1">
         <div class="card-title">👧 Child Profiles & Progress</div>
         <div id="child-reports"></div>
+      </div>
+
+      <!-- Growth Map -->
+      <div class="card growth-map-card" style="grid-column:1/-1" id="growth-map-card">
+        <div class="card-title">🧠 Growth Map
+          <span style="font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:700;color:#bbb;margin-left:4px">Character dimensions across all games</span>
+        </div>
+        <div class="growth-tabs" id="growth-tabs"></div>
+        <div class="growth-chart-wrap">
+          <canvas id="growth-radar" height="320"></canvas>
+          <div class="frozen-overlay" id="frozen-overlay" style="display:none">
+            <div class="frozen-inner">
+              <span class="f-icon">❄️</span>
+              <div class="f-title">Growth Map Paused</div>
+              <div class="f-sub">Your Spark Week has ended. Upgrade to Plus to keep tracking your child's character growth.</div>
+              <a href="/upgrade.html" class="f-btn">Unlock Plus →</a>
+            </div>
+          </div>
+        </div>
+        <div class="dim-pills" id="dim-pills"></div>
+        <div class="growth-empty" id="growth-empty" style="display:none">🎮 No game data yet — play some games to see the Growth Map!</div>
       </div>
 
       <!-- Weekly activity -->
@@ -382,6 +430,189 @@ function relTime(iso){const d=new Date(iso),now=new Date(),diff=Math.floor((now-
 
 let state={session:null,account:null,settings:null,profiles:[],sessions:[],pinInput:'',pinUnlocked:false};
 
+// ── GROWTH MAP ─────────────────────────────────────────────────
+const DIMENSIONS = [
+  {key:'empathy',      label:'Empathy',         color:'#fd79a8', pale:'#fce4f3', games:['emotionmatch','storychoices','kindnessquest']},
+  {key:'fairness',     label:'Fairness',         color:'#fdcb6e', pale:'#fff8e8', games:['shareorkeep','storychoices','truthorfib']},
+  {key:'reasoning',    label:'Reasoning',        color:'#a29bfe', pale:'#f3efff', games:['truthorfib','storychoices','mathdojo']},
+  {key:'selfregul',    label:'Self-Regulation',  color:'#00cec9', pale:'#e0faf9', games:['cooldowncorner','kindnessquest','mydailydojo']},
+  {key:'responsibi',   label:'Responsibility',   color:'#6c5ce7', pale:'#ede9ff', games:['kindnessquest','shareorkeep','petdojo']},
+  {key:'focus',        label:'Focus',            color:'#00b894', pale:'#e8f9f3', games:['mathdojo','memorymatch','mydailydojo']},
+];
+
+// Map each game slug → which dimensions it contributes to + weight
+function buildGameDimMap(){
+  const map={};
+  DIMENSIONS.forEach(function(d){
+    d.games.forEach(function(g,i){
+      if(!map[g]) map[g]=[];
+      map[g].push({key:d.key, weight:[1,.7,.5][i]||.5});
+    });
+  });
+  return map;
+}
+const GAME_DIM_MAP = buildGameDimMap();
+
+// Score 0–100 per dimension from a child's sessions
+function calcDimScores(childSessions){
+  const raw={};
+  const counts={};
+  DIMENSIONS.forEach(function(d){raw[d.key]=0; counts[d.key]=0;});
+
+  childSessions.forEach(function(s){
+    const contribs = GAME_DIM_MAP[s.game_slug]||[];
+    const xp = s.xp_earned||0;
+    contribs.forEach(function(c){
+      raw[c.key] += xp * c.weight;
+      counts[c.key]++;
+    });
+  });
+
+  // Normalise: treat 300 weighted-XP as 100 on the scale, cap at 100
+  const scores={};
+  DIMENSIONS.forEach(function(d){
+    scores[d.key] = Math.min(100, Math.round((raw[d.key]/300)*100));
+  });
+  return scores;
+}
+
+let radarChart = null;
+let gmState = { activeChild: null };
+
+function renderGrowthMap(profiles, sessions, account){
+  const isPlus   = account?.plan === 'plus';
+  const inTrial  = (Date.now() - new Date(account?.created_at||Date.now()).getTime()) < 7*864e5;
+  const canUpdate = isPlus || inTrial;
+
+  const tabs = document.getElementById('growth-tabs');
+  const empty = document.getElementById('growth-empty');
+  tabs.innerHTML = '';
+
+  if(!profiles.length){
+    document.getElementById('growth-radar').style.display='none';
+    document.getElementById('dim-pills').style.display='none';
+    empty.style.display='block';
+    return;
+  }
+
+  // Build tabs
+  profiles.forEach(function(p, i){
+    const btn = document.createElement('button');
+    btn.className = 'gtab' + (i===0?' active':'');
+    btn.textContent = (p.avatar||'🌟')+' '+p.name;
+    btn.onclick = function(){
+      document.querySelectorAll('.gtab').forEach(function(t){t.classList.remove('active');});
+      btn.classList.add('active');
+      gmState.activeChild = p;
+      drawRadar(p, sessions, canUpdate);
+    };
+    tabs.appendChild(btn);
+  });
+
+  gmState.activeChild = profiles[0];
+  drawRadar(profiles[0], sessions, canUpdate);
+}
+
+function drawRadar(profile, sessions, canUpdate){
+  const childSessions = sessions.filter(function(s){return s.child_id===profile.id;});
+  const scores = calcDimScores(childSessions);
+  const hasData = childSessions.length > 0;
+
+  const empty = document.getElementById('growth-empty');
+  const canvas = document.getElementById('growth-radar');
+  const pillsEl = document.getElementById('dim-pills');
+  const frozenEl = document.getElementById('frozen-overlay');
+
+  if(!hasData){
+    empty.style.display='block';
+    canvas.style.display='none';
+    pillsEl.style.display='none';
+    frozenEl.style.display='none';
+    return;
+  }
+  empty.style.display='none';
+  canvas.style.display='block';
+  pillsEl.style.display='grid';
+
+  // Show frozen overlay for free post-trial users
+  frozenEl.style.display = canUpdate ? 'none' : 'flex';
+
+  const labels  = DIMENSIONS.map(function(d){return d.label;});
+  const data    = DIMENSIONS.map(function(d){return scores[d.key];});
+  const colors  = DIMENSIONS.map(function(d){return d.color;});
+
+  // Destroy old chart instance cleanly
+  if(radarChart){ radarChart.destroy(); radarChart=null; }
+
+  const ctx = canvas.getContext('2d');
+  radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets:[{
+        label: profile.name+"'s Growth",
+        data: data,
+        backgroundColor: 'rgba(162,155,254,0.18)',
+        borderColor: '#7c5cbf',
+        borderWidth: 2.5,
+        pointBackgroundColor: colors,
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      animation:{duration:700,easing:'easeInOutQuart'},
+      scales:{
+        r:{
+          min:0, max:100,
+          ticks:{stepSize:25, display:false},
+          grid:{color:'rgba(162,155,254,.18)', lineWidth:1.5},
+          angleLines:{color:'rgba(162,155,254,.18)'},
+          pointLabels:{
+            font:{family:"'Fredoka One',cursive", size:13},
+            color:'#555',
+            padding:10,
+          }
+        }
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#fff',
+          titleColor:'#444',
+          bodyColor:'#888',
+          borderColor:'#e0d7ff',
+          borderWidth:1.5,
+          titleFont:{family:"'Fredoka One',cursive",size:13},
+          bodyFont:{family:"'Nunito',sans-serif",size:12,weight:'700'},
+          callbacks:{
+            label:function(ctx){return ' Score: '+ctx.raw+' / 100';}
+          }
+        }
+      }
+    }
+  });
+
+  // Dimension pills
+  pillsEl.innerHTML='';
+  DIMENSIONS.forEach(function(d){
+    const score = scores[d.key];
+    const pill = document.createElement('div');
+    pill.className = 'dim-pill';
+    pill.style.background = d.pale;
+    pill.style.borderColor = score > 0 ? d.color+'55' : '#f0e8ff';
+    pill.innerHTML =
+      '<div class="dp-score" style="color:'+d.color+'">'+score+'</div>'+
+      '<div class="dp-label" style="color:'+d.color+'">'+d.label+'</div>'+
+      '<div class="dp-bar-bg"><div class="dp-bar-fill" style="width:'+score+'%;background:'+d.color+'"></div></div>';
+    pillsEl.appendChild(pill);
+  });
+}
+
 async function init(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='/auth/login';return;}
@@ -524,6 +755,9 @@ function renderDashboard(){
       cr.appendChild(row);
     });
   }
+
+  // Growth Map
+  renderGrowthMap(profiles, sessions, account);
 
   // Weekly activity chart
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
