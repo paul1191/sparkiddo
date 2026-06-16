@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sparkiddo — Story Choices</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="/data/scenarios.js"></script>
 <script src="/data/scenarioEngine.js"></script>
 <style>
@@ -329,7 +329,7 @@ function buildScoreTrack(){
 }
 
 /* ── LOAD NEXT ───────────────────────────────────────────────── */
-function loadNext(){
+async function loadNext(){
   const paywalled = await checkPaywall();
   if (paywalled) return;
 
