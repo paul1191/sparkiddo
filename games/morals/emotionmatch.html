@@ -254,34 +254,27 @@ const BELTS = [
   {name:'Red Belt',emoji:'🟥',xp:1400},{name:'Black Belt',emoji:'⬛',xp:2000}
 ];
 
-// All emotion options — engine picks correct + 3 distractors per scenario
+// All emotion options — engine picks correct + 3 random distractors per scenario
+// ✅ Every entry has a UNIQUE emoji — no duplicate buttons possible
 const EMOTIONS = {
-  'happy/joyful':        {em:'😄',label:'Happy'},
-  'sad':                 {em:'😢',label:'Sad'},
-  'angry/frustrated':    {em:'😤',label:'Frustrated'},
-  'scared':              {em:'😨',label:'Scared'},
-  'surprised/happy':     {em:'😲',label:'Surprised'},
-  'excited/joyful':      {em:'🥳',label:'Excited'},
-  'proud':               {em:'😊',label:'Proud'},
-  'worried':             {em:'😟',label:'Worried'},
-  'lonely/left out':     {em:'😢',label:'Lonely'},
-  'nervous/anxious':     {em:'😰',label:'Nervous'},
-  'touched/loved':       {em:'🥹',label:'Touched'},
-  'relieved/forgiving':  {em:'😌',label:'Relieved'},
-  'embarrassed':         {em:'😳',label:'Embarrassed'},
-  'bittersweet joy':     {em:'😊',label:'Bittersweet'},
-  'warmth/gratitude':    {em:'🥹',label:'Grateful'},
-  'hurt/disappointed':   {em:'😔',label:'Hurt'},
-  'joyful/grateful':     {em:'😊',label:'Joyful'},
-  'anxious':             {em:'😰',label:'Anxious'},
-  'worried/love':        {em:'😟',label:'Worried'},
-  'happy but lonely':    {em:'😊',label:'Mixed Feelings'},
-  'bittersweet/excited': {em:'😊',label:'Bittersweet'},
-  'touched/curious/happy':{em:'🥹',label:'Touched'},
-  'scared but wanting to help':{em:'😨',label:'Brave-Scared'},
-  'sad but grateful':    {em:'😢',label:'Missing'},
-  'proud (child + parent)':{em:'🥹',label:'Proud'},
-  'child: impatient; parent: calm but focused':{em:'😤',label:'Impatient'},
+  'happy/joyful':       {em:'😄', label:'Happy'},
+  'excited/joyful':     {em:'🥳', label:'Excited'},
+  'proud':              {em:'😊', label:'Proud'},
+  'touched/loved':      {em:'🥹', label:'Touched'},
+  'grateful':           {em:'🤗', label:'Grateful'},
+  'relieved/forgiving': {em:'😌', label:'Relieved'},
+  'sad':                {em:'😢', label:'Sad'},
+  'lonely/left out':    {em:'🥺', label:'Lonely'},
+  'hurt/disappointed':  {em:'😔', label:'Hurt'},
+  'bittersweet':        {em:'😥', label:'Bittersweet'},
+  'missing/hopeful':    {em:'😞', label:'Missing'},
+  'worried':            {em:'😟', label:'Worried'},
+  'nervous/anxious':    {em:'😰', label:'Nervous'},
+  'embarrassed':        {em:'😳', label:'Embarrassed'},
+  'scared':             {em:'😨', label:'Scared'},
+  'angry/frustrated':   {em:'😤', label:'Frustrated'},
+  'surprised/happy':    {em:'😲', label:'Surprised'},
+  'impatient':          {em:'🙄', label:'Impatient'},
 };
 
 let child, engine, current, busy=false;
