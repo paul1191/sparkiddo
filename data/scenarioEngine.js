@@ -24,6 +24,14 @@
  *
  * =====================================================================
  */
+// ─────────────────────────────────────────────────────────────────
+// MASTER PAYWALL SWITCH
+// false = no caps (review-collection era — everyone plays unlimited)
+// true  = enforce 3/game/day for free users, unlimited for Plus
+// ⚠️  When flipping to true: also add trial bypass here so Spark
+//     Week users keep unlimited. See SPARKIDDO_COMPLETE_CONTEXT TD-16.
+// ─────────────────────────────────────────────────────────────────
+const CAPS_ENABLED = false;
 
 class SparkiddoScenarioEngine {
 
@@ -222,6 +230,7 @@ class SparkiddoScenarioEngine {
    * @returns {Promise<boolean>}  true = limit reached → show paywall
    */
   async checkDailyLimit(isPlus) {
+    if (!CAPS_ENABLED)                      return false; // Master switch — caps off
     if (isPlus)                             return false; // Plus = never blocked
     if (this.profile.id === 'guest')        return false; // Guest = free pass (encourage signup)
 
