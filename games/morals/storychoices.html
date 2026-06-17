@@ -224,10 +224,33 @@
     </p>
   </div>
 
-</main>
+<!-- DAILY MISSION COMPLETE OVERLAY -->
+<div id="daily-complete-overlay" style="display:none;position:fixed;inset:0;
+  background:rgba(247,243,255,.92);backdrop-filter:blur(6px);
+  z-index:100;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:28px;padding:36px 28px;
+    max-width:380px;width:100%;text-align:center;
+    box-shadow:0 12px 40px rgba(108,92,231,.18);border-top:5px solid #00b894">
+    <div style="font-size:4rem;margin-bottom:12px;animation:bounce 1s ease-in-out infinite">✅</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;
+      background:linear-gradient(135deg,#00b894,#00cec9);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;margin-bottom:6px">Mission Complete!</div>
+    <div style="font-size:.85rem;color:#888;font-weight:700;margin-bottom:18px">Great work on today's Daily Mission 🌟</div>
+    <div style="background:linear-gradient(135deg,#e8f9f3,#d0f5e8);border-radius:14px;
+      padding:12px 18px;margin-bottom:22px;font-family:'Fredoka One',cursive;
+      font-size:1.1rem;color:#00695c">🔥 Keep your streak alive!</div>
+    <a href="/auth/daily.html" style="display:block;background:linear-gradient(135deg,#00b894,#00cec9);
+      color:#fff;border-radius:99px;padding:14px 28px;font-family:'Fredoka One',cursive;
+      font-size:1rem;text-decoration:none;margin-bottom:12px;
+      box-shadow:0 5px 18px rgba(0,184,148,.35)">🎯 Back to Daily Missions</a>
+    <button onclick="continueGame()" style="background:#fff;color:#a29bfe;border:2px solid #e0d7ff;
+      border-radius:99px;padding:11px 28px;font-family:'Fredoka One',cursive;
+      font-size:.9rem;cursor:pointer;width:100%">▶ Keep Playing (5 more)</button>
+  </div>
+</div>
 
-<div id="end-screen">
-  <div class="end-icon">📖</div>
+</main>
   <div class="end-title" id="end-title">Story Complete!</div>
   <div class="stars" id="end-stars">⭐⭐⭐</div>
   <div class="end-score" id="end-score">0 XP</div>
@@ -245,7 +268,8 @@ window.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 const GAME_KEY    = 'storyChoices';
 const GAME_TOTAL  = 25;
-const SESSION_MAX = 8;
+const DAILY_MODE = new URLSearchParams(window.location.search).get('daily') === '1';
+const SESSION_MAX = DAILY_MODE ? 5 : 10;
 const BELTS = [
   {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
   {name:'Orange Belt',emoji:'🟧',xp:250},{name:'Green Belt',emoji:'🟩',xp:450},
@@ -337,7 +361,11 @@ async function loadNext(){
   document.getElementById('outcome-card').style.display='none';
   document.getElementById('reflection-card').style.display='none';
   document.getElementById('next-btn').style.display='none';
-  if(scenariosPlayed>=SESSION_MAX){showEndScreen();return;}
+  if(scenariosPlayed>=SESSION_MAX && !window._dailyExtended){
+    if(DAILY_MODE){showDailyComplete();return;}
+    showEndScreen();return;
+  }
+  if(scenariosPlayed>=10){showEndScreen();return;}
   current=engine.getNext();
   renderStory(current);
   updateProgress();
@@ -427,7 +455,9 @@ function handleChoice(choice,btn,quality){
 
   const nb=document.getElementById('next-btn');
   nb.style.display='block';
-  nb.textContent=scenariosPlayed>=SESSION_MAX?'See Results 🌟':'Continue the Story ➡️';
+  nb.textContent=scenariosPlayed>=SESSION_MAX && !window._dailyExtended
+    ?(DAILY_MODE?'Mission Done! ✅':'See Results 🌟')
+    :scenariosPlayed>=10?'See Results 🌟':'Continue the Story ➡️';
   updateProgress();
 }
 
@@ -517,6 +547,20 @@ function restartGame(){
   scenariosPlayed=0;sessionXp=0;goodCount=0;okCount=0;poorCount=0;choiceLog=[];
   document.getElementById('end-screen').style.display='none';
   buildScoreTrack();
+  loadNext();
+}
+
+function showDailyComplete(){
+  ['scenario-card','choices','outcome-card','reflection-card',
+   'next-btn','score-track'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('daily-complete-overlay').style.display='flex';
+}
+
+function continueGame(){
+  document.getElementById('daily-complete-overlay').style.display='none';
+  window._dailyExtended=true;
   loadNext();
 }
 

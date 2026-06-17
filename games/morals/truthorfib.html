@@ -227,10 +227,33 @@
     </p>
   </div>
 
-</main>
+<!-- DAILY MISSION COMPLETE OVERLAY -->
+<div id="daily-complete-overlay" style="display:none;position:fixed;inset:0;
+  background:rgba(247,243,255,.92);backdrop-filter:blur(6px);
+  z-index:100;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:28px;padding:36px 28px;
+    max-width:380px;width:100%;text-align:center;
+    box-shadow:0 12px 40px rgba(108,92,231,.18);border-top:5px solid #00b894">
+    <div style="font-size:4rem;margin-bottom:12px;animation:bounce 1s ease-in-out infinite">✅</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;
+      background:linear-gradient(135deg,#00b894,#00cec9);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;margin-bottom:6px">Mission Complete!</div>
+    <div style="font-size:.85rem;color:#888;font-weight:700;margin-bottom:18px">Great work on today's Daily Mission 🌟</div>
+    <div style="background:linear-gradient(135deg,#e8f9f3,#d0f5e8);border-radius:14px;
+      padding:12px 18px;margin-bottom:22px;font-family:'Fredoka One',cursive;
+      font-size:1.1rem;color:#00695c">🔥 Keep your streak alive!</div>
+    <a href="/auth/daily.html" style="display:block;background:linear-gradient(135deg,#00b894,#00cec9);
+      color:#fff;border-radius:99px;padding:14px 28px;font-family:'Fredoka One',cursive;
+      font-size:1rem;text-decoration:none;margin-bottom:12px;
+      box-shadow:0 5px 18px rgba(0,184,148,.35)">🎯 Back to Daily Missions</a>
+    <button onclick="continueGame()" style="background:#fff;color:#a29bfe;border:2px solid #e0d7ff;
+      border-radius:99px;padding:11px 28px;font-family:'Fredoka One',cursive;
+      font-size:.9rem;cursor:pointer;width:100%">▶ Keep Playing (5 more)</button>
+  </div>
+</div>
 
-<div id="end-screen">
-  <div class="end-icon">🔍</div>
+</main>
   <div class="end-title" id="end-title">Truth Seeker!</div>
   <div class="stars" id="end-stars">⭐⭐⭐</div>
   <div class="end-score" id="end-score">0 XP</div>
@@ -245,7 +268,9 @@ const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
 window.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-const GAME_KEY = 'truthOrFib';
+const GAME_KEY    = 'truthOrFib';
+const DAILY_MODE  = new URLSearchParams(window.location.search).get('daily')==='1';
+const SESSION_MAX = DAILY_MODE ? 5 : 10;
 const BELTS = [
   {name:'White Belt',emoji:'⬜',xp:0},{name:'Yellow Belt',emoji:'🟨',xp:100},
   {name:'Orange Belt',emoji:'🟧',xp:250},{name:'Green Belt',emoji:'🟩',xp:450},
@@ -311,6 +336,10 @@ async function loadNext(){
   document.getElementById('truth-btn').disabled=false;
   document.getElementById('fib-btn').disabled=false;
 
+  if(scenariosPlayed>=SESSION_MAX && !window._dailyExtended){
+    if(DAILY_MODE){showDailyComplete();return;}
+    showEndScreen();return;
+  }
   if(scenariosPlayed>=10){showEndScreen();return;}
   current=engine.getNext();
   scenariosPlayed++;
@@ -360,7 +389,10 @@ function timeUp(){
   const answer=current.choices?.find(c=>c.outcome==='honest')||current.choices?.[0];
   showResponse(false, answer||{outcome:'honest',xp:0,response:'Time\'s up! Take your time next round.',response:'Time ran out! Think carefully next time.'}, current);
   document.getElementById('next-btn').style.display='block';
-  document.getElementById('next-btn').textContent=scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
+  document.getElementById('next-btn').textContent=
+    (scenariosPlayed>=SESSION_MAX && !window._dailyExtended)
+      ?(DAILY_MODE?'Mission Done! ✅':'See Results 🌟')
+      :scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
 }
 
 // ── ANSWER ───────────────────────────────────────────────────────
@@ -405,7 +437,10 @@ function answer(verdict){
   engine.recordChoice(current.id, chosenChoice?.outcome||'neutral', xp);
   if(userPickedCorrect) confetti(document.getElementById('truth-btn'));
   document.getElementById('next-btn').style.display='block';
-  document.getElementById('next-btn').textContent=scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
+  document.getElementById('next-btn').textContent=
+    (scenariosPlayed>=SESSION_MAX && !window._dailyExtended)
+      ?(DAILY_MODE?'Mission Done! ✅':'See Results 🌟')
+      :scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
 }
 
 function showResponse(isCorrect, choice, scenario){
@@ -424,20 +459,20 @@ function showResponse(isCorrect, choice, scenario){
 
 // ── END ──────────────────────────────────────────────────────────
 function showEndScreen(){
-  const pct=correct/10;
+  const pct=correct/SESSION_MAX;
   let stars='⭐',title='Keep Investigating!',tip='Every scenario teaches us more about honesty!';
   if(pct>=.9){stars='⭐⭐⭐';title='Master Truth Detective!';tip='Nearly perfect! You have an incredible sense for honesty. 🔍💙';}
   else if(pct>=.7){stars='⭐⭐⭐';title='Expert Truth Seeker!';tip='Fantastic detecting! You understand honesty really well! ⭐';}
   else if(pct>=.5){stars='⭐⭐';title='Good Detective!';tip='You caught most of the fibs. Keep practising! 🔍';}
   document.getElementById('end-title').textContent=title;
   document.getElementById('end-stars').textContent=stars;
-  document.getElementById('end-score').textContent='+'+sessionXp+' XP · '+correct+'/10 correct · Trust: '+trust+'%';
+  document.getElementById('end-score').textContent='+'+sessionXp+' XP · '+correct+'/'+SESSION_MAX+' correct · Trust: '+trust+'%';
   document.getElementById('end-tip').textContent=tip;
   const br=document.getElementById('end-badges');
   br.innerHTML='';
   [{label:'🔍 Truth Seeker',bg:'#a29bfe'},{label:'🏅 Trust Builder',bg:'#00b894'}]
     .concat(streak>=4?[{label:'🔥 Streak Master',bg:'#fd79a8'}]:[])
-    .concat(correct===10?[{label:'💯 Perfect',bg:'#6c5ce7'}]:[])
+    .concat(correct===SESSION_MAX?[{label:'💯 Perfect',bg:'#6c5ce7'}]:[])
     .forEach(b=>{const s=document.createElement('span');s.className='badge';s.textContent=b.label;s.style.background=b.bg;br.appendChild(s);});
   document.getElementById('end-screen').style.display='flex';
   confettiAll();
@@ -448,6 +483,21 @@ function restartGame(){
   document.getElementById('trust-bar').style.width='50%';
   document.getElementById('trust-val').textContent='50%';
   document.getElementById('end-screen').style.display='none';
+  loadNext();
+}
+
+function showDailyComplete(){
+  clearInterval(timerInt);
+  ['scenario-card','verdict-btns','response-card','reflection-card',
+   'next-btn','trust-section','timer-wrap','streak-banner'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.getElementById('daily-complete-overlay').style.display='flex';
+}
+
+function continueGame(){
+  document.getElementById('daily-complete-overlay').style.display='none';
+  window._dailyExtended=true;
   loadNext();
 }
 
