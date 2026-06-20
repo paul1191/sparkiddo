@@ -230,31 +230,36 @@
 
 <!-- DAILY MISSION COMPLETE OVERLAY -->
 <div id="daily-complete-overlay" style="display:none;position:fixed;inset:0;
-  background:rgba(247,243,255,.92);backdrop-filter:blur(6px);
+  background:rgba(247,243,255,.95);backdrop-filter:blur(6px);
   z-index:100;align-items:center;justify-content:center;padding:20px">
-  <div style="background:#fff;border-radius:28px;padding:36px 28px;
-    max-width:380px;width:100%;text-align:center;
-    box-shadow:0 12px 40px rgba(108,92,231,.18);border-top:5px solid #00b894">
+  <div style="background:#fff;border-radius:28px;padding:36px 28px;max-width:380px;
+    width:100%;text-align:center;box-shadow:0 12px 40px rgba(108,92,231,.18);
+    border-top:5px solid #00b894">
     <div style="font-size:4rem;margin-bottom:12px;animation:bounce 1s ease-in-out infinite">✅</div>
     <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;
       background:linear-gradient(135deg,#00b894,#00cec9);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
       background-clip:text;margin-bottom:6px">Mission Complete!</div>
-    <div style="font-size:.85rem;color:#888;font-weight:700;margin-bottom:18px">Great work on today's Daily Mission 🌟</div>
+    <div style="font-size:.85rem;color:#888;font-weight:700;margin-bottom:18px">
+      Great work on today's Daily Mission 🌟</div>
     <div style="background:linear-gradient(135deg,#e8f9f3,#d0f5e8);border-radius:14px;
       padding:12px 18px;margin-bottom:22px;font-family:'Fredoka One',cursive;
       font-size:1.1rem;color:#00695c">🔥 Keep your streak alive!</div>
-    <a href="/auth/daily.html" style="display:block;background:linear-gradient(135deg,#00b894,#00cec9);
+    <a href="daily.html" style="display:block;background:linear-gradient(135deg,#00b894,#00cec9);
       color:#fff;border-radius:99px;padding:14px 28px;font-family:'Fredoka One',cursive;
       font-size:1rem;text-decoration:none;margin-bottom:12px;
       box-shadow:0 5px 18px rgba(0,184,148,.35)">🎯 Back to Daily Missions</a>
-    <button onclick="continueGame()" style="background:#fff;color:#a29bfe;border:2px solid #e0d7ff;
-      border-radius:99px;padding:11px 28px;font-family:'Fredoka One',cursive;
-      font-size:.9rem;cursor:pointer;width:100%">▶ Keep Playing (5 more)</button>
+    <button onclick="continueGame()" style="background:#fff;color:#a29bfe;
+      border:2px solid #e0d7ff;border-radius:99px;padding:11px 28px;
+      font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;width:100%">
+      ▶ Keep Playing (5 more)</button>
   </div>
 </div>
 
 </main>
+
+<div id="end-screen">
+  <div class="end-icon">🎭</div>
   <div class="end-title" id="end-title">Emotion Expert!</div>
   <div class="stars" id="end-stars">⭐⭐⭐</div>
   <div class="end-score" id="end-score">0 XP</div>
@@ -300,11 +305,6 @@ const EMOTIONS = {
   'angry/frustrated':   {em:'😤', label:'Frustrated'},
   'surprised/happy':    {em:'😲', label:'Surprised'},
   'impatient':          {em:'🙄', label:'Impatient'},
-  'jealous':            {em:'😒', label:'Jealous'},
-  'guilty':             {em:'😣', label:'Guilty'},
-  'overwhelmed':        {em:'😩', label:'Overwhelmed'},
-  'proud but sad':      {em:'🥲', label:'Proud but Sad'},
-  'curious':            {em:'🤔', label:'Curious'},
 };
 
 let child, engine, current, busy=false;
@@ -353,10 +353,10 @@ function setLevel(level, btn){
 }
 
 function updateProgress(){
-  const prog=engine.getProgress();
-  const pct=Math.min(100,(prog.seen/26)*100);
+  const shown=Math.min(scenariosPlayed,SESSION_MAX);
+  const pct=Math.min(100,(shown/SESSION_MAX)*100);
   document.getElementById('prog-bar').style.width=pct+'%';
-  document.getElementById('prog-count').textContent=prog.seen+' / 26 scenarios';
+  document.getElementById('prog-count').textContent=shown+' / '+SESSION_MAX+' scenarios';
 }
 
 async function loadNext(){
@@ -369,7 +369,7 @@ async function loadNext(){
   document.getElementById('next-btn').style.display='none';
   document.getElementById('feedback').innerHTML='&nbsp;';
   document.getElementById('feedback').className='';
-  if(scenariosPlayed>=SESSION_MAX && !window._dailyExtended){
+  if(scenariosPlayed>=SESSION_MAX&&!window._dailyExtended){
     if(DAILY_MODE){showDailyComplete();return;}
     showEndScreen();return;
   }
@@ -459,7 +459,7 @@ function handleAnswer(isCorrect,btn,correctEmotion,scenario){
 
   document.getElementById('next-btn').style.display='block';
   document.getElementById('next-btn').textContent=
-    (scenariosPlayed>=SESSION_MAX && !window._dailyExtended)
+    (scenariosPlayed>=SESSION_MAX&&!window._dailyExtended)
       ?(DAILY_MODE?'Mission Done! ✅':'See Results 🌟')
       :scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
 }
@@ -498,11 +498,25 @@ function showEndScreen(){
 
 function restartGame(){
   scenariosPlayed=0;sessionXp=0;correct=0;streak=0;
+  window._dailyExtended=false;
   document.getElementById('end-screen').style.display='none';
+  document.getElementById('prog-count').textContent='0 / '+SESSION_MAX+' scenarios';
+  document.getElementById('prog-bar').style.width='0%';
   loadNext();
 }
 
+function markDailyComplete(){
+  try{
+    const c=JSON.parse(sessionStorage.getItem('sparkiddo_child')||'{}');
+    const today=new Date().toISOString().slice(0,10);
+    const key='sparkiddo_daily_'+(c.id||'guest')+'_'+today;
+    const done=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!done.includes(GAME_KEY)){done.push(GAME_KEY);localStorage.setItem(key,JSON.stringify(done));}
+  }catch(e){}
+}
+
 function showDailyComplete(){
+  markDailyComplete();
   ['scenario-card','answers','fun-fact','reflection-card',
    'next-btn','feedback','level-pills'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';

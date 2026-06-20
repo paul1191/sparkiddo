@@ -229,31 +229,36 @@
 
 <!-- DAILY MISSION COMPLETE OVERLAY -->
 <div id="daily-complete-overlay" style="display:none;position:fixed;inset:0;
-  background:rgba(247,243,255,.92);backdrop-filter:blur(6px);
+  background:rgba(247,243,255,.95);backdrop-filter:blur(6px);
   z-index:100;align-items:center;justify-content:center;padding:20px">
-  <div style="background:#fff;border-radius:28px;padding:36px 28px;
-    max-width:380px;width:100%;text-align:center;
-    box-shadow:0 12px 40px rgba(108,92,231,.18);border-top:5px solid #00b894">
+  <div style="background:#fff;border-radius:28px;padding:36px 28px;max-width:380px;
+    width:100%;text-align:center;box-shadow:0 12px 40px rgba(108,92,231,.18);
+    border-top:5px solid #00b894">
     <div style="font-size:4rem;margin-bottom:12px;animation:bounce 1s ease-in-out infinite">✅</div>
     <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;
       background:linear-gradient(135deg,#00b894,#00cec9);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
       background-clip:text;margin-bottom:6px">Mission Complete!</div>
-    <div style="font-size:.85rem;color:#888;font-weight:700;margin-bottom:18px">Great work on today's Daily Mission 🌟</div>
+    <div style="font-size:.85rem;color:#888;font-weight:700;margin-bottom:18px">
+      Great work on today's Daily Mission 🌟</div>
     <div style="background:linear-gradient(135deg,#e8f9f3,#d0f5e8);border-radius:14px;
       padding:12px 18px;margin-bottom:22px;font-family:'Fredoka One',cursive;
       font-size:1.1rem;color:#00695c">🔥 Keep your streak alive!</div>
-    <a href="/auth/daily.html" style="display:block;background:linear-gradient(135deg,#00b894,#00cec9);
+    <a href="daily.html" style="display:block;background:linear-gradient(135deg,#00b894,#00cec9);
       color:#fff;border-radius:99px;padding:14px 28px;font-family:'Fredoka One',cursive;
       font-size:1rem;text-decoration:none;margin-bottom:12px;
       box-shadow:0 5px 18px rgba(0,184,148,.35)">🎯 Back to Daily Missions</a>
-    <button onclick="continueGame()" style="background:#fff;color:#a29bfe;border:2px solid #e0d7ff;
-      border-radius:99px;padding:11px 28px;font-family:'Fredoka One',cursive;
-      font-size:.9rem;cursor:pointer;width:100%">▶ Keep Playing (5 more)</button>
+    <button onclick="continueGame()" style="background:#fff;color:#a29bfe;
+      border:2px solid #e0d7ff;border-radius:99px;padding:11px 28px;
+      font-family:'Fredoka One',cursive;font-size:.9rem;cursor:pointer;width:100%">
+      ▶ Keep Playing (5 more)</button>
   </div>
 </div>
 
 </main>
+
+<div id="end-screen">
+  <div class="end-icon">🔍</div>
   <div class="end-title" id="end-title">Truth Seeker!</div>
   <div class="stars" id="end-stars">⭐⭐⭐</div>
   <div class="end-score" id="end-score">0 XP</div>
@@ -277,7 +282,9 @@ const BELTS = [
   {name:'Blue Belt',emoji:'🟦',xp:700},{name:'Purple Belt',emoji:'🟪',xp:1000},
   {name:'Red Belt',emoji:'🟥',xp:1400},{name:'Black Belt',emoji:'⬛',xp:2000}
 ];
-const TIMERS = {1:15,2:12,3:9};
+// Timer seconds by difficulty — increased for readability.
+// Ages 3-5 always get the longest window; timer is also skipped for them in startTimer().
+const TIMERS = {1:25, 2:20, 3:15};
 const CHAR_ICONS = {
   'home':'🏠','school':'🏫','park':'🌳','sports':'🏏',
   'festival':'🪔','online':'💻','shop':'🛍️','temple':'🛕'
@@ -336,7 +343,7 @@ async function loadNext(){
   document.getElementById('truth-btn').disabled=false;
   document.getElementById('fib-btn').disabled=false;
 
-  if(scenariosPlayed>=SESSION_MAX && !window._dailyExtended){
+  if(scenariosPlayed>=SESSION_MAX&&!window._dailyExtended){
     if(DAILY_MODE){showDailyComplete();return;}
     showEndScreen();return;
   }
@@ -353,8 +360,10 @@ function renderScenario(s){
   setTimeout(()=>document.getElementById('sc-icon').style.animation='',50);
   document.getElementById('sc-setting').textContent=s.setting.charAt(0).toUpperCase()+s.setting.slice(1);
   document.getElementById('sc-char-name').textContent=s.title;
-  document.getElementById('sc-statement').textContent=s.situation;
-  document.getElementById('sc-clue').textContent=s.choices?.[0]?.text?'':''/* clue optional */;
+  // Show the situation as context, then the statement to evaluate
+  const context = s.situation ? '📖 ' + s.situation + '\n\n' : '';
+  document.getElementById('sc-statement').textContent = context + '💬 "' + (s.statement || s.situation) + '"';
+  document.getElementById('sc-clue').textContent = 'Is this a TRUTH or a FIB?';
   const diffEl=document.getElementById('sc-difficulty');
   diffEl.textContent=s.difficulty===1?'⭐ Easy':s.difficulty===2?'⭐⭐ Medium':'⭐⭐⭐ Grey Zone';
   diffEl.className='sc-difficulty sc-diff-'+s.difficulty;
@@ -362,6 +371,13 @@ function renderScenario(s){
 
 // ── TIMER ────────────────────────────────────────────────────────
 function startTimer(secs){
+  // Youngest readers (3-5) get no timer pressure
+  if(child && child.age_group === '3-5'){
+    document.getElementById('timer-num').textContent='∞';
+    document.getElementById('timer-bar').style.width='100%';
+    document.getElementById('timer-bar').style.background='linear-gradient(90deg,#55efc4,#00cec9)';
+    return; // no countdown
+  }
   let t=secs;
   document.getElementById('timer-num').textContent=t;
   document.getElementById('timer-bar').style.width='100%';
@@ -390,7 +406,7 @@ function timeUp(){
   showResponse(false, answer||{outcome:'honest',xp:0,response:'Time\'s up! Take your time next round.',response:'Time ran out! Think carefully next time.'}, current);
   document.getElementById('next-btn').style.display='block';
   document.getElementById('next-btn').textContent=
-    (scenariosPlayed>=SESSION_MAX && !window._dailyExtended)
+    (scenariosPlayed>=SESSION_MAX&&!window._dailyExtended)
       ?(DAILY_MODE?'Mission Done! ✅':'See Results 🌟')
       :scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
 }
@@ -403,18 +419,19 @@ function answer(verdict){
   document.getElementById('truth-btn').disabled=true;
   document.getElementById('fib-btn').disabled=true;
 
-  // For truthOrFib, the "correct" choice is the honest one
-  // We determine truth/fib from the choices: honest = truth, dishonest = fib
-  const correctIsHonest = current.choices?.some(c=>['honest','honest kindly','honest + wise','walk'].includes(c.outcome));
-  const userPickedCorrect = correctIsHonest
-    ? verdict==='truth'
-    : verdict==='fib';
+  // Use the scenario's isTruth field — the definitive correct answer
+  // Falls back to choices-based logic for scenarios without isTruth (shouldn't happen)
+  const userPickedCorrect = (current.isTruth !== undefined)
+    ? (current.isTruth ? verdict==='truth' : verdict==='fib')
+    : current.choices?.some(c=>['honest','honest kindly','honest + wise'].includes(c.outcome)) 
+      ? verdict==='truth' : verdict==='fib';
 
-  const chosenChoice = current.choices?.find(c=>
-    userPickedCorrect
-      ? ['honest','honest kindly','honest + wise','responsible','brave','walk'].includes(c.outcome)
-      : ['dishonest','lie','evasive','hiding','partial','deeper lie'].includes(c.outcome)
-  ) || current.choices?.[0];
+  // Pick the most relevant choice to show as explanation
+  const chosenChoice = userPickedCorrect
+    ? current.choices?.find(c=>['honest','honest kindly','responsible','brave','wise'].includes(c.outcome))
+        || current.choices?.[0]
+    : current.choices?.find(c=>['lie','evasive','self','reactive'].includes(c.outcome))
+        || current.choices?.[current.choices.length-1];
 
   const xp = userPickedCorrect ? (chosenChoice?.xp||25) : 0;
   if(userPickedCorrect){streak++;correct++;} else streak=0;
@@ -438,7 +455,7 @@ function answer(verdict){
   if(userPickedCorrect) confetti(document.getElementById('truth-btn'));
   document.getElementById('next-btn').style.display='block';
   document.getElementById('next-btn').textContent=
-    (scenariosPlayed>=SESSION_MAX && !window._dailyExtended)
+    (scenariosPlayed>=SESSION_MAX&&!window._dailyExtended)
       ?(DAILY_MODE?'Mission Done! ✅':'See Results 🌟')
       :scenariosPlayed>=10?'See Results 🌟':'Next Scenario ➡️';
 }
@@ -449,12 +466,19 @@ function showResponse(isCorrect, choice, scenario){
   const border=isCorrect?'#00b894':'#ff7675';
   const color=isCorrect?'#005f44':'#9b2335';
   const emoji=isCorrect?'✅':'❌';
+  const correctLabel = scenario.isTruth !== undefined
+    ? (scenario.isTruth ? '✅ TRUTH' : '❌ FIB')
+    : '';
+  const wrongReveal = !isCorrect && correctLabel
+    ? `<div style="font-weight:700;margin-bottom:4px">The correct answer was: ${correctLabel}</div>`
+    : '';
   rc.style.cssText=`background:${bg};border-left:5px solid ${border};color:${color};border-radius:18px;padding:16px 18px;margin-bottom:12px;width:100%;display:block;animation:slidein .3s ease`;
   rc.innerHTML=
     '<div class="rc-result">'+emoji+' '+(isCorrect?'Correct! +'+(choice?.xp||25)+' XP':'Not quite this time.')+'</div>'+
-    '<div class="rc-explain">'+(choice?.response||scenario.situation)+'</div>'+
+    wrongReveal+
+    '<div class="rc-explain">'+(choice?.response||scenario.realWorldTip||scenario.situation)+'</div>'+
     '<div class="rc-lesson">💡 '+scenario.realWorldTip+'</div>';
-  if(!isCorrect) rc.querySelector('.rc-result').closest('.rc-result')||rc.classList.add('shake');
+  if(!isCorrect) rc.classList.add('shake');
 }
 
 // ── END ──────────────────────────────────────────────────────────
@@ -480,14 +504,26 @@ function showEndScreen(){
 
 function restartGame(){
   scenariosPlayed=0;sessionXp=0;trust=50;streak=0;correct=0;
+  window._dailyExtended=false;
   document.getElementById('trust-bar').style.width='50%';
   document.getElementById('trust-val').textContent='50%';
   document.getElementById('end-screen').style.display='none';
   loadNext();
 }
 
+function markDailyComplete(){
+  try{
+    const c=JSON.parse(sessionStorage.getItem('sparkiddo_child')||'{}');
+    const today=new Date().toISOString().slice(0,10);
+    const key='sparkiddo_daily_'+(c.id||'guest')+'_'+today;
+    const done=JSON.parse(localStorage.getItem(key)||'[]');
+    if(!done.includes(GAME_KEY)){done.push(GAME_KEY);localStorage.setItem(key,JSON.stringify(done));}
+  }catch(e){}
+}
+
 function showDailyComplete(){
   clearInterval(timerInt);
+  markDailyComplete();
   ['scenario-card','verdict-btns','response-card','reflection-card',
    'next-btn','trust-section','timer-wrap','streak-banner'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.style.display='none';

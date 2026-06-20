@@ -5016,654 +5016,1409 @@ const SPARKIDDO_SCENARIOS = {
      TRUTH OR FIB — 27 scenarios
      Game: truthorfib.html
   ═══════════════════════════════════════════════════════════════ */
-  truthOrFib: [
-
+  truthOrFib:   [
     {
-      id: 'tof_001',
-      title: 'The Broken Vase',
-      setting: 'home',
-      characters: ['parent'],
-      ageRange: [3, 8],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['home', 'mistake', 'family'],
-      situation: "You accidentally knocked over mum\'s favourite vase and it cracked. She comes in and asks what happened.",
-      choices: [
-        { text: 'Tell the truth: I knocked it over by accident', outcome: 'honest', xp: 30,
-          response: "Accidents happen! Telling the truth immediately — that\'s courage. Mum\'s proud of you for that. 🌟" },
-        { text: 'Say you don\'t know what happened', outcome: 'evasive', xp: 8,
-          response: "That\'s not quite a lie, but not the truth either. It still leaves Mum confused. 💭" },
-        { text: 'Blame the cat 🐱', outcome: 'lie', xp: 3,
-          response: "Poor cat! They can\'t defend themselves. Lies often come out eventually — and then feel worse. 💭" }
+      "id": "tof_001",
+      "title": "The Broken Vase",
+      "setting": "home",
+      "characters": [
+        "parent"
       ],
-      realWorldTip: 'The next time you make a mistake, tell a parent right away. Notice how they respond.',
-      reflectionPrompt: 'Why do we sometimes feel scared to tell the truth?'
+      "ageRange": [
+        3,
+        8
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "home",
+        "mistake",
+        "family"
+      ],
+      "situation": "You accidentally knocked over mum's favourite vase and it cracked. She comes in and asks what happened.",
+      "choices": [
+        {
+          "text": "Tell the truth: I knocked it over by accident",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Accidents happen! Telling the truth immediately — that's courage. Mum's proud of you for that. 🌟"
+        },
+        {
+          "text": "Say you don't know what happened",
+          "outcome": "evasive",
+          "xp": 8,
+          "response": "That's not quite a lie, but not the truth either. It still leaves Mum confused. 💭"
+        },
+        {
+          "text": "Blame the cat 🐱",
+          "outcome": "lie",
+          "xp": 3,
+          "response": "Poor cat! They can't defend themselves. Lies often come out eventually — and then feel worse. 💭"
+        }
+      ],
+      "realWorldTip": "The next time you make a mistake, tell a parent right away. Notice how they respond.",
+      "reflectionPrompt": "Why do we sometimes feel scared to tell the truth?",
+      "statement": "Telling the truth about a mistake makes it easier to fix.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_002',
-      title: 'The Missing Homework',
-      setting: 'school',
-      characters: ['teacher'],
-      ageRange: [5, 9],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness'],
-      culture: ['global'],
-      tags: ['school', 'homework', 'teacher'],
-      situation: "You forgot to do your homework. Your teacher is collecting it. You could say you forgot it at home.",
-      choices: [
-        { text: 'Tell the teacher I forgot to do it', outcome: 'honest', xp: 30,
-          response: "Straight up honest! The teacher might be strict, but they respect truthful students. 🌟" },
-        { text: 'Say I left it at home', outcome: 'lie', xp: 5,
-          response: "A small lie, but it delays the truth. What happens tomorrow when you still don\'t have it? 💭" },
-        { text: 'Say I was sick and couldn\'t finish', outcome: 'lie', xp: 3,
-          response: "Now there are two things to hide. Lies stack up fast. 💭" }
+      "id": "tof_002",
+      "title": "The Missing Homework",
+      "setting": "school",
+      "characters": [
+        "teacher"
       ],
-      realWorldTip: 'Tell a parent about a time you were honest with a teacher, even when it was hard.',
-      reflectionPrompt: 'Is it ever okay to lie to avoid getting in trouble?'
+      "ageRange": [
+        5,
+        9
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "school",
+        "homework",
+        "teacher"
+      ],
+      "situation": "You forgot to do your homework. Your teacher is collecting it. You could say you forgot it at home.",
+      "choices": [
+        {
+          "text": "Tell the teacher I forgot to do it",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Straight up honest! The teacher might be strict, but they respect truthful students. 🌟"
+        },
+        {
+          "text": "Say I left it at home",
+          "outcome": "lie",
+          "xp": 5,
+          "response": "A small lie, but it delays the truth. What happens tomorrow when you still don't have it? 💭"
+        },
+        {
+          "text": "Say I was sick and couldn't finish",
+          "outcome": "lie",
+          "xp": 3,
+          "response": "Now there are two things to hide. Lies stack up fast. 💭"
+        }
+      ],
+      "realWorldTip": "Tell a parent about a time you were honest with a teacher, even when it was hard.",
+      "reflectionPrompt": "Is it ever okay to lie to avoid getting in trouble?",
+      "statement": "A small lie is harmless and doesn't cause any problems.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_003',
-      title: 'The Compliment Lie',
-      setting: 'home',
-      characters: ['relative'],
-      ageRange: [6, 11],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['empathy', 'fairness'],
-      culture: ['global'],
-      tags: ['family', 'social lies', 'feelings'],
-      situation: "Your aunt made a dish especially for you. It tastes awful. She asks with excitement: \'Do you like it?\'",
-      choices: [
-        { text: 'Say \'It\'s delicious!\' — don\'t hurt her feelings', outcome: 'white lie', xp: 15,
-          response: "A kind lie. But she might make it again! Is there a kinder truth? 💭" },
-        { text: 'Say \'Thank you so much for making this for me\'', outcome: 'redirect', xp: 25,
-          response: "Truthful — you ARE grateful — and kind. You didn\'t lie AND didn\'t hurt feelings. Wise! 🌟" },
-        { text: 'Say \'It\'s not really my favourite but thank you\'', outcome: 'honest kindly', xp: 30,
-          response: "Gentle honesty — the hardest kind. She might appreciate knowing for next time! 🌟" }
+      "id": "tof_003",
+      "title": "The Compliment Lie",
+      "setting": "home",
+      "characters": [
+        "relative"
       ],
-      realWorldTip: 'Practice saying something true AND kind at the same time today.',
-      reflectionPrompt: 'Is it ever okay to lie to protect someone\'s feelings?'
+      "ageRange": [
+        6,
+        11
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "empathy",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "family",
+        "social lies",
+        "feelings"
+      ],
+      "situation": "Your aunt made a dish especially for you. It tastes awful. She asks with excitement: 'Do you like it?'",
+      "choices": [
+        {
+          "text": "Say 'It's delicious!' — don't hurt her feelings",
+          "outcome": "white lie",
+          "xp": 15,
+          "response": "A kind lie. But she might make it again! Is there a kinder truth? 💭"
+        },
+        {
+          "text": "Say 'Thank you so much for making this for me'",
+          "outcome": "redirect",
+          "xp": 25,
+          "response": "Truthful — you ARE grateful — and kind. You didn't lie AND didn't hurt feelings. Wise! 🌟"
+        },
+        {
+          "text": "Say 'It's not really my favourite but thank you'",
+          "outcome": "honest kindly",
+          "xp": 30,
+          "response": "Gentle honesty — the hardest kind. She might appreciate knowing for next time! 🌟"
+        }
+      ],
+      "realWorldTip": "Practice saying something true AND kind at the same time today.",
+      "reflectionPrompt": "Is it ever okay to lie to protect someone's feelings?",
+      "statement": "Being honest about a bad grade helps you get real support to improve.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_004',
-      title: 'The Race Fall',
-      setting: 'sports',
-      characters: ['coach', 'teammates'],
-      ageRange: [7, 12],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['sports', 'competition', 'fairness'],
-      situation: "During a running race, you tripped and took a shortcut by accident. You crossed the finish line first, but only because of the shortcut. The coach didn\'t see.",
-      choices: [
-        { text: 'Accept the win — nobody saw', outcome: 'dishonest', xp: 5,
-          response: "Nobody saw... but YOU know. Can you fully enjoy a win that isn\'t quite real? 💭" },
-        { text: 'Tell the coach what happened', outcome: 'honest', xp: 30,
-          response: "Telling the truth when you could have gotten away with a win — that\'s real championship character. 🏆🌟" },
-        { text: 'Say nothing but don\'t celebrate', outcome: 'guilty', xp: 15,
-          response: "Staying quiet but not celebrating — you feel the discomfort. That feeling is your conscience talking. 💭" }
+      "id": "tof_004",
+      "title": "The Race Fall",
+      "setting": "sports",
+      "characters": [
+        "coach",
+        "teammates"
       ],
-      realWorldTip: 'Think of a time you did something honest even when no one was watching.',
-      reflectionPrompt: 'Does winning matter if you didn\'t win fairly?'
+      "ageRange": [
+        7,
+        12
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "sports",
+        "competition",
+        "fairness"
+      ],
+      "situation": "During a running race, you tripped and took a shortcut by accident. You crossed the finish line first, but only because of the shortcut. The coach didn't see.",
+      "choices": [
+        {
+          "text": "Accept the win — nobody saw",
+          "outcome": "dishonest",
+          "xp": 5,
+          "response": "Nobody saw... but YOU know. Can you fully enjoy a win that isn't quite real? 💭"
+        },
+        {
+          "text": "Tell the coach what happened",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Telling the truth when you could have gotten away with a win — that's real championship character. 🏆🌟"
+        },
+        {
+          "text": "Say nothing but don't celebrate",
+          "outcome": "guilty",
+          "xp": 15,
+          "response": "Staying quiet but not celebrating — you feel the discomfort. That feeling is your conscience talking. 💭"
+        }
+      ],
+      "realWorldTip": "Think of a time you did something honest even when no one was watching.",
+      "reflectionPrompt": "Does winning matter if you didn't win fairly?",
+      "statement": "Pretending you finished homework when you haven't will always work out fine.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_005',
-      title: 'The Biryani That Wasn\'t Yours',
-      setting: 'home',
-      characters: ['sibling', 'parent'],
-      ageRange: [5, 10],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness'],
-      culture: ['IN'],
-      tags: ['food', 'family', 'sibling', 'blame'],
-      situation: "Your sibling ate the last of the biryani that was saved for Dad. They ask you who ate it. Your sibling is looking at you nervously.",
-      choices: [
-        { text: 'Tell the truth — my sibling ate it', outcome: 'honest', xp: 25,
-          response: "Honest. Your sibling has to face it, but at least Dad knows the truth. 🌟" },
-        { text: 'Cover for your sibling — say you don\'t know', outcome: 'loyal lie', xp: 10,
-          response: "Protecting them is kind. But Dad is left confused and someone got away with it. 💭" },
-        { text: 'Tell your sibling to come clean themselves', outcome: 'wise', xp: 30,
-          response: "You gave them the chance to be honest. That\'s more powerful than ratting them out. 💡" }
+      "id": "tof_005",
+      "title": "The Biryani That Wasn't Yours",
+      "setting": "home",
+      "characters": [
+        "sibling",
+        "parent"
       ],
-      realWorldTip: 'If you see someone do something wrong, try helping them make it right instead of covering for them.',
-      reflectionPrompt: 'Is protecting a friend or sibling from getting in trouble the same as lying?'
+      "ageRange": [
+        5,
+        10
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness"
+      ],
+      "culture": [
+        "IN"
+      ],
+      "tags": [
+        "food",
+        "family",
+        "sibling",
+        "blame"
+      ],
+      "situation": "Your sibling ate the last of the biryani that was saved for Dad. They ask you who ate it. Your sibling is looking at you nervously.",
+      "choices": [
+        {
+          "text": "Tell the truth — my sibling ate it",
+          "outcome": "honest",
+          "xp": 25,
+          "response": "Honest. Your sibling has to face it, but at least Dad knows the truth. 🌟"
+        },
+        {
+          "text": "Cover for your sibling — say you don't know",
+          "outcome": "loyal lie",
+          "xp": 10,
+          "response": "Protecting them is kind. But Dad is left confused and someone got away with it. 💭"
+        },
+        {
+          "text": "Tell your sibling to come clean themselves",
+          "outcome": "wise",
+          "xp": 30,
+          "response": "You gave them the chance to be honest. That's more powerful than ratting them out. 💡"
+        }
+      ],
+      "realWorldTip": "If you see someone do something wrong, try helping them make it right instead of covering for them.",
+      "reflectionPrompt": "Is protecting a friend or sibling from getting in trouble the same as lying?",
+      "statement": "When you own up to something wrong, people usually respect you more.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_006',
-      title: 'The Online Age Limit',
-      setting: 'online',
-      characters: ['website', 'parent'],
-      ageRange: [9, 12],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['reasoning', 'fairness'],
-      culture: ['global'],
-      tags: ['internet', 'age limit', 'rules'],
-      situation: "You want to sign up for a gaming platform but it requires users to be 13. You\'re 10. You could easily type in a fake birth year.",
-      choices: [
-        { text: 'Type a fake age — everyone does it', outcome: 'dishonest', xp: 5,
-          response: "Age limits exist for safety reasons. What might the platform contain that they\'re protecting you from? 💭" },
-        { text: 'Ask a parent to help find an age-appropriate alternative', outcome: 'responsible', xp: 30,
-          response: "Rules + asking for help = the smart play. Your parent can find something even better! 🌟" },
-        { text: 'Skip it — follow the rule', outcome: 'honest', xp: 25,
-          response: "Respecting rules even when nobody\'s checking — that\'s integrity. 💪" }
+      "id": "tof_006",
+      "title": "The Online Age Limit",
+      "setting": "online",
+      "characters": [
+        "website",
+        "parent"
       ],
-      realWorldTip: 'Ask a parent to help you find apps or games that are right for your age.',
-      reflectionPrompt: 'Why do apps and websites have age limits?'
+      "ageRange": [
+        9,
+        12
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "reasoning",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "internet",
+        "age limit",
+        "rules"
+      ],
+      "situation": "You want to sign up for a gaming platform but it requires users to be 13. You're 10. You could easily type in a fake birth year.",
+      "choices": [
+        {
+          "text": "Type a fake age — everyone does it",
+          "outcome": "dishonest",
+          "xp": 5,
+          "response": "Age limits exist for safety reasons. What might the platform contain that they're protecting you from? 💭"
+        },
+        {
+          "text": "Ask a parent to help find an age-appropriate alternative",
+          "outcome": "responsible",
+          "xp": 30,
+          "response": "Rules + asking for help = the smart play. Your parent can find something even better! 🌟"
+        },
+        {
+          "text": "Skip it — follow the rule",
+          "outcome": "honest",
+          "xp": 25,
+          "response": "Respecting rules even when nobody's checking — that's integrity. 💪"
+        }
+      ],
+      "realWorldTip": "Ask a parent to help you find apps or games that are right for your age.",
+      "reflectionPrompt": "Why do apps and websites have age limits?",
+      "statement": "Admitting you copied one answer is braver than pretending you didn't.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_007',
-      title: 'The Science Fair Credit',
-      setting: 'school',
-      characters: ['parent who helped too much', 'teacher'],
-      ageRange: [8, 12],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['school', 'honesty', 'parent help', 'grey zone'],
-      situation: "Your parent helped you so much with your science project that it\'s mostly their work. The teacher is very impressed and asks: \'Did you do all of this yourself?\'",
-      choices: [
-        { text: 'Say \'Yes, I did it myself!\'', outcome: 'dishonest', xp: 5,
-          response: "Tough spot — your parent meant well! But the teacher is grading YOUR learning. 💭" },
-        { text: 'Say \'My parent helped me a lot with this one\'', outcome: 'honest', xp: 30,
-          response: "That took courage! The teacher now knows the truth AND sees your honesty. 🌟" },
-        { text: 'Say \'I had some help\' without explaining more', outcome: 'partial', xp: 20,
-          response: "Partial truth. Better than a full lie — but leaves things unclear. 💭" }
+      "id": "tof_007",
+      "title": "The Science Fair Credit",
+      "setting": "school",
+      "characters": [
+        "parent who helped too much",
+        "teacher"
       ],
-      realWorldTip: 'Talk to a parent about the right amount of help for homework.',
-      reflectionPrompt: 'When does getting help become someone else doing it for you?'
+      "ageRange": [
+        8,
+        12
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "school",
+        "honesty",
+        "parent help",
+        "grey zone"
+      ],
+      "situation": "Your parent helped you so much with your science project that it's mostly their work. The teacher is very impressed and asks: 'Did you do all of this yourself?'",
+      "choices": [
+        {
+          "text": "Say 'Yes, I did it myself!'",
+          "outcome": "dishonest",
+          "xp": 5,
+          "response": "Tough spot — your parent meant well! But the teacher is grading YOUR learning. 💭"
+        },
+        {
+          "text": "Say 'My parent helped me a lot with this one'",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "That took courage! The teacher now knows the truth AND sees your honesty. 🌟"
+        },
+        {
+          "text": "Say 'I had some help' without explaining more",
+          "outcome": "partial",
+          "xp": 20,
+          "response": "Partial truth. Better than a full lie — but leaves things unclear. 💭"
+        }
+      ],
+      "realWorldTip": "Talk to a parent about the right amount of help for homework.",
+      "reflectionPrompt": "When does getting help become someone else doing it for you?",
+      "statement": "There is almost always a truthful way to be kind — you rarely have to choose.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_008',
-      title: 'The Broken Promise',
-      setting: 'school',
-      characters: ['best friend'],
-      ageRange: [6, 11],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'empathy'],
-      culture: ['global'],
-      tags: ['promise', 'friendship', 'trust'],
-      situation: "You promised your friend you\'d come to their birthday party. Something better came up and now you don\'t want to go. They ask why you\'re not coming.",
-      choices: [
-        { text: 'Tell the truth: something else came up', outcome: 'honest', xp: 20,
-          response: "Honest, but it hurts them. A promise is a big deal. Could you still show up briefly? 💭" },
-        { text: 'Make up an excuse — say you\'re sick', outcome: 'lie', xp: 5,
-          response: "The lie protects you but breaks real trust. What if they find out? 💭" },
-        { text: 'Keep your promise and go — you said you would', outcome: 'committed', xp: 30,
-          response: "A promise kept when you didn\'t feel like it — that\'s what makes you someone people trust. 🌟" }
+      "id": "tof_008",
+      "title": "The Broken Promise",
+      "setting": "school",
+      "characters": [
+        "best friend"
       ],
-      realWorldTip: 'Only make promises you know you can keep. And when you make one — keep it.',
-      reflectionPrompt: 'How important is keeping your word?'
+      "ageRange": [
+        6,
+        11
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "empathy"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "promise",
+        "friendship",
+        "trust"
+      ],
+      "situation": "You promised your friend you'd come to their birthday party. Something better came up and now you don't want to go. They ask why you're not coming.",
+      "choices": [
+        {
+          "text": "Tell the truth: something else came up",
+          "outcome": "honest",
+          "xp": 20,
+          "response": "Honest, but it hurts them. A promise is a big deal. Could you still show up briefly? 💭"
+        },
+        {
+          "text": "Make up an excuse — say you're sick",
+          "outcome": "lie",
+          "xp": 5,
+          "response": "The lie protects you but breaks real trust. What if they find out? 💭"
+        },
+        {
+          "text": "Keep your promise and go — you said you would",
+          "outcome": "committed",
+          "xp": 30,
+          "response": "A promise kept when you didn't feel like it — that's what makes you someone people trust. 🌟"
+        }
+      ],
+      "realWorldTip": "Only make promises you know you can keep. And when you make one — keep it.",
+      "reflectionPrompt": "How important is keeping your word?",
+      "statement": "Letting someone else take blame for your mistake is acceptable if it avoids trouble.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_009',
-      title: 'The Lost Library Book',
-      setting: 'school',
-      characters: ['librarian'],
-      ageRange: [6, 10],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'responsibility'],
-      culture: ['global'],
-      tags: ['school', 'library', 'responsibility'],
-      situation: "You lost a library book and it\'s overdue. The librarian asks where it is.",
-      choices: [
-        { text: 'Say I lost it and offer to pay for it', outcome: 'honest', xp: 30,
-          response: "Honest AND taking responsibility. That\'s two great things at once. 🌟" },
-        { text: 'Say it\'s at home and I\'ll bring it tomorrow', outcome: 'lie', xp: 5,
-          response: "Buying time with a lie creates more problems. Tomorrow comes quickly! 💭" },
-        { text: 'Tell the truth but ask for help finding a solution', outcome: 'honest', xp: 25,
-          response: "Honest and asking for help — great combination. Adults love problem-solving with you. 🌟" }
+      "id": "tof_009",
+      "title": "The Lost Library Book",
+      "setting": "school",
+      "characters": [
+        "librarian"
       ],
-      realWorldTip: 'When you make a mistake, focus on the solution, not the cover-up.',
-      reflectionPrompt: 'What does it mean to take responsibility?'
+      "ageRange": [
+        6,
+        10
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "responsibility"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "school",
+        "library",
+        "responsibility"
+      ],
+      "situation": "You lost a library book and it's overdue. The librarian asks where it is.",
+      "choices": [
+        {
+          "text": "Say I lost it and offer to pay for it",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Honest AND taking responsibility. That's two great things at once. 🌟"
+        },
+        {
+          "text": "Say it's at home and I'll bring it tomorrow",
+          "outcome": "lie",
+          "xp": 5,
+          "response": "Buying time with a lie creates more problems. Tomorrow comes quickly! 💭"
+        },
+        {
+          "text": "Tell the truth but ask for help finding a solution",
+          "outcome": "honest",
+          "xp": 25,
+          "response": "Honest and asking for help — great combination. Adults love problem-solving with you. 🌟"
+        }
+      ],
+      "realWorldTip": "When you make a mistake, focus on the solution, not the cover-up.",
+      "reflectionPrompt": "What does it mean to take responsibility?",
+      "statement": "If nobody finds out about a mistake, it doesn't matter at all.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_010',
-      title: 'The Test Score',
-      setting: 'school',
-      characters: ['parent'],
-      ageRange: [7, 12],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['IN'],
-      tags: ['school', 'marks', 'parent', 'pressure'],
-      situation: "You got low marks on a test. Your parents have high expectations and will be disappointed. They ask how the test went.",
-      choices: [
-        { text: 'Tell them the truth about my marks', outcome: 'honest', xp: 30,
-          response: "Hard conversation ahead, but now your parents can actually help you improve. Brave. 🌟" },
-        { text: 'Say \'it was okay\' and hope they don\'t find out', outcome: 'evasive', xp: 8,
-          response: "Vague answers are temporary shields. The report card will tell all eventually. 💭" },
-        { text: 'Tell them and ask for help with studying', outcome: 'honest + wise', xp: 35,
-          response: "Truth PLUS a plan — that\'s the power move. You turned a bad mark into a growth moment. 🌟💡" }
+      "id": "tof_010",
+      "title": "The Test Score",
+      "setting": "school",
+      "characters": [
+        "parent"
       ],
-      realWorldTip: 'Talk to a parent about a subject you find difficult. Ask for help before the next test.',
-      reflectionPrompt: 'Is it harder to be honest with people whose opinion matters most to you?'
+      "ageRange": [
+        7,
+        12
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "IN"
+      ],
+      "tags": [
+        "school",
+        "marks",
+        "parent",
+        "pressure"
+      ],
+      "situation": "You got low marks on a test. Your parents have high expectations and will be disappointed. They ask how the test went.",
+      "choices": [
+        {
+          "text": "Tell them the truth about my marks",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Hard conversation ahead, but now your parents can actually help you improve. Brave. 🌟"
+        },
+        {
+          "text": "Say 'it was okay' and hope they don't find out",
+          "outcome": "evasive",
+          "xp": 8,
+          "response": "Vague answers are temporary shields. The report card will tell all eventually. 💭"
+        },
+        {
+          "text": "Tell them and ask for help with studying",
+          "outcome": "honest + wise",
+          "xp": 35,
+          "response": "Truth PLUS a plan — that's the power move. You turned a bad mark into a growth moment. 🌟💡"
+        }
+      ],
+      "realWorldTip": "Talk to a parent about a subject you find difficult. Ask for help before the next test.",
+      "reflectionPrompt": "Is it harder to be honest with people whose opinion matters most to you?",
+      "statement": "Honesty about screen time helps families agree on fair rules.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_011',
-      title: 'The Overheard Secret',
-      setting: 'school',
-      characters: ['friend', 'another classmate'],
-      ageRange: [8, 12],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['empathy', 'fairness'],
-      culture: ['global'],
-      tags: ['gossip', 'secret', 'friendship', 'grey zone'],
-      situation: "You overheard your friend saying something unkind about another classmate. The classmate asks you if your friend said anything about them.",
-      choices: [
-        { text: 'Tell them what you heard', outcome: 'honest', xp: 20,
-          response: "Honest, but it might cause a fight. Is there a way to fix this without hurting both sides? 💭" },
-        { text: 'Say \'I\'m not sure, let me talk to them first\'', outcome: 'wise', xp: 30,
-          response: "Giving your friend a chance to make it right first — that\'s conflict-smart thinking. 🌟" },
-        { text: 'Say you didn\'t hear anything', outcome: 'lie', xp: 5,
-          response: "A lie to protect feelings. But the unkind words are still out there. 💭" }
+      "id": "tof_011",
+      "title": "The Overheard Secret",
+      "setting": "school",
+      "characters": [
+        "friend",
+        "another classmate"
       ],
-      realWorldTip: 'If you hear something unkind about a friend, tell them privately before it spreads.',
-      reflectionPrompt: 'Should you always tell people what others say about them?'
+      "ageRange": [
+        8,
+        12
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "empathy",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "gossip",
+        "secret",
+        "friendship",
+        "grey zone"
+      ],
+      "situation": "You overheard your friend saying something unkind about another classmate. The classmate asks you if your friend said anything about them.",
+      "choices": [
+        {
+          "text": "Tell them what you heard",
+          "outcome": "honest",
+          "xp": 20,
+          "response": "Honest, but it might cause a fight. Is there a way to fix this without hurting both sides? 💭"
+        },
+        {
+          "text": "Say 'I'm not sure, let me talk to them first'",
+          "outcome": "wise",
+          "xp": 30,
+          "response": "Giving your friend a chance to make it right first — that's conflict-smart thinking. 🌟"
+        },
+        {
+          "text": "Say you didn't hear anything",
+          "outcome": "lie",
+          "xp": 5,
+          "response": "A lie to protect feelings. But the unkind words are still out there. 💭"
+        }
+      ],
+      "realWorldTip": "If you hear something unkind about a friend, tell them privately before it spreads.",
+      "reflectionPrompt": "Should you always tell people what others say about them?",
+      "statement": "A well-intentioned lie is always better than a difficult honest conversation.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_012',
-      title: 'The Compliment That Wasn\'t True',
-      setting: 'school',
-      characters: ['classmate who worked hard'],
-      ageRange: [7, 11],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['empathy', 'fairness'],
-      culture: ['global'],
-      tags: ['compliment', 'friendship', 'social'],
-      situation: "Your classmate shows you a drawing they worked very hard on. Honestly, you don\'t think it\'s very good. They ask: \'Is it good?\'",
-      choices: [
-        { text: 'Say \'It\'s amazing!\' to be nice', outcome: 'white lie', xp: 10,
-          response: "Kind but not honest. They might enter it in a competition and be embarrassed later. 💭" },
-        { text: 'Say \'I can see you worked really hard on it!\'', outcome: 'kind truth', xp: 30,
-          response: "True AND kind. You noticed their effort — that\'s what matters most! 🌟" },
-        { text: 'Tell them exactly what you think', outcome: 'blunt', xp: 15,
-          response: "Honest, but without kindness it can sting. Is there a gentler way to say it? 💭" }
+      "id": "tof_012",
+      "title": "The Compliment That Wasn't True",
+      "setting": "school",
+      "characters": [
+        "classmate who worked hard"
       ],
-      realWorldTip: 'Practice saying something true AND encouraging to someone today.',
-      reflectionPrompt: 'What\'s the difference between being honest and being kind?'
+      "ageRange": [
+        7,
+        11
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "empathy",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "compliment",
+        "friendship",
+        "social"
+      ],
+      "situation": "Your classmate shows you a drawing they worked very hard on. Honestly, you don't think it's very good. They ask: 'Is it good?'",
+      "choices": [
+        {
+          "text": "Say 'It's amazing!' to be nice",
+          "outcome": "white lie",
+          "xp": 10,
+          "response": "Kind but not honest. They might enter it in a competition and be embarrassed later. 💭"
+        },
+        {
+          "text": "Say 'I can see you worked really hard on it!'",
+          "outcome": "kind truth",
+          "xp": 30,
+          "response": "True AND kind. You noticed their effort — that's what matters most! 🌟"
+        },
+        {
+          "text": "Tell them exactly what you think",
+          "outcome": "blunt",
+          "xp": 15,
+          "response": "Honest, but without kindness it can sting. Is there a gentler way to say it? 💭"
+        }
+      ],
+      "realWorldTip": "Practice saying something true AND encouraging to someone today.",
+      "reflectionPrompt": "What's the difference between being honest and being kind?",
+      "statement": "If you broke a rule and no one found out, keeping quiet forever is the best plan.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_013',
-      title: 'The Stolen Pencil',
-      setting: 'school',
-      characters: ['teacher', 'classmate whose pencil was taken'],
-      ageRange: [5, 9],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness'],
-      culture: ['global'],
-      tags: ['school', 'stealing', 'property'],
-      situation: "You accidentally took a classmate\'s pencil home and only realised later. They\'re looking for it. You could secretly put it back or admit what happened.",
-      choices: [
-        { text: 'Give it back and explain what happened 🖊️', outcome: 'honest', xp: 30,
-          response: "Returning it AND explaining takes courage. Your classmate will trust you more, not less. 🌟" },
-        { text: 'Secretly put it on their desk', outcome: 'quiet fix', xp: 20,
-          response: "The problem is solved! But you don\'t get to feel the relief of honesty. Still kind though. 🤝" },
-        { text: 'Keep it — they probably won\'t notice', outcome: 'dishonest', xp: 3,
-          response: "They WILL notice. And then you\'ll have to explain anyway, but with a bigger problem. 💭" }
+      "id": "tof_013",
+      "title": "The Stolen Pencil",
+      "setting": "school",
+      "characters": [
+        "teacher",
+        "classmate whose pencil was taken"
       ],
-      realWorldTip: 'Return or report anything that isn\'t yours — even small things.',
-      reflectionPrompt: 'Why is keeping something that isn\'t yours wrong even if it was an accident?'
+      "ageRange": [
+        5,
+        9
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "school",
+        "stealing",
+        "property"
+      ],
+      "situation": "You accidentally took a classmate's pencil home and only realised later. They're looking for it. You could secretly put it back or admit what happened.",
+      "choices": [
+        {
+          "text": "Give it back and explain what happened 🖊️",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Returning it AND explaining takes courage. Your classmate will trust you more, not less. 🌟"
+        },
+        {
+          "text": "Secretly put it on their desk",
+          "outcome": "quiet fix",
+          "xp": 20,
+          "response": "The problem is solved! But you don't get to feel the relief of honesty. Still kind though. 🤝"
+        },
+        {
+          "text": "Keep it — they probably won't notice",
+          "outcome": "dishonest",
+          "xp": 3,
+          "response": "They WILL notice. And then you'll have to explain anyway, but with a bigger problem. 💭"
+        }
+      ],
+      "realWorldTip": "Return or report anything that isn't yours — even small things.",
+      "reflectionPrompt": "Why is keeping something that isn't yours wrong even if it was an accident?",
+      "statement": "Saying sorry and telling the truth helps rebuild trust.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_014',
-      title: 'The Social Media Post',
-      setting: 'online',
-      characters: ['classmate', 'parent'],
-      ageRange: [10, 12],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['reasoning', 'fairness'],
-      culture: ['global'],
-      tags: ['social media', 'online', 'reputation', 'grey zone'],
-      situation: "A classmate posts something online that is half true and half exaggerated, making another classmate look bad. People are believing it. Do you correct it publicly?",
-      choices: [
-        { text: 'Comment publicly: that\'s not entirely true', outcome: 'honest', xp: 25,
-          response: "Brave! Standing up for truth online when everyone else is silent — that\'s digital courage. 🌟" },
-        { text: 'Tell the classmate being talked about privately', outcome: 'wise', xp: 30,
-          response: "They deserve to know! And you kept things from escalating publicly. Smart. 💡" },
-        { text: 'Tell an adult — it could be cyberbullying', outcome: 'responsible', xp: 25,
-          response: "Getting a grown-up involved when online stuff feels wrong — always the right call. ✅" }
+      "id": "tof_014",
+      "title": "The Social Media Post",
+      "setting": "online",
+      "characters": [
+        "classmate",
+        "parent"
       ],
-      realWorldTip: 'Before sharing or believing something online, ask: is this really true? Ask a parent.',
-      reflectionPrompt: 'Who is responsible when something false spreads online?'
+      "ageRange": [
+        10,
+        12
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "reasoning",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "social media",
+        "online",
+        "reputation",
+        "grey zone"
+      ],
+      "situation": "A classmate posts something online that is half true and half exaggerated, making another classmate look bad. People are believing it. Do you correct it publicly?",
+      "choices": [
+        {
+          "text": "Comment publicly: that's not entirely true",
+          "outcome": "honest",
+          "xp": 25,
+          "response": "Brave! Standing up for truth online when everyone else is silent — that's digital courage. 🌟"
+        },
+        {
+          "text": "Tell the classmate being talked about privately",
+          "outcome": "wise",
+          "xp": 30,
+          "response": "They deserve to know! And you kept things from escalating publicly. Smart. 💡"
+        },
+        {
+          "text": "Tell an adult — it could be cyberbullying",
+          "outcome": "responsible",
+          "xp": 25,
+          "response": "Getting a grown-up involved when online stuff feels wrong — always the right call. ✅"
+        }
+      ],
+      "realWorldTip": "Before sharing or believing something online, ask: is this really true? Ask a parent.",
+      "reflectionPrompt": "Who is responsible when something false spreads online?",
+      "statement": "Correcting someone's wrong impression is honest, even if they didn't ask.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_015',
-      title: 'The Accidental Lie That Grew',
-      setting: 'school',
-      characters: ['teacher', 'classmates'],
-      ageRange: [7, 11],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['reasoning', 'fairness'],
-      culture: ['global'],
-      tags: ['lie that grew', 'school', 'snowball'],
-      situation: "You told one small lie about missing a school event. Now the story has grown and your teacher is planning a special get-well card for your fake illness.",
-      choices: [
-        { text: 'Come clean now — before it gets worse', outcome: 'honest', xp: 30,
-          response: "Stopping the snowball before it becomes an avalanche — brave and right. 🌟" },
-        { text: 'Go along with it — it\'s too far to turn back', outcome: 'deeper lie', xp: 3,
-          response: "Lies that grow usually collapse eventually. The longer this goes, the harder the fall. 💭" },
-        { text: 'Quietly fix it without making a big deal', outcome: 'partial', xp: 20,
-          response: "Trying to fix it quietly — still better than letting it grow. 🤝" }
+      "id": "tof_015",
+      "title": "The Accidental Lie That Grew",
+      "setting": "school",
+      "characters": [
+        "teacher",
+        "classmates"
       ],
-      realWorldTip: 'If you\'ve told a lie that\'s grown, tell a parent today. They can help you fix it.',
-      reflectionPrompt: 'Why do small lies sometimes turn into big problems?'
+      "ageRange": [
+        7,
+        11
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "reasoning",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "lie that grew",
+        "school",
+        "snowball"
+      ],
+      "situation": "You told one small lie about missing a school event. Now the story has grown and your teacher is planning a special get-well card for your fake illness.",
+      "choices": [
+        {
+          "text": "Come clean now — before it gets worse",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Stopping the snowball before it becomes an avalanche — brave and right. 🌟"
+        },
+        {
+          "text": "Go along with it — it's too far to turn back",
+          "outcome": "deeper lie",
+          "xp": 3,
+          "response": "Lies that grow usually collapse eventually. The longer this goes, the harder the fall. 💭"
+        },
+        {
+          "text": "Quietly fix it without making a big deal",
+          "outcome": "partial",
+          "xp": 20,
+          "response": "Trying to fix it quietly — still better than letting it grow. 🤝"
+        }
+      ],
+      "realWorldTip": "If you've told a lie that's grown, tell a parent today. They can help you fix it.",
+      "reflectionPrompt": "Why do small lies sometimes turn into big problems?",
+      "statement": "Letting a friend copy your work is truly helping them learn.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_016',
-      title: 'The Puja Room Mishap',
-      setting: 'home',
-      characters: ['grandparent'],
-      ageRange: [5, 10],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'respect'],
-      culture: ['IN'],
-      tags: ['home', 'grandparent', 'puja', 'accident'],
-      situation: "You were playing near the puja room and accidentally knocked over an oil lamp (diya). Nothing caught fire, but the carpet is stained. Your grandparent asks what happened.",
-      choices: [
-        { text: 'Tell them exactly what happened 🪔', outcome: 'honest', xp: 30,
-          response: "Accidents happen — honesty makes them easier to fix. Your grandparent will appreciate the truth. 🌟" },
-        { text: 'Say you don\'t know how the lamp fell', outcome: 'evasive', xp: 8,
-          response: "You were right there — they probably know. Telling the truth would have been easier. 💭" },
-        { text: 'Try to clean it up before anyone sees', outcome: 'hiding', xp: 10,
-          response: "Fixing the problem is good! But telling them what happened matters too. 💭" }
+      "id": "tof_016",
+      "title": "The Puja Room Mishap",
+      "setting": "home",
+      "characters": [
+        "grandparent"
       ],
-      realWorldTip: 'Tell a grandparent or elder about a mistake you made and how you handled it.',
-      reflectionPrompt: 'Does it matter more WHO you tell the truth to?'
+      "ageRange": [
+        5,
+        10
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "respect"
+      ],
+      "culture": [
+        "IN"
+      ],
+      "tags": [
+        "home",
+        "grandparent",
+        "puja",
+        "accident"
+      ],
+      "situation": "You were playing near the puja room and accidentally knocked over an oil lamp (diya). Nothing caught fire, but the carpet is stained. Your grandparent asks what happened.",
+      "choices": [
+        {
+          "text": "Tell them exactly what happened 🪔",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Accidents happen — honesty makes them easier to fix. Your grandparent will appreciate the truth. 🌟"
+        },
+        {
+          "text": "Say you don't know how the lamp fell",
+          "outcome": "evasive",
+          "xp": 8,
+          "response": "You were right there — they probably know. Telling the truth would have been easier. 💭"
+        },
+        {
+          "text": "Try to clean it up before anyone sees",
+          "outcome": "hiding",
+          "xp": 10,
+          "response": "Fixing the problem is good! But telling them what happened matters too. 💭"
+        }
+      ],
+      "realWorldTip": "Tell a grandparent or elder about a mistake you made and how you handled it.",
+      "reflectionPrompt": "Does it matter more WHO you tell the truth to?",
+      "statement": "Lying once usually makes everything easier in the end.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_017',
-      title: 'The Extra Screen Time',
-      setting: 'home',
-      characters: ['parent'],
-      ageRange: [6, 11],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['self-regulation', 'fairness'],
-      culture: ['global'],
-      tags: ['screen time', 'rules', 'parent', 'trust'],
-      situation: "You played on your tablet for an extra 30 minutes after your screen time ended, while your parents were busy. They ask: \'Did you follow the screen time rule today?\'",
-      choices: [
-        { text: 'Say yes — they\'ll never check', outcome: 'lie', xp: 5,
-          response: "The app history tells all. And breaking trust is much worse than extra screen time. 💭" },
-        { text: 'Admit you went over and apologise', outcome: 'honest', xp: 30,
-          response: "Owning up without being caught — that\'s real trustworthiness. Your parents will remember this. 🌟" },
-        { text: 'Say \'mostly\' and change the subject', outcome: 'evasive', xp: 10,
-          response: "\'Mostly\' is a soft lie. They sense something\'s off. 💭" }
+      "id": "tof_017",
+      "title": "The Extra Screen Time",
+      "setting": "home",
+      "characters": [
+        "parent"
       ],
-      realWorldTip: 'Set a timer for your screen time this week and tell a parent when you\'ve used it all.',
-      reflectionPrompt: 'Why does breaking small rules matter even when no one sees?'
+      "ageRange": [
+        6,
+        11
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "self-regulation",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "screen time",
+        "rules",
+        "parent",
+        "trust"
+      ],
+      "situation": "You played on your tablet for an extra 30 minutes after your screen time ended, while your parents were busy. They ask: 'Did you follow the screen time rule today?'",
+      "choices": [
+        {
+          "text": "Say yes — they'll never check",
+          "outcome": "lie",
+          "xp": 5,
+          "response": "The app history tells all. And breaking trust is much worse than extra screen time. 💭"
+        },
+        {
+          "text": "Admit you went over and apologise",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Owning up without being caught — that's real trustworthiness. Your parents will remember this. 🌟"
+        },
+        {
+          "text": "Say 'mostly' and change the subject",
+          "outcome": "evasive",
+          "xp": 10,
+          "response": "'Mostly' is a soft lie. They sense something's off. 💭"
+        }
+      ],
+      "realWorldTip": "Set a timer for your screen time this week and tell a parent when you've used it all.",
+      "reflectionPrompt": "Why does breaking small rules matter even when no one sees?",
+      "statement": "Talking to a teacher honestly when something goes wrong usually leads to help.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_018',
-      title: 'The Cricket Score',
-      setting: 'sports',
-      characters: ['opposing team captain'],
-      ageRange: [7, 12],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['IN'],
-      tags: ['cricket', 'sports', 'competition', 'cheating'],
-      situation: "Playing a street cricket match, you run between the wickets and you KNOW you were run out — but the fielding team didn\'t appeal in time and the umpire says \'not out\'.",
-      choices: [
-        { text: 'Walk — I know I was out', outcome: 'honest', xp: 35,
-          response: "Walking when you know you\'re out — the rarest and greatest sporting honour. Legends do this. 🏏🌟" },
-        { text: 'Stay — the umpire said not out, that\'s the rule', outcome: 'technical', xp: 15,
-          response: "Technically correct. But you know. Does it feel like a clean innings? 💭" },
-        { text: 'Argue about it openly to confuse everyone', outcome: 'dishonest', xp: 3,
-          response: "Deliberately confusing others to benefit yourself — that\'s not cricket, literally. 💭" }
+      "id": "tof_018",
+      "title": "The Cricket Score",
+      "setting": "sports",
+      "characters": [
+        "opposing team captain"
       ],
-      realWorldTip: 'In your next game, call yourself out even if no one else does.',
-      reflectionPrompt: 'Can you be honest in sports even when winning is at stake?'
+      "ageRange": [
+        7,
+        12
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "IN"
+      ],
+      "tags": [
+        "cricket",
+        "sports",
+        "competition",
+        "cheating"
+      ],
+      "situation": "Playing a street cricket match, you run between the wickets and you KNOW you were run out — but the fielding team didn't appeal in time and the umpire says 'not out'.",
+      "choices": [
+        {
+          "text": "Walk — I know I was out",
+          "outcome": "honest",
+          "xp": 35,
+          "response": "Walking when you know you're out — the rarest and greatest sporting honour. Legends do this. 🏏🌟"
+        },
+        {
+          "text": "Stay — the umpire said not out, that's the rule",
+          "outcome": "technical",
+          "xp": 15,
+          "response": "Technically correct. But you know. Does it feel like a clean innings? 💭"
+        },
+        {
+          "text": "Argue about it openly to confuse everyone",
+          "outcome": "dishonest",
+          "xp": 3,
+          "response": "Deliberately confusing others to benefit yourself — that's not cricket, literally. 💭"
+        }
+      ],
+      "realWorldTip": "In your next game, call yourself out even if no one else does.",
+      "reflectionPrompt": "Can you be honest in sports even when winning is at stake?",
+      "statement": "Using an answer you accidentally saw in a test is still cheating.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_019',
-      title: 'The Copied Drawing',
-      setting: 'school',
-      characters: ['teacher', 'original artist'],
-      ageRange: [7, 11],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['art', 'copying', 'school', 'credit'],
-      situation: "You copied a drawing from online for an art competition. It looks amazing. The teacher is about to announce you as the winner.",
-      choices: [
-        { text: 'Accept the prize — no one knows', outcome: 'dishonest', xp: 3,
-          response: "You\'d know. And online images often get traced back. The prize would feel hollow. 💭" },
-        { text: 'Tell the teacher before they announce it', outcome: 'honest', xp: 35,
-          response: "Stopping an undeserved prize — the bravest thing. The teacher will NEVER forget this honesty. 🌟" },
-        { text: 'Accept it but decide never to copy again', outcome: 'partial', xp: 10,
-          response: "A quiet decision to do better — good start. But what about this time? 💭" }
+      "id": "tof_019",
+      "title": "The Copied Drawing",
+      "setting": "school",
+      "characters": [
+        "teacher",
+        "original artist"
       ],
-      realWorldTip: 'When you use someone else\'s idea or work, always say where it came from.',
-      reflectionPrompt: 'What\'s the difference between being inspired by something and copying it?'
+      "ageRange": [
+        7,
+        11
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "art",
+        "copying",
+        "school",
+        "credit"
+      ],
+      "situation": "You copied a drawing from online for an art competition. It looks amazing. The teacher is about to announce you as the winner.",
+      "choices": [
+        {
+          "text": "Accept the prize — no one knows",
+          "outcome": "dishonest",
+          "xp": 3,
+          "response": "You'd know. And online images often get traced back. The prize would feel hollow. 💭"
+        },
+        {
+          "text": "Tell the teacher before they announce it",
+          "outcome": "honest",
+          "xp": 35,
+          "response": "Stopping an undeserved prize — the bravest thing. The teacher will NEVER forget this honesty. 🌟"
+        },
+        {
+          "text": "Accept it but decide never to copy again",
+          "outcome": "partial",
+          "xp": 10,
+          "response": "A quiet decision to do better — good start. But what about this time? 💭"
+        }
+      ],
+      "realWorldTip": "When you use someone else's idea or work, always say where it came from.",
+      "reflectionPrompt": "What's the difference between being inspired by something and copying it?",
+      "statement": "Backing up a friend's lie is harmless if their intentions were good.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_020',
-      title: 'The Allergy Announcement',
-      setting: 'school',
-      characters: ['new friend'],
-      ageRange: [6, 10],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['health', 'honesty', 'food allergy'],
-      situation: "You have a food allergy but you\'re embarrassed about it. At a birthday party, someone offers you food that you\'re allergic to. You don\'t want to seem different.",
-      choices: [
-        { text: 'Eat it anyway — it\'s just this once', outcome: 'dangerous', xp: 0,
-          response: "Oh no — allergies can be very serious! Please always tell someone. Your health is more important than anything. 🚨" },
-        { text: 'Say \'No thank you\' without explaining', outcome: 'safe but private', xp: 15,
-          response: "Safe! But sharing your allergy with a friend actually helps them look out for you. 💭" },
-        { text: 'Tell them honestly about the allergy', outcome: 'honest + safe', xp: 30,
-          response: "Honest AND safe. Good friends want to know so they can care for you. 🌟" }
+      "id": "tof_020",
+      "title": "The Allergy Announcement",
+      "setting": "school",
+      "characters": [
+        "new friend"
       ],
-      realWorldTip: 'If you have any allergy or health condition, always tell a trusted adult and friend.',
-      reflectionPrompt: 'Why is it important to be honest about things that affect your health?'
+      "ageRange": [
+        6,
+        10
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "health",
+        "honesty",
+        "food allergy"
+      ],
+      "situation": "You have a food allergy but you're embarrassed about it. At a birthday party, someone offers you food that you're allergic to. You don't want to seem different.",
+      "choices": [
+        {
+          "text": "Eat it anyway — it's just this once",
+          "outcome": "dangerous",
+          "xp": 0,
+          "response": "Oh no — allergies can be very serious! Please always tell someone. Your health is more important than anything. 🚨"
+        },
+        {
+          "text": "Say 'No thank you' without explaining",
+          "outcome": "safe but private",
+          "xp": 15,
+          "response": "Safe! But sharing your allergy with a friend actually helps them look out for you. 💭"
+        },
+        {
+          "text": "Tell them honestly about the allergy",
+          "outcome": "honest + safe",
+          "xp": 30,
+          "response": "Honest AND safe. Good friends want to know so they can care for you. 🌟"
+        }
+      ],
+      "realWorldTip": "If you have any allergy or health condition, always tell a trusted adult and friend.",
+      "reflectionPrompt": "Why is it important to be honest about things that affect your health?",
+      "statement": "Honest people find it easier to build strong friendships.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_021',
-      title: 'The Holi Colour Mishap',
-      setting: 'festival',
-      characters: ['neighbour', 'parent'],
-      ageRange: [5, 9],
-      difficulty: 1,
-      theme: 'honesty',
-      growthDimensions: ['fairness'],
-      culture: ['IN'],
-      tags: ['holi', 'festival', 'accident', 'property'],
-      situation: "During Holi, you accidentally splashed colour on a neighbour\'s freshly washed car. They don\'t know it was you.",
-      choices: [
-        { text: 'Tell the neighbour and apologise', outcome: 'honest', xp: 30,
-          response: "Admitting an accident to a grown-up neighbour takes real courage. They\'ll appreciate it. 🌟" },
-        { text: 'Walk away quickly — it was an accident', outcome: 'avoiding', xp: 5,
-          response: "Accidents don\'t need to be secrets. Saying sorry clears the air. 💭" },
-        { text: 'Tell your parent and let them handle it', outcome: 'responsible', xp: 25,
-          response: "Getting a grown-up involved is smart and honest. Good call. ✅" }
+      "id": "tof_021",
+      "title": "The Holi Colour Mishap",
+      "setting": "festival",
+      "characters": [
+        "neighbour",
+        "parent"
       ],
-      realWorldTip: 'The next time you accidentally hurt someone or break something, say sorry right away.',
-      reflectionPrompt: 'Does an accident need an apology?'
+      "ageRange": [
+        5,
+        9
+      ],
+      "difficulty": 1,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness"
+      ],
+      "culture": [
+        "IN"
+      ],
+      "tags": [
+        "holi",
+        "festival",
+        "accident",
+        "property"
+      ],
+      "situation": "During Holi, you accidentally splashed colour on a neighbour's freshly washed car. They don't know it was you.",
+      "choices": [
+        {
+          "text": "Tell the neighbour and apologise",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Admitting an accident to a grown-up neighbour takes real courage. They'll appreciate it. 🌟"
+        },
+        {
+          "text": "Walk away quickly — it was an accident",
+          "outcome": "avoiding",
+          "xp": 5,
+          "response": "Accidents don't need to be secrets. Saying sorry clears the air. 💭"
+        },
+        {
+          "text": "Tell your parent and let them handle it",
+          "outcome": "responsible",
+          "xp": 25,
+          "response": "Getting a grown-up involved is smart and honest. Good call. ✅"
+        }
+      ],
+      "realWorldTip": "The next time you accidentally hurt someone or break something, say sorry right away.",
+      "reflectionPrompt": "Does an accident need an apology?",
+      "statement": "Blaming someone else for your mistake is a kind thing to do.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_022',
-      title: 'The Friend\'s Bad Idea',
-      setting: 'school',
-      characters: ['best friend', 'teacher'],
-      ageRange: [7, 12],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['peer pressure', 'friendship', 'courage', 'grey zone'],
-      situation: "Your best friend wants to pull a prank on a classmate they don\'t like. You know it will hurt that classmate\'s feelings. Your friend is excited about it.",
-      choices: [
-        { text: 'Tell your friend honestly that it\'s a bad idea', outcome: 'honest + brave', xp: 30,
-          response: "Saying no to your best friend when they\'re wrong — that\'s the hardest honesty. Real friendship looks like this. 🌟" },
-        { text: 'Go along with it to avoid conflict', outcome: 'peer pressure', xp: 5,
-          response: "Keeping the peace at someone else\'s expense — that\'s not friendship, it\'s fear. 💭" },
-        { text: 'Tell a teacher before it happens', outcome: 'protective', xp: 25,
-          response: "Protecting the classmate first — brave, and the right thing for everyone. 💪" }
+      "id": "tof_022",
+      "title": "The Friend's Bad Idea",
+      "setting": "school",
+      "characters": [
+        "best friend",
+        "teacher"
       ],
-      realWorldTip: 'If a friend is about to do something that could hurt someone, say so — even if it\'s uncomfortable.',
-      reflectionPrompt: 'Is it ever hard to be honest with your closest friends?'
+      "ageRange": [
+        7,
+        12
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "peer pressure",
+        "friendship",
+        "courage",
+        "grey zone"
+      ],
+      "situation": "Your best friend wants to pull a prank on a classmate they don't like. You know it will hurt that classmate's feelings. Your friend is excited about it.",
+      "choices": [
+        {
+          "text": "Tell your friend honestly that it's a bad idea",
+          "outcome": "honest + brave",
+          "xp": 30,
+          "response": "Saying no to your best friend when they're wrong — that's the hardest honesty. Real friendship looks like this. 🌟"
+        },
+        {
+          "text": "Go along with it to avoid conflict",
+          "outcome": "peer pressure",
+          "xp": 5,
+          "response": "Keeping the peace at someone else's expense — that's not friendship, it's fear. 💭"
+        },
+        {
+          "text": "Tell a teacher before it happens",
+          "outcome": "protective",
+          "xp": 25,
+          "response": "Protecting the classmate first — brave, and the right thing for everyone. 💪"
+        }
+      ],
+      "realWorldTip": "If a friend is about to do something that could hurt someone, say so — even if it's uncomfortable.",
+      "reflectionPrompt": "Is it ever hard to be honest with your closest friends?",
+      "statement": "Staying silent when someone is wrongly blamed is the same as being innocent.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_023',
-      title: 'The Overheard Parents',
-      setting: 'home',
-      characters: ['sibling', 'parent'],
-      ageRange: [8, 12],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['empathy', 'fairness'],
-      culture: ['global'],
-      tags: ['family', 'overhearing', 'privacy', 'grey zone'],
-      situation: "You accidentally overheard your parents discussing something private (a family money problem). Your sibling asks if everything is okay at home.",
-      choices: [
-        { text: 'Tell your sibling what you heard', outcome: 'oversharing', xp: 10,
-          response: "Sharing adult worries with younger siblings can scare them unnecessarily. 💭" },
-        { text: 'Say \'I think things are fine\' to protect them', outcome: 'protective', xp: 20,
-          response: "Protecting them from adult worries — thoughtful. Though \'I think\' keeps it honest. 🤝" },
-        { text: 'Talk to a parent about what you heard', outcome: 'wise', xp: 30,
-          response: "Going to the source — adult and wise. They can explain at the right level. 🌟" }
+      "id": "tof_023",
+      "title": "The Overheard Parents",
+      "setting": "home",
+      "characters": [
+        "sibling",
+        "parent"
       ],
-      realWorldTip: 'If you hear something worrying at home, talk to a trusted adult about it.',
-      reflectionPrompt: 'Is sharing a secret always the honest thing to do?'
+      "ageRange": [
+        8,
+        12
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "empathy",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "family",
+        "overhearing",
+        "privacy",
+        "grey zone"
+      ],
+      "situation": "You accidentally overheard your parents discussing something private (a family money problem). Your sibling asks if everything is okay at home.",
+      "choices": [
+        {
+          "text": "Tell your sibling what you heard",
+          "outcome": "oversharing",
+          "xp": 10,
+          "response": "Sharing adult worries with younger siblings can scare them unnecessarily. 💭"
+        },
+        {
+          "text": "Say 'I think things are fine' to protect them",
+          "outcome": "protective",
+          "xp": 20,
+          "response": "Protecting them from adult worries — thoughtful. Though 'I think' keeps it honest. 🤝"
+        },
+        {
+          "text": "Talk to a parent about what you heard",
+          "outcome": "wise",
+          "xp": 30,
+          "response": "Going to the source — adult and wise. They can explain at the right level. 🌟"
+        }
+      ],
+      "realWorldTip": "If you hear something worrying at home, talk to a trusted adult about it.",
+      "reflectionPrompt": "Is sharing a secret always the honest thing to do?",
+      "statement": "Helping someone cheat because their situation is hard is a genuine act of kindness.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_024',
-      title: 'The Exam Cheat Sheet',
-      setting: 'school',
-      characters: ['classmate', 'teacher'],
-      ageRange: [9, 12],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['IN'],
-      tags: ['exam', 'cheating', 'peer pressure', 'grey zone'],
-      situation: "A classmate passes you a cheat sheet during an important exam. The teacher hasn\'t noticed yet. You could use it or push it away.",
-      choices: [
-        { text: 'Push it away without making a scene', outcome: 'honest', xp: 25,
-          response: "Quiet courage. You didn\'t need to announce it — you just did the right thing. 🌟" },
-        { text: 'Use it — everyone else probably does', outcome: 'dishonest', xp: 3,
-          response: "Not everyone does. And if caught, both of you face serious consequences. 💭" },
-        { text: 'Tell the teacher after the exam', outcome: 'honest + delayed', xp: 20,
-          response: "You waited, but you still told the truth. Not easy — but right. 🤝" }
+      "id": "tof_024",
+      "title": "The Exam Cheat Sheet",
+      "setting": "school",
+      "characters": [
+        "classmate",
+        "teacher"
       ],
-      realWorldTip: 'Talk to a parent or teacher about how to prepare better for the next test.',
-      reflectionPrompt: 'Does cheating hurt anyone besides yourself?'
+      "ageRange": [
+        9,
+        12
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "IN"
+      ],
+      "tags": [
+        "exam",
+        "cheating",
+        "peer pressure",
+        "grey zone"
+      ],
+      "situation": "A classmate passes you a cheat sheet during an important exam. The teacher hasn't noticed yet. You could use it or push it away.",
+      "choices": [
+        {
+          "text": "Push it away without making a scene",
+          "outcome": "honest",
+          "xp": 25,
+          "response": "Quiet courage. You didn't need to announce it — you just did the right thing. 🌟"
+        },
+        {
+          "text": "Use it — everyone else probably does",
+          "outcome": "dishonest",
+          "xp": 3,
+          "response": "Not everyone does. And if caught, both of you face serious consequences. 💭"
+        },
+        {
+          "text": "Tell the teacher after the exam",
+          "outcome": "honest + delayed",
+          "xp": 20,
+          "response": "You waited, but you still told the truth. Not easy — but right. 🤝"
+        }
+      ],
+      "realWorldTip": "Talk to a parent or teacher about how to prepare better for the next test.",
+      "reflectionPrompt": "Does cheating hurt anyone besides yourself?",
+      "statement": "A whistle-blower who exposes cheating harms their peers by doing so.",
+      "isTruth": false
     },
-
     {
-      id: 'tof_025',
-      title: 'The App Purchase',
-      setting: 'home',
-      characters: ['parent'],
-      ageRange: [9, 12],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['money', 'online purchase', 'parent', 'trust'],
-      situation: "You accidentally made an in-app purchase on your parent\'s phone. The money has already been charged. Your parent hasn\'t noticed yet.",
-      choices: [
-        { text: 'Tell them immediately and explain it was an accident', outcome: 'honest', xp: 30,
-          response: "Telling before they notice — that\'s next-level trustworthiness. They might be frustrated but they\'ll trust you more. 🌟" },
-        { text: 'Wait and see if they notice', outcome: 'hoping', xp: 8,
-          response: "They WILL notice. And finding out you knew all along makes it much worse. 💭" },
-        { text: 'Delete the app so there\'s no trace', outcome: 'hiding', xp: 3,
-          response: "Bank statements exist. The truth always comes out — better from you first. 💭" }
+      "id": "tof_025",
+      "title": "The App Purchase",
+      "setting": "home",
+      "characters": [
+        "parent"
       ],
-      realWorldTip: 'Always ask a parent before making any purchase online, even a small one.',
-      reflectionPrompt: 'Is waiting to see if someone notices different from hiding the truth?'
+      "ageRange": [
+        9,
+        12
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "money",
+        "online purchase",
+        "parent",
+        "trust"
+      ],
+      "situation": "You accidentally made an in-app purchase on your parent's phone. The money has already been charged. Your parent hasn't noticed yet.",
+      "choices": [
+        {
+          "text": "Tell them immediately and explain it was an accident",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Telling before they notice — that's next-level trustworthiness. They might be frustrated but they'll trust you more. 🌟"
+        },
+        {
+          "text": "Wait and see if they notice",
+          "outcome": "hoping",
+          "xp": 8,
+          "response": "They WILL notice. And finding out you knew all along makes it much worse. 💭"
+        },
+        {
+          "text": "Delete the app so there's no trace",
+          "outcome": "hiding",
+          "xp": 3,
+          "response": "Bank statements exist. The truth always comes out — better from you first. 💭"
+        }
+      ],
+      "realWorldTip": "Always ask a parent before making any purchase online, even a small one.",
+      "reflectionPrompt": "Is waiting to see if someone notices different from hiding the truth?",
+      "statement": "Returning something borrowed that got damaged builds more trust than hiding it.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_026',
-      title: 'The Friend\'s Secret',
-      setting: 'school',
-      characters: ['friend who told you a secret', 'another classmate'],
-      ageRange: [7, 11],
-      difficulty: 3,
-      theme: 'honesty',
-      growthDimensions: ['empathy', 'fairness'],
-      culture: ['global'],
-      tags: ['secret', 'friendship', 'trust', 'grey zone'],
-      situation: "Your friend told you in confidence that they have a crush on someone. That someone directly asks you: \'Does anyone like me?\'",
-      choices: [
-        { text: 'Keep the secret — say \'I don\'t know\'', outcome: 'loyal', xp: 25,
-          response: "Keeping someone\'s secret is a form of honesty too — honest to your friend\'s trust. 🌟" },
-        { text: 'Tell the truth — you asked me directly', outcome: 'blunt', xp: 10,
-          response: "Direct honesty broke your friend\'s trust. Not all truths are ours to tell. 💭" },
-        { text: 'Say \'That\'s something to ask people yourself\'', outcome: 'wise redirect', xp: 30,
-          response: "Didn\'t lie AND didn\'t betray your friend. That\'s masterful. 🌟💡" }
+      "id": "tof_026",
+      "title": "The Friend's Secret",
+      "setting": "school",
+      "characters": [
+        "friend who told you a secret",
+        "another classmate"
       ],
-      realWorldTip: 'Keep the secrets people trust you with. Only share them if someone could be hurt.',
-      reflectionPrompt: 'When should you break a secret?'
+      "ageRange": [
+        7,
+        11
+      ],
+      "difficulty": 3,
+      "theme": "honesty",
+      "growthDimensions": [
+        "empathy",
+        "fairness"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "secret",
+        "friendship",
+        "trust",
+        "grey zone"
+      ],
+      "situation": "Your friend told you in confidence that they have a crush on someone. That someone directly asks you: 'Does anyone like me?'",
+      "choices": [
+        {
+          "text": "Keep the secret — say 'I don't know'",
+          "outcome": "loyal",
+          "xp": 25,
+          "response": "Keeping someone's secret is a form of honesty too — honest to your friend's trust. 🌟"
+        },
+        {
+          "text": "Tell the truth — you asked me directly",
+          "outcome": "blunt",
+          "xp": 10,
+          "response": "Direct honesty broke your friend's trust. Not all truths are ours to tell. 💭"
+        },
+        {
+          "text": "Say 'That's something to ask people yourself'",
+          "outcome": "wise redirect",
+          "xp": 30,
+          "response": "Didn't lie AND didn't betray your friend. That's masterful. 🌟💡"
+        }
+      ],
+      "realWorldTip": "Keep the secrets people trust you with. Only share them if someone could be hurt.",
+      "reflectionPrompt": "When should you break a secret?",
+      "statement": "Covering for a struggling friend sometimes hides the help they actually need.",
+      "isTruth": true
     },
-
     {
-      id: 'tof_027',
-      title: 'The Survey Answer',
-      setting: 'school',
-      characters: ['teacher'],
-      ageRange: [8, 12],
-      difficulty: 2,
-      theme: 'honesty',
-      growthDimensions: ['fairness', 'reasoning'],
-      culture: ['global'],
-      tags: ['school', 'feedback', 'survey', 'truth'],
-      situation: "Your teacher asks everyone to fill in a feedback form about the class. Some questions ask if the teaching is clear. Honestly, you\'ve been confused for weeks but you don\'t want to be rude.",
-      choices: [
-        { text: 'Write honestly — I\'ve been confused about some things', outcome: 'honest', xp: 30,
-          response: "Honest feedback helps the teacher help everyone including you. Brave and kind! 🌟" },
-        { text: 'Write that everything is great to make them happy', outcome: 'people pleasing', xp: 8,
-          response: "They won\'t know to help you if you say everything\'s fine. 💭" },
-        { text: 'Be specific and polite: write what was hard', outcome: 'honest + kind', xp: 35,
-          response: "Specific, honest, and kind. The teacher can actually USE this feedback. 🌟💡" }
+      "id": "tof_027",
+      "title": "The Survey Answer",
+      "setting": "school",
+      "characters": [
+        "teacher"
       ],
-      realWorldTip: 'Give honest feedback to someone this week — a teacher, parent, or friend.',
-      reflectionPrompt: 'Can honest feedback be a form of kindness?'
+      "ageRange": [
+        8,
+        12
+      ],
+      "difficulty": 2,
+      "theme": "honesty",
+      "growthDimensions": [
+        "fairness",
+        "reasoning"
+      ],
+      "culture": [
+        "global"
+      ],
+      "tags": [
+        "school",
+        "feedback",
+        "survey",
+        "truth"
+      ],
+      "situation": "Your teacher asks everyone to fill in a feedback form about the class. Some questions ask if the teaching is clear. Honestly, you've been confused for weeks but you don't want to be rude.",
+      "choices": [
+        {
+          "text": "Write honestly — I've been confused about some things",
+          "outcome": "honest",
+          "xp": 30,
+          "response": "Honest feedback helps the teacher help everyone including you. Brave and kind! 🌟"
+        },
+        {
+          "text": "Write that everything is great to make them happy",
+          "outcome": "people pleasing",
+          "xp": 8,
+          "response": "They won't know to help you if you say everything's fine. 💭"
+        },
+        {
+          "text": "Be specific and polite: write what was hard",
+          "outcome": "honest + kind",
+          "xp": 35,
+          "response": "Specific, honest, and kind. The teacher can actually USE this feedback. 🌟💡"
+        }
+      ],
+      "realWorldTip": "Give honest feedback to someone this week — a teacher, parent, or friend.",
+      "reflectionPrompt": "Can honest feedback be a form of kindness?",
+      "statement": "Exaggerating the truth a little is basically the same as telling it straight.",
+      "isTruth": false
     },
     {
       "id": "tof_028",
@@ -5713,7 +6468,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When you eat something you shouldn't have, telling the truth is braver than blaming someone else.",
-      "reflectionPrompt": "Why is it unfair to blame someone else for something you did?"
+      "reflectionPrompt": "Why is it unfair to blame someone else for something you did?",
+      "statement": "Telling a grown-up when something goes wrong is usually the right choice.",
+      "isTruth": true
     },
     {
       "id": "tof_029",
@@ -5763,7 +6520,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Accidents with books happen — telling the truth helps you learn to be more careful.",
-      "reflectionPrompt": "How does it feel to hide a mistake versus just telling the truth?"
+      "reflectionPrompt": "How does it feel to hide a mistake versus just telling the truth?",
+      "statement": "Hiding a mistake always makes it go away faster.",
+      "isTruth": false
     },
     {
       "id": "tof_030",
@@ -5812,7 +6571,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Owning your mess and helping clean up shows real honesty and responsibility.",
-      "reflectionPrompt": "Why is it better to admit a mess than to hide it?"
+      "reflectionPrompt": "Why is it better to admit a mess than to hide it?",
+      "statement": "Being honest, even when it's scary, shows real bravery.",
+      "isTruth": true
     },
     {
       "id": "tof_031",
@@ -5862,7 +6623,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the truth about a spill, even if you broke a rule, is the brave choice.",
-      "reflectionPrompt": "What makes telling the truth feel scary sometimes?"
+      "reflectionPrompt": "What makes telling the truth feel scary sometimes?",
+      "statement": "People who tell small lies never get caught.",
+      "isTruth": false
     },
     {
       "id": "tof_032",
@@ -5912,7 +6675,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "If you find something that belongs to someone else, telling the truth and returning it is right.",
-      "reflectionPrompt": "How would you feel if you lost something and someone kept it?"
+      "reflectionPrompt": "How would you feel if you lost something and someone kept it?",
+      "statement": "Admitting what you did wrong is better than hoping no one notices.",
+      "isTruth": true
     },
     {
       "id": "tof_033",
@@ -5962,7 +6727,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When there's clear evidence, honesty is always better than a story that won't hold up.",
-      "reflectionPrompt": "Why is it hard to lie when there's evidence?"
+      "reflectionPrompt": "Why is it hard to lie when there's evidence?",
+      "statement": "Making up excuses for mistakes is just as good as telling the truth.",
+      "isTruth": false
     },
     {
       "id": "tof_034",
@@ -6011,7 +6778,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting what you did, even when you'll be corrected, is braver than blaming a baby.",
-      "reflectionPrompt": "Why isn't it fair to blame someone who couldn't have done it?"
+      "reflectionPrompt": "Why isn't it fair to blame someone who couldn't have done it?",
+      "statement": "When you tell the truth, you usually feel lighter and less worried.",
+      "isTruth": true
     },
     {
       "id": "tof_035",
@@ -6062,7 +6831,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about accidents helps you learn — even about taking care of nature.",
-      "reflectionPrompt": "How can telling the truth help you learn something new?"
+      "reflectionPrompt": "How can telling the truth help you learn something new?",
+      "statement": "It's fine to take something that isn't yours if no one is watching.",
+      "isTruth": false
     },
     {
       "id": "tof_036",
@@ -6111,7 +6882,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about food you don't like helps grown-ups understand and help you.",
-      "reflectionPrompt": "Why is it better to say you don't like something than to hide it?"
+      "reflectionPrompt": "Why is it better to say you don't like something than to hide it?",
+      "statement": "Keeping promises is an important part of being honest.",
+      "isTruth": true
     },
     {
       "id": "tof_037",
@@ -6162,7 +6935,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When you accidentally hurt someone, admitting it and saying sorry helps everyone feel better.",
-      "reflectionPrompt": "How does it feel when someone won't admit they hurt you?"
+      "reflectionPrompt": "How does it feel when someone won't admit they hurt you?",
+      "statement": "Copying someone else's work is okay as long as you do it quietly.",
+      "isTruth": false
     },
     {
       "id": "tof_038",
@@ -6211,7 +6986,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest when you break someone's toy keeps them trusting you with their things.",
-      "reflectionPrompt": "Why does honesty help people trust you?"
+      "reflectionPrompt": "Why does honesty help people trust you?",
+      "statement": "Honesty helps friendships stay strong and trusting.",
+      "isTruth": true
     },
     {
       "id": "tof_039",
@@ -6262,7 +7039,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Honesty about little accidents, like a spill, is always easier than making up excuses.",
-      "reflectionPrompt": "Why do made-up excuses often get complicated?"
+      "reflectionPrompt": "Why do made-up excuses often get complicated?",
+      "statement": "Saying 'I don't know' to dodge a question is the same as lying.",
+      "isTruth": true
     },
     {
       "id": "tof_040",
@@ -6312,7 +7091,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about a bad grade lets people help you improve — hiding it just delays that.",
-      "reflectionPrompt": "Why might telling the truth about a bad grade actually help you?"
+      "reflectionPrompt": "Why might telling the truth about a bad grade actually help you?",
+      "statement": "A lie that makes someone happy in the moment is always better.",
+      "isTruth": false
     },
     {
       "id": "tof_041",
@@ -6361,7 +7142,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about breaking a screen-time rule is better than getting caught in a lie about it.",
-      "reflectionPrompt": "Why is it tempting to make a rule-break sound smaller than it was?"
+      "reflectionPrompt": "Why is it tempting to make a rule-break sound smaller than it was?",
+      "statement": "If you break something by accident, telling the owner is right.",
+      "isTruth": true
     },
     {
       "id": "tof_042",
@@ -6412,7 +7195,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you copied is hard, but it's the honest path — and helps you actually learn.",
-      "reflectionPrompt": "Why doesn't copying help you in the long run?"
+      "reflectionPrompt": "Why doesn't copying help you in the long run?",
+      "statement": "Keeping a mistake secret protects everyone involved.",
+      "isTruth": false
     },
     {
       "id": "tof_043",
@@ -6463,7 +7248,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you took something without asking is honest; letting others be suspected is not.",
-      "reflectionPrompt": "How does staying silent sometimes let others get unfairly blamed?"
+      "reflectionPrompt": "How does staying silent sometimes let others get unfairly blamed?",
+      "statement": "People usually feel better after they tell the truth.",
+      "isTruth": true
     },
     {
       "id": "tof_044",
@@ -6513,7 +7300,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you didn't finish your part is fairer to your team than pretending you did.",
-      "reflectionPrompt": "How does honesty help a team work better together?"
+      "reflectionPrompt": "How does honesty help a team work better together?",
+      "statement": "It's okay to blame a younger child for something you did.",
+      "isTruth": false
     },
     {
       "id": "tof_045",
@@ -6563,7 +7352,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When you damage something you borrowed, telling the truth right away keeps friendships strong.",
-      "reflectionPrompt": "How would you feel if a friend hid that they damaged your things?"
+      "reflectionPrompt": "How would you feel if a friend hid that they damaged your things?",
+      "statement": "Found money always belongs to the person who found it, no matter what.",
+      "isTruth": false
     },
     {
       "id": "tof_046",
@@ -6614,7 +7405,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about unfinished homework leads to help, not just trouble.",
-      "reflectionPrompt": "Why is honesty about responsibilities better than excuses?"
+      "reflectionPrompt": "Why is honesty about responsibilities better than excuses?",
+      "statement": "Returning extra change given by mistake is the honest thing to do.",
+      "isTruth": true
     },
     {
       "id": "tof_047",
@@ -6665,7 +7458,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you cut in line and fixing it is fairer than pretending you didn't.",
-      "reflectionPrompt": "Why does cutting in line feel unfair to those who waited?"
+      "reflectionPrompt": "Why does cutting in line feel unfair to those who waited?",
+      "statement": "Honesty matters even when absolutely no one is watching.",
+      "isTruth": true
     },
     {
       "id": "tof_048",
@@ -6716,7 +7511,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you copied, even when being praised for it, is honest and helps you grow as a writer.",
-      "reflectionPrompt": "Why does praise feel empty when you didn't really earn it?"
+      "reflectionPrompt": "Why does praise feel empty when you didn't really earn it?",
+      "statement": "Telling the truth about a mistake makes it easier to fix.",
+      "isTruth": true
     },
     {
       "id": "tof_049",
@@ -6767,7 +7564,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Even if you prepared to cheat but didn't, being honest about it shows real growth.",
-      "reflectionPrompt": "Why does admitting a temptation you resisted take courage?"
+      "reflectionPrompt": "Why does admitting a temptation you resisted take courage?",
+      "statement": "A small lie is harmless and doesn't cause any problems.",
+      "isTruth": false
     },
     {
       "id": "tof_050",
@@ -6816,7 +7615,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you broke something expensive is hard, but honesty protects the trust that matters most.",
-      "reflectionPrompt": "Why might a parent care more about honesty than about a broken screen?"
+      "reflectionPrompt": "Why might a parent care more about honesty than about a broken screen?",
+      "statement": "When you own up to something wrong, people usually respect you more.",
+      "isTruth": true
     },
     {
       "id": "tof_051",
@@ -6867,7 +7668,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Owning up to spreading something false, and apologising, is the only way to truly make it right.",
-      "reflectionPrompt": "How can admitting a mistake help heal the harm it caused?"
+      "reflectionPrompt": "How can admitting a mistake help heal the harm it caused?",
+      "statement": "If nobody finds out about a mistake, it doesn't matter at all.",
+      "isTruth": false
     },
     {
       "id": "tof_052",
@@ -6917,7 +7720,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Owning up to spending money without permission is honest, and offering to make it right shows maturity.",
-      "reflectionPrompt": "Why is honesty about money especially important for trust?"
+      "reflectionPrompt": "Why is honesty about money especially important for trust?",
+      "statement": "Saying sorry and telling the truth helps rebuild trust.",
+      "isTruth": true
     },
     {
       "id": "tof_053",
@@ -6967,7 +7772,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about skipping something leads to a real conversation, not a tangle of lies.",
-      "reflectionPrompt": "Why does one lie often lead to needing more lies?"
+      "reflectionPrompt": "Why does one lie often lead to needing more lies?",
+      "statement": "Lying once usually makes everything easier in the end.",
+      "isTruth": false
     },
     {
       "id": "tof_054",
@@ -7018,7 +7825,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the truth even when no one saw you is one of the hardest and most honourable things to do.",
-      "reflectionPrompt": "Why does honesty matter even when no one would ever know?"
+      "reflectionPrompt": "Why does honesty matter even when no one would ever know?",
+      "statement": "Honest people find it easier to build strong friendships.",
+      "isTruth": true
     },
     {
       "id": "tof_055",
@@ -7068,7 +7877,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Showing a disappointing report card honestly lets your family support you, instead of hiding alone.",
-      "reflectionPrompt": "Why might hiding bad news feel worse than sharing it?"
+      "reflectionPrompt": "Why might hiding bad news feel worse than sharing it?",
+      "statement": "Blaming someone else for your mistake is a kind thing to do.",
+      "isTruth": false
     },
     {
       "id": "tof_056",
@@ -7119,7 +7930,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can be honest and kind by thanking someone for their effort and thought, which is always true.",
-      "reflectionPrompt": "How can you be truthful without hurting someone's feelings?"
+      "reflectionPrompt": "How can you be truthful without hurting someone's feelings?",
+      "statement": "Being honest about spending money without permission is better than making up a story.",
+      "isTruth": true
     },
     {
       "id": "tof_057",
@@ -7170,7 +7983,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest in trades and deals, even small ones, keeps friends trusting you.",
-      "reflectionPrompt": "How would you feel if you found out a trade was unfair?"
+      "reflectionPrompt": "How would you feel if you found out a trade was unfair?",
+      "statement": "Writing a fake online review is minor and doesn't really affect anyone.",
+      "isTruth": false
     },
     {
       "id": "tof_058",
@@ -7220,7 +8035,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When someone makes something with love, you can honestly thank them for the effort and care.",
-      "reflectionPrompt": "Why does the effort someone puts in matter, even if you don't love the result?"
+      "reflectionPrompt": "Why does the effort someone puts in matter, even if you don't love the result?",
+      "statement": "An honest mistake handled openly is almost always treated better than a cover-up.",
+      "isTruth": true
     },
     {
       "id": "tof_059",
@@ -7271,7 +8088,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Returning something that isn't yours without taking advantage shows real honesty.",
-      "reflectionPrompt": "Why is it tempting to take an unfair advantage, and why is resisting it worth it?"
+      "reflectionPrompt": "Why is it tempting to take an unfair advantage, and why is resisting it worth it?",
+      "statement": "Signing a classmate in as present when they're absent is a small harmless favour.",
+      "isTruth": false
     },
     {
       "id": "tof_060",
@@ -7321,7 +8140,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you forgot a promise and apologising is far kinder than making excuses.",
-      "reflectionPrompt": "How does it feel when someone forgets a promise but won't admit it?"
+      "reflectionPrompt": "How does it feel when someone forgets a promise but won't admit it?",
+      "statement": "Honest test scores, even lower ones, are more helpful than dishonest high ones.",
+      "isTruth": true
     },
     {
       "id": "tof_061",
@@ -7372,7 +8193,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Keeping score honestly, even when you're losing, makes you someone others can always trust.",
-      "reflectionPrompt": "Why does an unfair win not feel as good as a fair loss?"
+      "reflectionPrompt": "Why does an unfair win not feel as good as a fair loss?",
+      "statement": "Getting praise for work you didn't do feels just as satisfying as earning it.",
+      "isTruth": false
     },
     {
       "id": "tof_062",
@@ -7421,7 +8244,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you hid a mess instead of cleaning it is more honest than claiming it's done.",
-      "reflectionPrompt": "Why does hiding a mess usually make it worse later?"
+      "reflectionPrompt": "Why does hiding a mess usually make it worse later?",
+      "statement": "Admitting you were late and why usually leads to a better conversation.",
+      "isTruth": true
     },
     {
       "id": "tof_063",
@@ -7472,7 +8297,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Explaining honestly that something was an accident, and helping fix it, clears up misunderstandings.",
-      "reflectionPrompt": "Why is it important to explain when something was truly an accident?"
+      "reflectionPrompt": "Why is it important to explain when something was truly an accident?",
+      "statement": "A lie that delays a problem always makes that problem smaller over time.",
+      "isTruth": false
     },
     {
       "id": "tof_064",
@@ -7522,7 +8349,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Pointing out extra money you were given by mistake builds deep trust.",
-      "reflectionPrompt": "Why does honesty about money matter so much for trust?"
+      "reflectionPrompt": "Why does honesty about money matter so much for trust?",
+      "statement": "Honest records, even when they show a mistake, are fairer for everyone.",
+      "isTruth": true
     },
     {
       "id": "tof_065",
@@ -7573,7 +8402,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the honest reason, even when friends want to make one up, often works out better.",
-      "reflectionPrompt": "Why can group lies be even trickier than lies you tell alone?"
+      "reflectionPrompt": "Why can group lies be even trickier than lies you tell alone?",
+      "statement": "If a teacher makes a marking mistake in your favour, you don't need to say anything.",
+      "isTruth": false
     },
     {
       "id": "tof_066",
@@ -7624,7 +8455,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you took someone's snack is fairer than letting them think they lost it.",
-      "reflectionPrompt": "Why is making someone doubt their memory an unkind thing to do?"
+      "reflectionPrompt": "Why is making someone doubt their memory an unkind thing to do?",
+      "statement": "Being honest about not liking a gift can still be done kindly.",
+      "isTruth": true
     },
     {
       "id": "tof_067",
@@ -7675,7 +8508,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "If you saw who dropped something, the honest thing is to return it, not keep it.",
-      "reflectionPrompt": "How is keeping something you saw someone drop different from finding something truly lost?"
+      "reflectionPrompt": "How is keeping something you saw someone drop different from finding something truly lost?",
+      "statement": "Pointing out a billing error that saved you money isn't really your responsibility.",
+      "isTruth": false
     },
     {
       "id": "tof_068",
@@ -7726,7 +8561,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Being honest about getting help means you actually learn, instead of just looking good.",
-      "reflectionPrompt": "Why is it important that YOU understand your own work?"
+      "reflectionPrompt": "Why is it important that YOU understand your own work?",
+      "statement": "Honesty in small money matters builds trust worth far more than the amount.",
+      "isTruth": true
     },
     {
       "id": "tof_069",
@@ -7777,7 +8614,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you hid something is honest; blaming a sibling for your action is not.",
-      "reflectionPrompt": "Why does even a small lie sometimes cause a big loss of trust?"
+      "reflectionPrompt": "Why does even a small lie sometimes cause a big loss of trust?",
+      "statement": "Saying you understand something you don't is helpful to everyone in class.",
+      "isTruth": false
     },
     {
       "id": "tof_070",
@@ -7827,7 +8666,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Pointing out a grading mistake that helped you, even though it lowers your score, is true honesty.",
-      "reflectionPrompt": "Why might someone keep quiet about a mistake in their favour? Why is speaking up better?"
+      "reflectionPrompt": "Why might someone keep quiet about a mistake in their favour? Why is speaking up better?",
+      "statement": "Admitting you were wrong in front of others is a sign of real maturity.",
+      "isTruth": true
     },
     {
       "id": "tof_071",
@@ -7878,7 +8719,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Speaking up when someone else is wrongly blamed for what you did is true courage.",
-      "reflectionPrompt": "How would it feel to be punished for something you didn't do?"
+      "reflectionPrompt": "How would it feel to be punished for something you didn't do?",
+      "statement": "Sharing someone else's password with their verbal approval is always safe and honest.",
+      "isTruth": false
     },
     {
       "id": "tof_072",
@@ -7928,7 +8771,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Owning up to a rule-break is honest; pulling someone else into a lie makes it worse.",
-      "reflectionPrompt": "Why is it unfair to ask someone else to lie for you?"
+      "reflectionPrompt": "Why is it unfair to ask someone else to lie for you?",
+      "statement": "Being honest about a bad grade helps you get real support to improve.",
+      "isTruth": true
     },
     {
       "id": "tof_073",
@@ -7979,7 +8824,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Even if you didn't ask for help, being honest about using it shows real integrity.",
-      "reflectionPrompt": "Is using an answer you didn't ask for still unfair? Why?"
+      "reflectionPrompt": "Is using an answer you didn't ask for still unfair? Why?",
+      "statement": "Pretending you finished homework when you haven't will always work out fine.",
+      "isTruth": false
     },
     {
       "id": "tof_074",
@@ -8030,7 +8877,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Taking responsibility for what you were in charge of, even a sibling's mistake, is honest and mature.",
-      "reflectionPrompt": "What does it mean to take responsibility for something you were supposed to watch?"
+      "reflectionPrompt": "What does it mean to take responsibility for something you were supposed to watch?",
+      "statement": "Admitting you copied one answer is braver than pretending you didn't.",
+      "isTruth": true
     },
     {
       "id": "tof_075",
@@ -8080,7 +8929,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Admitting you peeked or broke a game rule keeps games fun and fair for everyone.",
-      "reflectionPrompt": "Why does cheating spoil a game even if you win?"
+      "reflectionPrompt": "Why does cheating spoil a game even if you win?",
+      "statement": "Letting someone else take blame for your mistake is acceptable if it avoids trouble.",
+      "isTruth": false
     },
     {
       "id": "tof_076",
@@ -8131,7 +8982,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Honestly warning someone about a prank or harm coming their way is a caring kind of truth.",
-      "reflectionPrompt": "When is sharing the truth a way of protecting someone?"
+      "reflectionPrompt": "When is sharing the truth a way of protecting someone?",
+      "statement": "Honesty about screen time helps families agree on fair rules.",
+      "isTruth": true
     },
     {
       "id": "tof_077",
@@ -8182,7 +9035,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Speaking up when a family member is wrongly blamed for your mistake is honest and loyal.",
-      "reflectionPrompt": "How would you feel if a cousin let you take the blame for something they did?"
+      "reflectionPrompt": "How would you feel if a cousin let you take the blame for something they did?",
+      "statement": "If you broke a rule and no one found out, keeping quiet forever is the best plan.",
+      "isTruth": false
     },
     {
       "id": "tof_078",
@@ -8233,7 +9088,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Giving honest credit to those who did the work, even when praise comes to you, is fair and kind.",
-      "reflectionPrompt": "Why does it matter to credit people honestly for their work?"
+      "reflectionPrompt": "Why does it matter to credit people honestly for their work?",
+      "statement": "Letting a friend copy your work is truly helping them learn.",
+      "isTruth": false
     },
     {
       "id": "tof_079",
@@ -8284,7 +9141,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Owning up to accidental damage even when unseen, and apologising, is a mark of real integrity.",
-      "reflectionPrompt": "Why is honesty when no one saw you one of the hardest kinds?"
+      "reflectionPrompt": "Why is honesty when no one saw you one of the hardest kinds?",
+      "statement": "Talking to a teacher honestly when something goes wrong usually leads to help.",
+      "isTruth": true
     },
     {
       "id": "tof_080",
@@ -8335,7 +9194,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Refusing to lie on official records, even for a friend, protects everyone from bigger trouble.",
-      "reflectionPrompt": "Why is it important not to falsify records, even small ones?"
+      "reflectionPrompt": "Why is it important not to falsify records, even small ones?",
+      "statement": "Using an answer you accidentally saw in a test is still cheating.",
+      "isTruth": true
     },
     {
       "id": "tof_081",
@@ -8386,7 +9247,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Honest reviews help people make good choices; fake ones mislead and can backfire.",
-      "reflectionPrompt": "Why does honesty matter even in online reviews and ratings?"
+      "reflectionPrompt": "Why does honesty matter even in online reviews and ratings?",
+      "statement": "Backing up a friend's lie is harmless if their intentions were good.",
+      "isTruth": false
     },
     {
       "id": "tof_082",
@@ -8437,7 +9300,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Keeping records honest, even when a friend pleads, protects fairness for everyone.",
-      "reflectionPrompt": "Why is it unfair to others when scores are changed for a friend?"
+      "reflectionPrompt": "Why is it unfair to others when scores are changed for a friend?",
+      "statement": "Returning something borrowed that got damaged builds more trust than hiding it.",
+      "isTruth": true
     },
     {
       "id": "tof_083",
@@ -8486,7 +9351,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the truth about being late builds trust that earns you more freedom over time.",
-      "reflectionPrompt": "How does honesty, even about mistakes, lead to more trust and freedom?"
+      "reflectionPrompt": "How does honesty, even about mistakes, lead to more trust and freedom?",
+      "statement": "Exaggerating the truth a little is basically the same as telling it straight.",
+      "isTruth": false
     },
     {
       "id": "tof_084",
@@ -8537,7 +9404,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can protect a happy surprise without lying — by being playfully truthful instead.",
-      "reflectionPrompt": "Is there a difference between keeping a secret and telling a lie?"
+      "reflectionPrompt": "Is there a difference between keeping a secret and telling a lie?",
+      "statement": "The size of a lie doesn't matter as much as the reality it changes.",
+      "isTruth": true
     },
     {
       "id": "tof_085",
@@ -8588,7 +9457,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When honesty and loyalty clash, helping a friend make it right serves both them and others.",
-      "reflectionPrompt": "What do you do when being honest might hurt a friend?"
+      "reflectionPrompt": "What do you do when being honest might hurt a friend?",
+      "statement": "It's possible to be honest about something while still being kind about how you say it.",
+      "isTruth": true
     },
     {
       "id": "tof_086",
@@ -8639,7 +9510,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can always honestly thank someone for their effort and love, even if you didn't love the result.",
-      "reflectionPrompt": "How can you tell the truth in a way that's still kind?"
+      "reflectionPrompt": "How can you tell the truth in a way that's still kind?",
+      "statement": "If a friend begs you to lie for them, loyalty should always win over honesty.",
+      "isTruth": false
     },
     {
       "id": "tof_087",
@@ -8690,7 +9563,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Pointing out an accidental advantage, even one that helps you, keeps things fair for everyone.",
-      "reflectionPrompt": "Why is it tempting to keep an unfair advantage quiet? Why is speaking up better?"
+      "reflectionPrompt": "Why is it tempting to keep an unfair advantage quiet? Why is speaking up better?",
+      "statement": "Noticing you benefited from someone else's mistake means you should speak up.",
+      "isTruth": true
     },
     {
       "id": "tof_088",
@@ -8741,7 +9616,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Sometimes the most caring honesty is helping someone face their own truth.",
-      "reflectionPrompt": "When does protecting someone with a lie actually hurt them?"
+      "reflectionPrompt": "When does protecting someone with a lie actually hurt them?",
+      "statement": "Encouraging a friend to admit their mistake is a kinder act than reporting them.",
+      "isTruth": true
     },
     {
       "id": "tof_089",
@@ -8792,7 +9669,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Real winners tell the truth even when it costs them the win.",
-      "reflectionPrompt": "Would a win feel good if you knew it wasn't earned honestly?"
+      "reflectionPrompt": "Would a win feel good if you knew it wasn't earned honestly?",
+      "statement": "A coach's trust in your records matters less than helping a friend make the team.",
+      "isTruth": false
     },
     {
       "id": "tof_090",
@@ -8843,7 +9722,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can be honest about a mistake while still being respectful about how and when you share it.",
-      "reflectionPrompt": "How can you correct someone without embarrassing them?"
+      "reflectionPrompt": "How can you correct someone without embarrassing them?",
+      "statement": "Fake reviews and false ratings don't affect real decisions real people make.",
+      "isTruth": false
     },
     {
       "id": "tof_091",
@@ -8894,7 +9775,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When someone you love is hurting, caring honesty can open the door to help they need.",
-      "reflectionPrompt": "How do you balance respecting someone's privacy with caring about their safety?"
+      "reflectionPrompt": "How do you balance respecting someone's privacy with caring about their safety?",
+      "statement": "An honest mistake handled openly almost always leads to better outcomes.",
+      "isTruth": true
     },
     {
       "id": "tof_092",
@@ -8945,7 +9828,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Speaking up to protect someone who can't defend themselves is honesty AND courage.",
-      "reflectionPrompt": "How would it feel to be blamed for something you didn't do, unable to defend yourself?"
+      "reflectionPrompt": "How would it feel to be blamed for something you didn't do, unable to defend yourself?",
+      "statement": "Reporting dishonesty that harms many people is selfish if it upsets your friend group.",
+      "isTruth": false
     },
     {
       "id": "tof_093",
@@ -8996,7 +9881,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Protecting someone's private message from being spread is an honest, loyal act.",
-      "reflectionPrompt": "Why does it matter to keep private things private, even when others want to share?"
+      "reflectionPrompt": "Why does it matter to keep private things private, even when others want to share?",
+      "statement": "When someone's safety is at risk, keeping their secret matters more than getting help.",
+      "isTruth": false
     },
     {
       "id": "tof_094",
@@ -9047,7 +9934,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the honest reason for falling behind usually goes better than a story that can unravel.",
-      "reflectionPrompt": "Why are group lies especially risky?"
+      "reflectionPrompt": "Why are group lies especially risky?",
+      "statement": "Some truths are too uncomfortable to share, so staying silent forever is acceptable.",
+      "isTruth": false
     },
     {
       "id": "tof_095",
@@ -9098,7 +9987,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can almost always find something true and kind to say, instead of repeating a lie.",
-      "reflectionPrompt": "Is it possible to be honest without hurting feelings? How?"
+      "reflectionPrompt": "Is it possible to be honest without hurting feelings? How?",
+      "statement": "Praising work you know is plagiarised makes you partly responsible for the dishonesty.",
+      "isTruth": true
     },
     {
       "id": "tof_096",
@@ -9149,7 +10040,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "When someone's safety is at risk, getting help is more important than keeping a secret.",
-      "reflectionPrompt": "When is breaking a promise actually the caring thing to do?"
+      "reflectionPrompt": "When is breaking a promise actually the caring thing to do?",
+      "statement": "You can be honest about a mistake without also being unkind about it.",
+      "isTruth": true
     },
     {
       "id": "tof_097",
@@ -9200,7 +10093,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Doing your own work, even for a lower grade, is honest and something to be proud of.",
-      "reflectionPrompt": "Why does an honestly earned grade feel better than a copied one?"
+      "reflectionPrompt": "Why does an honestly earned grade feel better than a copied one?",
+      "statement": "Standing up for someone wrongly blamed always comes with personal risk.",
+      "isTruth": true
     },
     {
       "id": "tof_098",
@@ -9252,7 +10147,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Fairness means caring that everyone gets what they earned, even when unfairness helps a friend.",
-      "reflectionPrompt": "Is it honest to stay quiet about unfairness that benefits someone you like?"
+      "reflectionPrompt": "Is it honest to stay quiet about unfairness that benefits someone you like?",
+      "statement": "Honesty that costs you something is usually more credible than honesty that costs nothing.",
+      "isTruth": true
     },
     {
       "id": "tof_099",
@@ -9303,7 +10200,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Sometimes the most loyal thing is helping someone face a problem instead of hiding it with them.",
-      "reflectionPrompt": "When does keeping a secret stop being kind and start being harmful?"
+      "reflectionPrompt": "When does keeping a secret stop being kind and start being harmful?",
+      "statement": "A carefully phrased half-truth counts as being fully honest.",
+      "isTruth": false
     },
     {
       "id": "tof_100",
@@ -9354,7 +10253,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can correct misinformation respectfully — checking facts protects everyone from false fear.",
-      "reflectionPrompt": "How can you share the truth with elders in a way that's still respectful?"
+      "reflectionPrompt": "How can you share the truth with elders in a way that's still respectful?",
+      "statement": "Helping someone else lie means you share the moral weight of that lie.",
+      "isTruth": true
     },
     {
       "id": "tof_101",
@@ -9405,7 +10306,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the truth even when a lie would benefit you is the mark of real character.",
-      "reflectionPrompt": "Is popularity worth gaining if it means lying about someone's pain?"
+      "reflectionPrompt": "Is popularity worth gaining if it means lying about someone's pain?",
+      "statement": "The right time to share a hard truth is never — some things are better unsaid.",
+      "isTruth": false
     },
     {
       "id": "tof_102",
@@ -9456,7 +10359,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Honesty in business, even at a small cost, builds trust worth far more than the loss.",
-      "reflectionPrompt": "Why might honesty help a business more than a small unfair gain?"
+      "reflectionPrompt": "Why might honesty help a business more than a small unfair gain?",
+      "statement": "Guilt after keeping a secret about someone else's wrongdoing is normal and meaningful.",
+      "isTruth": true
     },
     {
       "id": "tof_103",
@@ -9507,7 +10412,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Honestly crediting quiet people's hard work, even when praise comes to you, is fair and kind.",
-      "reflectionPrompt": "How does it feel when someone takes credit for what you did?"
+      "reflectionPrompt": "How does it feel when someone takes credit for what you did?",
+      "statement": "If no one was physically harmed, dishonesty in competitions is acceptable.",
+      "isTruth": false
     },
     {
       "id": "tof_104",
@@ -9558,7 +10465,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "You can honestly share your feelings while staying calm and respectful, even with difficult people.",
-      "reflectionPrompt": "How can you be honest about being hurt without being disrespectful?"
+      "reflectionPrompt": "How can you be honest about being hurt without being disrespectful?",
+      "statement": "Returning something wrongly given to you, without being asked, shows real integrity.",
+      "isTruth": true
     },
     {
       "id": "tof_105",
@@ -9609,7 +10518,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Refusing to lie for someone, even for a reward, protects you both from bigger trouble.",
-      "reflectionPrompt": "Why is being asked to lie for someone a tricky kind of pressure?"
+      "reflectionPrompt": "Why is being asked to lie for someone a tricky kind of pressure?",
+      "statement": "An apology given only to avoid consequences is just as meaningful as a genuine one.",
+      "isTruth": false
     },
     {
       "id": "tof_106",
@@ -9660,7 +10571,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Pointing out a scoring error that helped you win, even when it costs you, is remarkable honesty.",
-      "reflectionPrompt": "Would a trophy feel good if you knew someone else truly earned it?"
+      "reflectionPrompt": "Would a trophy feel good if you knew someone else truly earned it?",
+      "statement": "Acknowledging when you had an unfair advantage, even if you didn't create it, is honest.",
+      "isTruth": true
     },
     {
       "id": "tof_107",
@@ -9712,7 +10625,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the truth about widespread cheating is scary, but it protects everyone who plays fair.",
-      "reflectionPrompt": "When is it worth taking a personal risk to tell the truth?"
+      "reflectionPrompt": "When is it worth taking a personal risk to tell the truth?",
+      "statement": "There is almost always a truthful way to be kind — you rarely have to choose.",
+      "isTruth": true
     },
     {
       "id": "tof_108",
@@ -9763,7 +10678,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Honesty that costs you something is the hardest and most honourable kind.",
-      "reflectionPrompt": "Why might your parents value honesty even more than the broken item?"
+      "reflectionPrompt": "Why might your parents value honesty even more than the broken item?",
+      "statement": "A well-intentioned lie is always better than a difficult honest conversation.",
+      "isTruth": false
     },
     {
       "id": "tof_109",
@@ -9814,7 +10731,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Winning with stolen ideas and a lie isn't really winning. Honest effort is worth more.",
-      "reflectionPrompt": "Would a win feel good if it came from a lie and someone else's work?"
+      "reflectionPrompt": "Would a win feel good if it came from a lie and someone else's work?",
+      "statement": "Correcting someone's wrong impression is honest, even if they didn't ask.",
+      "isTruth": true
     },
     {
       "id": "tof_110",
@@ -9865,7 +10784,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "No grade is worth your honesty. Honest struggles build more than dishonest success.",
-      "reflectionPrompt": "How can pressure sometimes push people toward dishonest choices? How do you resist?"
+      "reflectionPrompt": "How can pressure sometimes push people toward dishonest choices? How do you resist?",
+      "statement": "Staying silent when someone is wrongly blamed is the same as being innocent.",
+      "isTruth": false
     },
     {
       "id": "tof_111",
@@ -9916,7 +10837,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Sharing what you honestly know, even against louder voices, can bring fairness and peace.",
-      "reflectionPrompt": "Why can telling a calm truth help settle an argument?"
+      "reflectionPrompt": "Why can telling a calm truth help settle an argument?",
+      "statement": "Helping someone cheat because their situation is hard is a genuine act of kindness.",
+      "isTruth": false
     },
     {
       "id": "tof_112",
@@ -9967,7 +10890,9 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Telling the truth to stop online cruelty, privately or to an adult, protects everyone it targets.",
-      "reflectionPrompt": "What's the bravest way to stop someone from hurting others anonymously?"
+      "reflectionPrompt": "What's the bravest way to stop someone from hurting others anonymously?",
+      "statement": "A whistle-blower who exposes cheating harms their peers by doing so.",
+      "isTruth": false
     },
     {
       "id": "tof_113",
@@ -10019,10 +10944,12 @@ const SPARKIDDO_SCENARIOS = {
         }
       ],
       "realWorldTip": "Keeping records honest, even when a friend pleads, protects fairness for everyone who earned their place.",
-      "reflectionPrompt": "Why is it unfair to others when records are changed for a friend?"
-    },
-
+      "reflectionPrompt": "Why is it unfair to others when records are changed for a friend?",
+      "statement": "Covering for a struggling friend sometimes hides the help they actually need.",
+      "isTruth": true
+    }
   ],
+
 
   /* ═══════════════════════════════════════════════════════════════
      EMOTION MATCH — 26 scenarios

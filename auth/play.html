@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>sparkiddo — Choose Your Player</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
   :root{
@@ -123,21 +123,6 @@
   .upgrade-text p{font-size:.75rem;color:#888;font-weight:600}
   .upgrade-arrow{margin-left:auto;font-size:1.2rem;color:var(--purple-light)}
 
-  /* AGE GROUP PICKER */
-  .age-group-label{font-size:.78rem;font-weight:800;color:#888;letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase}
-  .age-group-grid{display:flex;gap:10px;margin-bottom:20px}
-  .age-opt{flex:1;padding:11px 8px;border-radius:14px;border:2px solid #e0d7ff;background:#f9f7ff;text-align:center;cursor:pointer;transition:.2s;font-family:'Fredoka One',cursive}
-  .age-opt:hover{border-color:var(--purple-light);background:var(--purple-pale)}
-  .age-opt.sel{border-color:var(--purple);background:var(--purple-pale);box-shadow:0 0 0 3px rgba(124,92,191,.12)}
-  .age-opt .age-emoji{font-size:1.4rem;display:block;margin-bottom:4px}
-  .age-opt .age-range{font-size:.8rem;color:var(--purple);font-weight:800}
-  .age-opt .age-name{font-size:.65rem;color:#aaa;font-weight:700}
-  /* AGE BADGE on profile card */
-  .profile-age{font-size:.62rem;color:#aaa;font-weight:700;margin-bottom:4px}
-
-  .missions-hub-btn{background:linear-gradient(135deg,#fdcb6e,#ff9f43);color:#fff;border-radius:99px;padding:7px 16px;font-family:'Fredoka One',cursive;font-size:.82rem;text-decoration:none;box-shadow:0 4px 12px rgba(255,159,67,.3);transition:.2s;white-space:nowrap}
-  .missions-hub-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(255,159,67,.4)}
-
   @media(max-width:640px){
     .arcade-games-grid{grid-template-columns:repeat(2,1fr)}
     .games-grid{grid-template-columns:1fr 1fr}
@@ -182,7 +167,6 @@
         </div>
       </div>
       <div class="hub-streak" id="hub-streak">🔥 0</div>
-      <a href="/auth/daily.html" id="missions-btn" class="missions-hub-btn" style="display:none">🎯 Daily Missions</a>
     </div>
 
     <!-- Fun & Learn -->
@@ -229,24 +213,6 @@
     <div class="modal-title">👧 Add a child profile</div>
     <input class="modal-input" id="child-name" type="text" placeholder="Child's first name..." maxlength="20"/>
     <div class="avatar-grid" id="avatar-grid"></div>
-    <div class="age-group-label">Age Group</div>
-    <div class="age-group-grid" id="age-group-grid">
-      <div class="age-opt" data-age="3-5" onclick="selAgeGroup('3-5',this)">
-        <span class="age-emoji">🌱</span>
-        <span class="age-range">Ages 3–5</span>
-        <span class="age-name">Tiny Sparks</span>
-      </div>
-      <div class="age-opt" data-age="6-8" onclick="selAgeGroup('6-8',this)">
-        <span class="age-emoji">⭐</span>
-        <span class="age-range">Ages 6–8</span>
-        <span class="age-name">Rising Stars</span>
-      </div>
-      <div class="age-opt" data-age="9-12" onclick="selAgeGroup('9-12',this)">
-        <span class="age-emoji">🏆</span>
-        <span class="age-range">Ages 9–12</span>
-        <span class="age-name">Spark Champions</span>
-      </div>
-    </div>
     <div class="modal-btns">
       <button class="modal-btn modal-cancel" onclick="closeModal()">Cancel</button>
       <button class="modal-btn modal-save" onclick="saveChild()">Add Profile ✓</button>
@@ -256,8 +222,8 @@
 
 <script>
 // ── SUPABASE ───────────────────────────────────────────────────
-const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
+const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
+const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
 const {createClient} = supabase;
 window.sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -274,8 +240,8 @@ const AVATARS = ['🌟','🦊','🐼','🐰','🦁','🐸','🐧','🦋','🐻',
 // NOTE: Morals games now live at /games/morals/ and use the scenario engine
 const GAMES = {
   learn:[
-    {id:'mathdojo',       path:'/games/learn/math_dojo.html',       title:'Math Dojo',         emoji:'➕',desc:'Number puzzles — 3 levels!',           tag:'Ages 5+',  tagColor:'#fdcb6e',tagText:'#7a5c00',xp:20},
-    {id:'colorshapequest',path:'/games/learn/color_shape_quest.html',title:'Color & Shape Quest',emoji:'🎨',desc:'Colors, shapes & drag & drop!',        tag:'Ages 3+',  tagColor:'#a29bfe',tagText:'#fff',  xp:20},
+    {id:'mathdojo',       path:'/games/learn/mathdojo.html',       title:'Math Dojo',         emoji:'➕',desc:'Number puzzles — 3 levels!',           tag:'Ages 5+',  tagColor:'#fdcb6e',tagText:'#7a5c00',xp:20},
+    {id:'colorshapequest',path:'/games/learn/colorshapequest.html',title:'Color & Shape Quest',emoji:'🎨',desc:'Colors, shapes & drag & drop!',        tag:'Ages 3+',  tagColor:'#a29bfe',tagText:'#fff',  xp:20},
   ],
   morals:[
     {id:'emotionmatch',   path:'/games/morals/emotionmatch.html',  title:'Emotion Match',     emoji:'🎭',desc:'Match faces to feelings!',             tag:'Empathy',  tagColor:'#fd79a8',tagText:'#fff',  xp:25},
@@ -283,14 +249,14 @@ const GAMES = {
     {id:'storychoices',   path:'/games/morals/storychoices.html',  title:'Story Choices',     emoji:'📖',desc:'25 branching story adventures!',       tag:'Wisdom',   tagColor:'#a29bfe',tagText:'#fff',  xp:30},
     {id:'shareorkeep',    path:'/games/morals/shareorkeep.html',   title:'Share or Keep?',    emoji:'🤲',desc:'27 sharing dilemmas — new every time!', tag:'Sharing',  tagColor:'#ff9f43',tagText:'#fff',  xp:25},
     {id:'truthorfib',     path:'/games/morals/truthorfib.html',    title:'Truth or Fib?',     emoji:'🔍',desc:'27 honesty scenarios with a timer!',   tag:'Honesty',  tagColor:'#74b9ff',tagText:'#fff',  xp:25},
-    {id:'cooldowncorner', path:'/games/morals/cool_down_corner.html',title:'Cool Down Corner',  emoji:'☮️',desc:'Breathe, ground & affirm!',            tag:'Calm',     tagColor:'#55efc4',tagText:'#007a5e',xp:20},
-    {id:'mydailydojo',    path:'/games/morals/my_daily_dojo.html',   title:'My Daily Dojo',     emoji:'🥋',desc:'Daily habits. Earn belts!',            tag:'Habits',   tagColor:'#ff6b6b',tagText:'#fff',  xp:30},
-    {id:'petdojo',        path:'/games/morals/pet_dojo.html',       title:'Pet Dojo',          emoji:'🐾',desc:'Pet that grows with responsibility!',  tag:'Care',     tagColor:'#00b894',tagText:'#fff',  xp:30},
+    {id:'cooldowncorner', path:'/games/morals/cooldowncorner.html',title:'Cool Down Corner',  emoji:'☮️',desc:'Breathe, ground & affirm!',            tag:'Calm',     tagColor:'#55efc4',tagText:'#007a5e',xp:20},
+    {id:'mydailydojo',    path:'/games/morals/mydailydojo.html',   title:'My Daily Dojo',     emoji:'🥋',desc:'Daily habits. Earn belts!',            tag:'Habits',   tagColor:'#ff6b6b',tagText:'#fff',  xp:30},
+    {id:'petdojo',        path:'/games/morals/petdojo.html',       title:'Pet Dojo',          emoji:'🐾',desc:'Pet that grows with responsibility!',  tag:'Care',     tagColor:'#00b894',tagText:'#fff',  xp:30},
   ],
   arcade:[
     {id:'snake',              path:'/games/arcade/snake.html',             title:'Snake',              emoji:'🐍',xp:15},
     {id:'tictactoe',          path:'/games/arcade/tictactoe.html',         title:'Tic Tac Toe',        emoji:'⭕',xp:15},
-    {id:'memorymatch',        path:'/games/arcade/memory_match.html',       title:'Memory Match',       emoji:'🃏',xp:15},
+    {id:'memorymatch',        path:'/games/arcade/memorymatch.html',       title:'Memory Match',       emoji:'🃏',xp:15},
     {id:'rockpaperscissors',  path:'/games/arcade/rockpaperscissors.html', title:'Rock Paper Scissors',emoji:'✂️',xp:15},
   ]
 };
@@ -301,8 +267,7 @@ let state = {
   parentAccount: null,
   profiles: [],
   selectedProfileId: null,
-  selAvatar: '🌟',
-  selAgeGroup: '6-8'
+  selAvatar: '🌟'
 };
 
 // ── BELT HELPERS ───────────────────────────────────────────────
@@ -335,6 +300,33 @@ async function init(){
   state.parentAccount = account;
 
   document.getElementById('loading').style.display='none';
+
+  // ── AUTO-RESUME: if an active child is already in sessionStorage, skip picker ──
+  try {
+    const stored = sessionStorage.getItem('sparkiddo_child');
+    if (stored) {
+      const active = JSON.parse(stored);
+      // Find the matching profile in freshly loaded list (ensures it still exists)
+      const stillExists = state.profiles.find(p => p.id === active.id);
+      if (stillExists) {
+        // Refresh sessionStorage with latest DB values (XP/streak may have changed)
+        sessionStorage.setItem('sparkiddo_child', JSON.stringify({
+          id:          stillExists.id,
+          name:        stillExists.name,
+          avatar:      stillExists.avatar || '🌟',
+          xp:          stillExists.xp || 0,
+          belt:        getBelt(stillExists.xp || 0).name,
+          streak:      stillExists.streak || 0,
+          age_group:   stillExists.age_group || '6-8',
+          last_played: stillExists.last_played || null,
+        }));
+        renderHub(stillExists);
+        document.getElementById('game-hub').style.display = 'block';
+        return; // skip picker
+      }
+    }
+  } catch(e) { /* malformed session data — fall through to picker */ }
+
   showProfilePicker();
 }
 
@@ -351,12 +343,9 @@ function renderProfiles(){
     const b=getBelt(p.xp||0), pct=xpPct(p.xp||0);
     const card=document.createElement('div');
     card.className='profile-card'+(state.selectedProfileId===p.id?' selected':'');
-    const ageLabels={'3-5':'🌱 Ages 3–5','6-8':'⭐ Ages 6–8','9-12':'🏆 Ages 9–12'};
-    const ageLabel=ageLabels[p.age_group]||'⭐ Ages 6–8';
     card.innerHTML=
       '<span class="profile-avatar">'+(p.avatar||'🌟')+'</span>'+
       '<div class="profile-name">'+p.name+'</div>'+
-      '<div class="profile-age">'+ageLabel+'</div>'+
       '<div class="profile-belt">'+b.emoji+' '+b.name+'</div>'+
       '<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+pct+'%"></div></div>'+
       '<div class="profile-xp-label">'+(p.xp||0)+' XP · 🔥 '+(p.streak||0)+'</div>';
@@ -400,7 +389,6 @@ function startPlaying(){
     streak:     profile.streak||0,
     age_group:  profile.age_group||'6-8',
     last_played:profile.last_played||null,
-    isPlus:     state.parentAccount?.plan==='plus',
   }));
 
   document.getElementById('profile-picker').style.display='none';
@@ -422,13 +410,6 @@ function renderHub(p){
   renderGames('learn-grid',  GAMES.learn,  p);
   renderGames('morals-grid', GAMES.morals, p);
   renderArcade('arcade-grid',GAMES.arcade, p);
-
-  // Show Daily Missions button for Plus users and trial users
-  const isPlus = state.parentAccount?.plan==='plus';
-  const trialMs = Date.now() - new Date(state.parentAccount?.created_at||Date.now()).getTime();
-  const inTrial = trialMs < 7*864e5;
-  const mBtn = document.getElementById('missions-btn');
-  if(mBtn) mBtn.style.display = (isPlus||inTrial) ? 'inline-block' : 'none';
 }
 
 function renderGames(gridId, games, profile){
@@ -454,7 +435,6 @@ function renderGames(gridId, games, profile){
         xp:fresh.xp||0,belt:getBelt(fresh.xp||0).name,
         streak:fresh.streak||0,age_group:fresh.age_group||'6-8',
         last_played:fresh.last_played||null,
-        isPlus:state.parentAccount?.plan==='plus',
       }));
       logSession(profile.id,g.id,g.xp);
     });
@@ -515,6 +495,7 @@ function getCategory(slug){
 }
 
 function switchProfile(){
+  sessionStorage.removeItem('sparkiddo_child'); // clear so auto-resume doesn't skip picker
   document.getElementById('game-hub').style.display='none';
   showProfilePicker();
 }
@@ -523,7 +504,6 @@ function switchProfile(){
 function openModal(){
   document.getElementById('child-name').value='';
   state.selAvatar='🌟';
-  state.selAgeGroup='6-8';
   const grid=document.getElementById('avatar-grid');
   grid.innerHTML='';
   AVATARS.forEach(function(a){
@@ -533,10 +513,6 @@ function openModal(){
     div.onclick=function(){selAvatar(a,div);};
     grid.appendChild(div);
   });
-  // Reset age group pills — default to 6-8
-  document.querySelectorAll('.age-opt').forEach(function(el){
-    el.classList.toggle('sel', el.dataset.age==='6-8');
-  });
   document.getElementById('add-modal').classList.add('show');
 }
 function closeModal(){document.getElementById('add-modal').classList.remove('show');}
@@ -545,16 +521,11 @@ function selAvatar(a,el){
   document.querySelectorAll('.avatar-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
 }
-function selAgeGroup(age,el){
-  state.selAgeGroup=age;
-  document.querySelectorAll('.age-opt').forEach(e=>e.classList.remove('sel'));
-  el.classList.add('sel');
-}
 async function saveChild(){
   const name=document.getElementById('child-name').value.trim();
   if(!name)return;
   const {data,error}=await sb.from('child_profiles')
-    .insert({parent_id:state.session.user.id,name,avatar:state.selAvatar,age_group:state.selAgeGroup})
+    .insert({parent_id:state.session.user.id,name,avatar:state.selAvatar})
     .select().single();
   if(error){alert(error.message==='new row violates row-level security policy'?'Profile limit reached.':error.message);return;}
   state.profiles.push(data);
