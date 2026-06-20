@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>sparkiddo — Choose Your Player</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/umd/supabase.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap');
   :root{
@@ -222,8 +222,8 @@
 
 <script>
 // ── SUPABASE ───────────────────────────────────────────────────
-const SUPABASE_URL  = 'https://YOUR-PROJECT-ID.supabase.co';
-const SUPABASE_ANON = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL  = 'https://cxpnedeqmtwufwmefpxc.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN4cG5lZGVxbXR3dWZ3bWVmcHhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODI0OTcsImV4cCI6MjA5Mzk1ODQ5N30.A-JRcutv_AyB7izhhT3hk86-5VZJpbU-EAofjGWL8Oc';
 const {createClient} = supabase;
 window.sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
