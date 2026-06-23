@@ -1,3 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cookie Policy · Sparkiddo</title>
+<meta name="description" content="What cookies and local storage Sparkiddo uses, and why.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap');
+:root{
+  --purple:#7c5cbf;--purple-light:#a29bfe;--purple-pale:#f3efff;
+  --green:#00b894;--green-light:#55efc4;--green-pale:#e8f9f3;
+  --pink:#fd79a8;--teal:#00cec9;
+  --dark:#1a1a2e;--text:#333;--muted:#777;
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+  --radius:16px;--radius-lg:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;font-weight:600;color:var(--text);background:#f9f8ff;line-height:1.75}
+
+/* NAV — identical to about.html */
+nav{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(124,92,191,.1);
+  height:64px;display:flex;align-items:center;padding:0 24px}
+.nav-inner{max-width:1100px;margin:0 auto;width:100%;display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;
+  background:linear-gradient(135deg,#7c5cbf,#fd79a8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;text-decoration:none;display:flex;align-items:center;gap:8px;margin-right:auto}
+.nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:10px;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:7px 13px;border-radius:10px;font-size:.82rem;font-weight:700;
+  color:var(--muted);text-decoration:none;transition:.2s}
+.nav-link:hover{background:var(--purple-pale);color:var(--purple)}
+.nav-login{padding:7px 14px;border-radius:10px;font-size:.82rem;font-weight:700;
+  border:2px solid #e0d7ff;color:var(--purple);text-decoration:none;transition:.2s}
+.nav-login:hover{background:var(--purple-pale)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--dark) 0%,#2d1b69 100%);
+  color:#fff;padding:56px 24px 48px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);border-radius:99px;
+  padding:6px 18px;font-size:.78rem;font-weight:800;color:#e0d7ff;
+  margin-bottom:20px;letter-spacing:.04em}
+.hero-logo{margin-bottom:18px}
+.hero-logo img{width:80px;height:80px;object-fit:contain;
+  border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.hero h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,5vw,2.8rem);margin-bottom:12px}
+.hero p{font-size:.98rem;color:#c4b5fd;max-width:600px;margin:0 auto}
+
+/* CONTENT */
+.page{max-width:1100px;margin:0 auto;padding:0 24px}
+.legal-wrap{max-width:860px;margin:0 auto;padding:48px 0 80px}
+
+/* Override Termly's Arial with Nunito */
+[data-custom-class='body'],[data-custom-class='body'] *{
+  font-family:'Nunito',sans-serif !important;background:transparent !important}
+[data-custom-class='title'],[data-custom-class='title'] *{
+  font-family:'Fredoka One',cursive !important;font-size:2rem !important;color:var(--dark) !important}
+[data-custom-class='subtitle'],[data-custom-class='subtitle'] *{
+  font-family:'Nunito',sans-serif !important;color:var(--muted) !important;font-size:.9rem !important}
+[data-custom-class='heading_1'] h2,[data-custom-class='heading_1'] *{
+  font-family:'Fredoka One',cursive !important;color:var(--dark) !important;font-size:1.3rem !important}
+[data-custom-class='heading_2'] h3,[data-custom-class='heading_2'] *{
+  font-family:'Fredoka One',cursive !important;color:var(--purple) !important;font-size:1.05rem !important}
+[data-custom-class='body_text'],[data-custom-class='body_text'] *{
+  font-family:'Nunito',sans-serif !important;color:var(--text) !important;font-size:.95rem !important;line-height:1.8 !important}
+[data-custom-class='link'] *{color:var(--purple) !important;font-family:'Nunito',sans-serif !important}
+a[data-custom-class='link']{color:var(--purple) !important}
+
+/* Hide Termly branding logo SVG (the base64 span at the top) */
+span[style*='background: url(data:image/svg+xml']{display:none !important}
+/* Hide "This policy was created using Termly" footer text */
+body > div > br + div:last-of-type{
+  display:none
+}
+
+/* Improve content readability */
+.legal-wrap h1{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--dark);margin-bottom:8px}
+.legal-wrap h2{font-family:'Fredoka One',cursive;font-size:1.25rem;color:var(--dark);
+  margin-top:36px;margin-bottom:10px;padding-top:16px;border-top:1px solid #ede9ff}
+.legal-wrap h2:first-child{margin-top:0;border-top:none;padding-top:0}
+.legal-wrap h3{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--purple);margin:20px 0 8px}
+.legal-wrap p,.legal-wrap li{font-size:.94rem;line-height:1.8;color:#444;margin-bottom:8px}
+.legal-wrap ul{padding-left:22px;margin-bottom:12px}
+.legal-wrap a{color:var(--purple)}
+.legal-wrap table{width:100%;border-collapse:collapse;font-size:.88rem;margin:16px 0}
+.legal-wrap table td,.legal-wrap table th{
+  border:1px solid #ddd;padding:10px 14px;vertical-align:top;line-height:1.6}
+.legal-wrap table thead{background:var(--purple-pale)}
+
+/* FOOTER — identical to about.html */
+footer{background:#1a1a2e;color:#c4b5fd;padding:50px 0 28px;margin-top:80px}
+.footer-inner{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;
+  background:linear-gradient(135deg,var(--purple-light),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.footer-logo img{height:30px;width:30px;object-fit:contain;border-radius:8px}
+.footer-tag{font-size:.78rem;color:#7d6fb0;font-weight:700;line-height:1.6;margin-bottom:10px}
+.footer-email{font-size:.78rem;color:#a78bfa;text-decoration:none}
+.footer-col-title{font-family:'Fredoka One',cursive;font-size:.92rem;color:#e0d7ff;margin-bottom:14px}
+.fl{display:block;font-size:.78rem;color:#7d6fb0;font-weight:700;text-decoration:none;padding:3px 0;transition:.2s}
+.fl:hover{color:var(--pink)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:20px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  font-size:.72rem;color:#4a3f6b;font-weight:700}
+.footer-bottom a{color:#4a3f6b;text-decoration:none;transition:.2s}
+.footer-bottom a:hover{color:#c4b5fd}
+.footer-legal{display:flex;gap:14px;flex-wrap:wrap}
+
+@media(max-width:760px){
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+}
+@media(max-width:480px){
+  .footer-inner{grid-template-columns:1fr}
+  .hero{padding:40px 16px 36px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/assets/sparkiddologo.png" alt="Sparkiddo logo" onerror="this.style.display='none'">
+      🌟 Sparkiddo
+    </a>
+    <div class="nav-links">
+      <a href="/about.html" class="nav-link">About</a>
+      <a href="/#how" class="nav-link">How it works</a>
+      <a href="/for_parents.html" class="nav-link">For Parents</a>
+      <a href="/blog.html" class="nav-link">Blog</a>
+      <a href="/auth/login.html" class="nav-login">🔐 Parent Login</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-logo">
+    <img src="/assets/sparkiddologo.png" alt="Sparkiddo">
+  </div>
+  <div class="hero-badge">🍪 Last updated: May 2026</div>
+  <h1>🍪 Cookie Policy</h1>
+  <p>What cookies and local storage Sparkiddo uses, and why.</p>
+</div>
+<div class="page">
+  <div class="legal-wrap">
 <style>
   [data-custom-class='body'], [data-custom-class='body'] * {
           background: transparent !important;
@@ -53,3 +204,56 @@ word-break: break-word !important;
     </style>
       </div>
       <br><div><span data-custom-class='body_text'>This Cookie Policy was created using Termly's </span><a href="https://termly.io/products/cookie-consent-manager/" target="_blank" rel="noopener external" data-custom-class='link'>Cookie Consent Manager</a></div>
+  </div>
+</div>
+
+<footer>
+  <div class="page">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">
+          <img src="/assets/sparkiddologo.png" alt="Sparkiddo" onerror="this.style.display='none'">
+          🌟 Sparkiddo
+        </div>
+        <p class="footer-tag">Spark Smart Minds. Build Confident Hearts.<br>Daily growth platform for kids aged 3–12.</p>
+        <a href="mailto:hello@sparkiddo.com" class="footer-email">📧 hello@sparkiddo.com</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <a href="/" class="fl">Home</a>
+        <a href="/about.html" class="fl">About</a>
+        <a href="/upcoming.html" class="fl">What's Coming 🚀</a>
+        <a href="/blog.html" class="fl">Blog</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Parents</div>
+        <a href="/for_parents.html" class="fl">For Parents</a>
+        <a href="/auth/register.html" class="fl">Create Account</a>
+        <a href="/auth/login.html" class="fl">Parent Login</a>
+        <a href="/contact.html" class="fl">Contact</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Legal</div>
+        <a href="/privacy.html" class="fl">Privacy Policy</a>
+        <a href="/terms.html" class="fl">Terms of Service</a>
+        <a href="/cookies.html" class="fl">Cookie Policy</a>
+        <a href="/coppa.html" class="fl">COPPA Notice</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Sparkiddo. All rights reserved. Made with ❤️ in India.</span>
+      <div class="footer-legal">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').style.boxShadow=scrollY>20?'0 2px 20px rgba(0,0,0,.08)':'none';
+});
+</script>
+</body>
+</html>
