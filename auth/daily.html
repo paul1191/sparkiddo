@@ -183,7 +183,41 @@ const ZONES = [
 let state = {child:null, account:null, missions:[], completions:new Set()};
 
 // ── HELPERS ────────────────────────────────────────────────────
-function todayStr(){return new Date().toISOString().split('T')[0];}
+// IST-aware date (UTC+5:30) — avoids UTC day-rollover for Indian users playing after 11:30 PM IST
+function todayStr(){
+  var now = new Date();
+  var istMs = now.getTime() + (now.getTimezoneOffset() * 60000) + (330 * 60000);
+  return new Date(istMs).toISOString().split('T')[0];
+}
+
+// Map daily.html game slugs (lowercase) → game file GAME_KEY values (camelCase).
+// Games write their GAME_KEY into localStorage; daily.html uses lowercase slugs.
+var SLUG_TO_GAME_KEY = {
+  'shareorkeep':  'shareOrKeep',
+  'truthorfib':   'truthOrFib',
+  'emotionmatch': 'emotionMatch',
+  'storychoices': 'storyChoices',
+  'kindnessquest':'kindnessQuest',
+  'cooldowncorner':'cooldownCorner'
+};
+
+// Read completions from localStorage (written by game files in ?daily=1 mode).
+// Key written by games: sparkiddo_daily_{childId}_{YYYY-MM-DD}  →  value: JSON array of GAME_KEYs
+// e.g. ["shareOrKeep","emotionMatch"]
+function readLocalCompletions(){
+  var localDone = new Set();
+  if(!state.child?.id || state.child.id === 'guest') return localDone;
+  try{
+    var key = 'sparkiddo_daily_' + state.child.id + '_' + todayStr();
+    var arr = JSON.parse(localStorage.getItem(key) || '[]');
+    // arr contains GAME_KEY values (camelCase); missions use lowercase slugs
+    state.missions.forEach(function(m){
+      var gameKey = SLUG_TO_GAME_KEY[m.game] || m.game;
+      if(arr.includes(gameKey)) localDone.add(m.game);
+    });
+  }catch(e){}
+  return localDone;
+}
 
 // Days since fixed epoch — deterministic, same answer on all devices same day
 function dayIndex(){return Math.floor((Date.now() - new Date('2024-01-01').getTime()) / 86400000);}
@@ -239,15 +273,25 @@ async function init(){
   const isPlus   = account?.plan === 'plus';
   const inTrial  = isInTrial(account);
 
+  // ── OPEN_ACCESS ────────────────────────────────────────────────
+  // During Wave 1/2 (review-collection era) all logged-in users get Daily Missions.
+  // Mirrors CAPS_ENABLED=false in scenarioEngine.js — both must be flipped together.
+  // ⚠️ WAVE 3 ACTIVATION: set OPEN_ACCESS=false when Razorpay is live + CAPS enabled.
+  const OPEN_ACCESS = true;
+  // ──────────────────────────────────────────────────────────────
+
   document.getElementById('loading').style.display='none';
   document.getElementById('page-content').style.display='block';
 
-  if(!isPlus && !inTrial){renderGate(); return;}
+  if(!OPEN_ACCESS && !isPlus && !inTrial){renderGate(); return;}
 
   state.missions = buildMissions();
-  await refreshCompletions();
+  // Pre-populate from localStorage immediately so cards render correctly at once
+  state.completions = readLocalCompletions();
+  renderPage(isPlus, inTrial);      // render with local data first (instant)
+  await refreshCompletions();       // then merge Supabase — may add more completions
   await maybeAwardBonus();
-  renderPage(isPlus, inTrial);
+  patchMissionsDOM();               // re-patch with final merged state
 }
 
 // Re-check when child returns from a game (tab refocus)
@@ -262,14 +306,25 @@ window.addEventListener('focus', async function(){
 });
 
 async function refreshCompletions(){
-  if(!state.child?.id || state.child.id==='guest') return;
-  const gameIds = state.missions.map(m=>m.game);
-  const {data} = await sb.from('game_sessions')
-    .select('game_slug')
-    .eq('child_id', state.child.id)
-    .gte('played_at', todayStr()+'T00:00:00.000Z')
-    .in('game_slug', gameIds);
-  state.completions = new Set((data||[]).map(s=>s.game_slug));
+  // Step 1 — immediately populate from localStorage (instant, no flicker)
+  var local = readLocalCompletions();
+  // Step 2 — fetch from Supabase (authoritative; may be empty if Supabase is slow/offline)
+  var supabaseSet = new Set();
+  if(state.child?.id && state.child.id !== 'guest'){
+    var gameIds = state.missions.map(function(m){return m.game;});
+    var {data} = await sb.from('game_sessions')
+      .select('game_slug')
+      .eq('child_id', state.child.id)
+      .gte('played_at', todayStr()+'T00:00:00.000Z')
+      .in('game_slug', gameIds);
+    // game_sessions stores lowercase slug (e.g. 'shareorkeep'); map back via SLUG_TO_GAME_KEY
+    (data||[]).forEach(function(s){
+      // try direct match first, then reverse-lookup
+      if(gameIds.includes(s.game_slug)) supabaseSet.add(s.game_slug);
+    });
+  }
+  // Merge both sources — either is sufficient evidence of completion
+  state.completions = new Set([...supabaseSet, ...local]);
 }
 
 async function maybeAwardBonus(){

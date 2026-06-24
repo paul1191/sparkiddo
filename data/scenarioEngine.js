@@ -33,6 +33,18 @@
 // ─────────────────────────────────────────────────────────────────
 const CAPS_ENABLED = false;
 
+/**
+ * Returns today's date string in IST (UTC+5:30), formatted YYYY-MM-DD.
+ * Used for daily_usage writes and reads to avoid UTC day-rollover issues
+ * for Indian users playing after 11:30 PM IST (= 6:00 PM UTC the same day,
+ * but next calendar day in UTC).
+ */
+function getISTDateString() {
+  const now = new Date();
+  const istMs = now.getTime() + (now.getTimezoneOffset() * 60000) + (330 * 60000);
+  return new Date(istMs).toISOString().split('T')[0];
+}
+
 class SparkiddoScenarioEngine {
 
   /**
@@ -239,7 +251,7 @@ class SparkiddoScenarioEngine {
     // ── Supabase check (primary) ──────────────────────────────
     if (window.sb) {
       try {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getISTDateString();
         const { data } = await window.sb
           .from('daily_usage')
           .select('count')
@@ -289,7 +301,7 @@ class SparkiddoScenarioEngine {
 
     // ── localStorage increment (always, for offline fallback) ──
     const stored = this._getLocalDailyUsage();
-    const today  = new Date().toISOString().split('T')[0];
+    const today  = getISTDateString();
     const count  = stored.date === today ? stored.count + 1 : 1;
     this._setLocalDailyUsage({ date: today, count });
     this._log(`Daily usage (localStorage): ${count} for ${this.gameKey}`);
@@ -303,13 +315,13 @@ class SparkiddoScenarioEngine {
   _getLocalDailyUsage() {
     try {
       const raw   = localStorage.getItem(this._localDailyKey());
-      const today = new Date().toISOString().split('T')[0];
+      const today = getISTDateString();
       if (!raw) return { date: today, count: 0 };
       const parsed = JSON.parse(raw);
       // Reset count if stored date is not today
       return parsed.date === today ? parsed : { date: today, count: 0 };
     } catch {
-      return { date: new Date().toISOString().split('T')[0], count: 0 };
+      return { date: getISTDateString(), count: 0 };
     }
   }
 
@@ -459,7 +471,7 @@ class SparkiddoScenarioEngine {
       // Also update child XP
       await window.sb.from('child_profiles').update({
         xp: (this.profile.xp || 0) + xpEarned,
-        last_played: new Date().toISOString().split('T')[0],
+        last_played: getISTDateString(),
       }).eq('id', this.profile.id);
 
       // Update local profile copy
@@ -546,7 +558,7 @@ class SparkiddoDailyMissions {
    * Returns cached missions if already generated today.
    */
   getMissions() {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getISTDateString();
     const cached = this._loadDailyState();
 
     if (cached && cached.date === today) {
