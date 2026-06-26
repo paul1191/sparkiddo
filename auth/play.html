@@ -24,7 +24,8 @@
 
   /* NAV */
   nav{position:relative;z-index:10;background:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(162,155,254,.12)}
-  .nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+  .nav-logo{font-family:'Fredoka One',cursive;font-size:1.4rem;background:linear-gradient(135deg,#6c5ce7,#fd79a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;display:flex;align-items:center;gap:8px}
+  .nav-logo img{width:34px;height:34px;object-fit:contain;border-radius:9px;flex-shrink:0;-webkit-text-fill-color:initial}
   .nav-right{display:flex;align-items:center;gap:12px}
   .nav-user{font-size:.82rem;color:#888;font-weight:700}
   .sign-out-btn{background:#f0e8ff;border:none;padding:7px 16px;border-radius:99px;font-family:'Fredoka One',cursive;font-size:.8rem;color:#6c5ce7;cursor:pointer;transition:.2s}
@@ -58,9 +59,12 @@
 
   /* GAME HUB */
   #game-hub{display:none}
-  .hub-header{display:flex;align-items:center;gap:14px;background:#fff;border-radius:24px;padding:18px 22px;margin-bottom:24px;box-shadow:var(--shadow)}
-  .hub-avatar{font-size:3rem;cursor:pointer;transition:.2s}
+  .hub-header{display:flex;align-items:center;gap:14px;background:#fff;border-radius:24px;padding:18px 22px 24px;margin-bottom:24px;box-shadow:var(--shadow)}
+  .hub-avatar{font-size:3rem;cursor:pointer;transition:.2s;position:relative}
   .hub-avatar:hover{transform:scale(1.1)}
+  .hub-avatar::after{content:'tap';position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-family:'Nunito',sans-serif;font-size:.58rem;font-weight:800;color:#a29bfe;letter-spacing:.04em;white-space:nowrap}
+  .switch-player-btn{display:flex;align-items:center;gap:6px;background:#f0e8ff;border:1.5px solid #e0d7ff;border-radius:99px;padding:7px 14px;font-family:'Fredoka One',cursive;font-size:.8rem;color:#6c5ce7;cursor:pointer;transition:.2s;text-decoration:none;white-space:nowrap}
+  .switch-player-btn:hover{background:#e0d7ff;transform:translateY(-1px)}
   .hub-info{flex:1}
   .hub-name{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--dark);margin-bottom:4px}
   .hub-belt{font-size:.78rem;color:#888;font-weight:700;margin-bottom:8px}
@@ -133,7 +137,10 @@
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 
 <nav>
-  <a href="/" class="nav-logo">🌟 sparkiddo</a>
+  <a href="/" class="nav-logo">
+    <img src="/assets/sparkiddologo.png" alt="Sparkiddo" onerror="this.style.display='none'">
+    🌟 sparkiddo
+  </a>
   <div class="nav-right">
     <span class="nav-user" id="nav-user"></span>
     <a href="/auth/parent_dashboard.html" class="parent-btn">🔐 Parent Zone</a>
@@ -167,6 +174,9 @@
         </div>
       </div>
       <div class="hub-streak" id="hub-streak">🔥 0</div>
+      <button class="switch-player-btn" onclick="switchProfile()" title="Change who's playing">
+        🔄 Switch Player
+      </button>
     </div>
 
     <!-- Morals -->
